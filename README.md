@@ -1,4 +1,4 @@
-# ◈ PortfolioAI v3 — MERN + AI + 12 Themes
+# ◈ PortfolioAI 
 
 A production-grade full-stack MERN application where developers generate stunning portfolio websites using AI and 12 distinct visual themes.
 
