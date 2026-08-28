@@ -216,36 +216,4 @@ Every theme receives the same `data` object and renders it differently. This mea
 
 ---
 
-## 🚀 Deployment
 
-### Backend → Render
-```
-Root Dir:      backend
-Build:         npm install
-Start:         node server.js
-Env vars:      MONGODB_URI, JWT_SECRET, GEMINI_API_KEY, FRONTEND_URL
-```
-
-### Frontend → Vercel
-```
-Root Dir:      frontend
-Build:         CI=false npm run build
-Output:        build
-Env vars:      REACT_APP_API_URL=https://your-backend.onrender.com/api
-```
-
-### After deploying both:
-Update `FRONTEND_URL` on Render to your Vercel URL.
-
----
-
-## 🎤 Interview Talking Points
-
-**"What makes this project unique?"**
-> "I built a pluggable theme engine where one portfolio data schema renders across 12 completely different layouts. Each theme targets a different persona — from a Neon Terminal theme for developers to a Dark Luxe theme for agencies. The architecture means adding a new theme is just one file."
-
-**"How did you integrate AI?"**
-> "I used Google Gemini Pro on the backend via Node.js. When users click 'Generate Bio', the frontend sends their name, title, skills, and experience to Express, which crafts a specific prompt and calls the Gemini API. The response is streamed back and populated directly into the form field. Same pattern for project descriptions and skill suggestions."
-
-**"What was the hardest technical challenge?"**
-> "The theme engine. Each theme needed to look completely different while consuming the same data. I designed a themeRegistry.js that maps theme IDs to React components, and each component receives a single `data` prop. The challenge was making 12 visually distinct layouts without duplicating any data logic."
