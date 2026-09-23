@@ -363,7 +363,7 @@ https://your-backend.onrender.com/api/health
 
 ## Built By
 
-**Satya Sri Karri** — CSE Student & Full Stack Developer
+**Satya Sri Karri** — AIML Student & Full Stack Developer
 
 [![GitHub](https://img.shields.io/badge/GitHub-satya--sri--karri-181717?style=flat-square&logo=github)](https://github.com/satya-sri-karri)
 
