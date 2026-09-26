@@ -16,18 +16,43 @@ const getClient = () => {
   return groq;
 };
 
+const MODELS = Array.from(
+  new Set([
+    process.env.GROQ_MODEL,
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+  ].filter(Boolean))
+);
+
 const generate = async (system, prompt) => {
   const client = getClient();
-  const res = await client.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: prompt },
-    ],
-    temperature: 0.7,
-    max_tokens: 300,
-  });
-  return res.choices[0].message.content;
+  let lastErr;
+
+  for (const model of MODELS) {
+    try {
+      const body = {
+        model,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      };
+      // gpt-oss spends tokens on reasoning, which is wasted for short copywriting
+      // and can leave too little room for the response.
+      if (model.startsWith("openai/gpt-oss")) body.reasoning_effort = "low";
+
+      const res = await client.chat.completions.create(body);
+      return res.choices[0].message.content;
+    } catch (err) {
+      lastErr = err;
+      if (err?.status !== 404) throw err;
+      console.warn(`Model ${model} unavailable, trying next fallback.`);
+    }
+  }
+
+  throw lastErr;
 };
 
 router.post("/bio", auth, async (req, res) => {
