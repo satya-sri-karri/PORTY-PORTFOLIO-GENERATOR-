@@ -230,6 +230,93 @@ const SkillsSection = ({ form, set, skillInput, setSkillInput, addSkill, addSkil
   );
 };
 
+// ── Project image field: URL or local file upload ─────────────────────────────
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+// Capped so that 8 projects worth of inline images stays under the backend's
+// 10 MB express.json limit and the browser's sessionStorage quota.
+const MAX_DATA_URL_CHARS = 500000;
+
+// Scales the image down to fit the box while preserving its aspect ratio, so
+// screenshots and mockups keep their framing instead of being centre-cropped.
+const fileToResizedDataUrl = (file, maxW, maxH, quality) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read that file."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Could not read that image."));
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width, maxH / img.height);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+const ProjectImageField = ({ value, onChange }) => {
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const fileRef = useRef(null);
+  const isUpload = typeof value === "string" && value.startsWith("data:");
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setError("");
+    if (!file.type.startsWith("image/")) return setError("Please choose an image file.");
+    if (file.size > MAX_UPLOAD_BYTES) return setError("Image must be under 5 MB.");
+    setBusy(true);
+    try {
+      const dataUrl = await fileToResizedDataUrl(file, 1000, 1000, 0.8);
+      if (dataUrl.length > MAX_DATA_URL_CHARS) {
+        return setError("That image is too large to store. Try a smaller or simpler image.");
+      }
+      onChange(dataUrl);
+    } catch (e) {
+      setError(e.message || "Could not process that image.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="form-group">
+        <label className="form-label">Image (screenshot / product mockup)</label>
+        <input className="form-input" type="url" placeholder="https://example.com/my-product.png" value={value || ""} onChange={e => onChange(e.target.value)} />
+        <div className="form-hint" style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6 }}>
+          <span>or</span>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => fileRef.current && fileRef.current.click()} disabled={busy}
+            style={{ padding: "4px 10px", cursor: busy ? "progress" : "pointer" }}>
+            {busy ? "Processing…" : "⬆ Upload from file"}
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => { handleFile(e.target.files[0]); e.target.value = ""; }} />
+        </div>
+        {error && <div className="form-error" style={{ marginTop: 4 }}>⚠ {error}</div>}
+      </div>
+      {value && (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: -8, marginBottom: 16 }}>
+          <img src={value} alt="preview" onError={e => e.target.style.display = "none"}
+            style={{ width: 72, height: 48, borderRadius: 4, objectFit: "cover", border: "1px solid var(--accent)" }} />
+          <span className="form-hint">{isUpload ? "Uploaded image" : "Image preview"}</span>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onChange("")} style={{ padding: "4px 10px", cursor: "pointer" }}>
+            ✕ Remove
+          </button>
+        </div>
+      )}
+    </>
+  );
+};
+
 const ProjectsSection = ({ form, addItem, updateItem, removeItem, token }) => {
   const [aiLoading, setAiLoading] = useState({});
   const [aiErrors, setAiErrors] = useState({});
@@ -269,10 +356,7 @@ const ProjectsSection = ({ form, addItem, updateItem, removeItem, token }) => {
               onChange={e => setTechInputs(prev => ({ ...prev, [i]: e.target.value }))}
               onBlur={e => { updateItem("projects", i, "techStack", e.target.value.split(",").map(t => t.trim()).filter(Boolean)); setTechInputs(prev => { const n = { ...prev }; delete n[i]; return n; }); }} />
           </div>
-          <div className="form-group">
-            <label className="form-label">Image URL (screenshot / product mockup)</label>
-            <input className="form-input" type="url" placeholder="https://example.com/my-product.png" value={p.image} onChange={e => updateItem("projects", i, "image", e.target.value)} />
-          </div>
+          <ProjectImageField value={p.image} onChange={v => updateItem("projects", i, "image", v)} />
           <FormRow>
             <div className="form-group">
               <label className="form-label">Live URL</label>

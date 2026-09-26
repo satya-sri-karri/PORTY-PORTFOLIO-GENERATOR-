@@ -55,7 +55,7 @@ const TerminalOSTheme = ({ data }) => {
       output = skills?.length ? skills.join("\n  ├─ ") : "No skills";
       if (skills?.length) output = ".\n├─ " + output;
     } else if (lower === "projects" || lower === "ls projects/") {
-      output = projects?.length ? projects.map(p => `📦 ${p.title}\n${p.image ? `   [img] ${p.image.split('/').pop() || 'image.png'} [/img]\n` : ""}   ${p.description?.slice(0, 60)}...`).join("\n") : "No projects";
+      output = projects?.length ? projects.map(p => `📦 ${p.title}\n${p.image ? `   [img] ${p.image.startsWith("data:") ? "uploaded-image.jpg" : p.image.split('/').pop() || 'image.png'} [/img]\n` : ""}   ${p.description?.slice(0, 60)}...`).join("\n") : "No projects";
     } else if (lower === "experience" || lower === "ls experience/") {
       output = experience?.length ? experience.map(e => `  ${e.role} @ ${e.company} [${e.duration}]`).join("\n") : "No experience";
     } else if (lower === "certs" || lower === "ls certs/") {
