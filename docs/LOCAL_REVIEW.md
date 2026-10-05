@@ -90,7 +90,7 @@ The original master checklist is preserved alongside this guide. It intentionall
 
 Batch 3 establishes the rendering contract and content adaptation for the first five designs: Swiss Design through Minimalist, Luxury Typography through Dark Luxe, Scrapbook, Y2K Aesthetic, and Product Showcase. The catalog now contains 33 themes with all original IDs preserved.
 
-Next: continue reviewing and upgrading the other 28 registered themes in the checklist order, create the remaining eight planned new themes, and replace the dashboard cover generator with actual captures.
+The second design batch upgrades Aurora, Editorial, Neon Terminal, Brutalist and Neumorphic. Next: continue reviewing and upgrading the other 23 registered themes in the checklist order, create the remaining eight planned new themes, and replace the dashboard cover generator with actual captures.
 
 Resume import, guest trial/onboarding, sharing kit, metadata/analytics improvements, accessibility across all themes, the full 123-case theme fixture matrix, and target-user observation remain later work. The all-theme smoke checks do not establish full design or interaction validation of the other themes.
 
@@ -172,4 +172,30 @@ The implementation contract is documented in `docs/THEME_CONTRACT.md`. The origi
 - Desktop and phone screenshots of the new designs were visually inspected. The Scrapbook tablet overflow found during testing was corrected.
 - Original checklist preservation, whitespace, ZIP integrity and cumulative patch application: checked before packaging.
 
-The batch 3 bundle includes all three batches. All changes remain local and uncommitted. Real development MongoDB round trips, login/OTP/email, AI provider output and physical Android testing remain for your configured environment.
+The batch 3 bundle includes all three development checkpoints. At that checkpoint the changes were local; they were subsequently pushed to the upgrade branch with the user's authorization. Real development MongoDB round trips, login/OTP/email, AI provider output and physical Android testing remain for your configured environment.
+
+## Second design batch — next five themes (5 October 2026)
+
+This continues the first design batch above. It is separate from the earlier development checkpoint called Batch 2, which covered theme discovery and AI review.
+
+- Aurora now has a serif introduction and a restrained luminous atmosphere. Its native pause/resume control, reduced-motion response, offscreen pause and static preview keep motion optional. It displays all supplied content without a graphics dependency.
+- Editorial now uses a magazine masthead, split introduction and lead project story, followed by every remaining project. Screenshots fit their frames; portraits are optional.
+- Neon Terminal now has a working portfolio file explorer with real section anchors, an actual README introduction and keyboard-operable Card / Compact project views. Both views keep every project and destination available.
+- Brutalist now uses large framed typography, hard shadows and responsive project cards. Additional Neo-brutalism and Neo lilac palettes can be previewed, cancelled, applied and saved through the existing colour settings.
+- Neumorphic now has raised profile surfaces and rounded project cards with readable text and borders. Its surfaces also adapt to dark custom colours.
+- All five retain their existing saved IDs and names, show supplied optional sections and project facts, hide empty sections, and preserve the builder's ordering and featured-project rules. The shared content contract now covers ten designs. The registry still has 33 themes.
+
+Review in Theme & Publish: search for each design, switch desktop/phone preview, Apply and save. On Brutalist, preview Neo-brutalism and Cancel before applying it; reload to check your saved colours. In the full Neon Terminal preview, use the file links and switch between Card and Compact views. In Aurora, use Pause atmosphere; a system reduced-motion preference removes the animated atmosphere automatically.
+
+## Verified results for the second design batch
+
+- Production frontend build passed; initial JavaScript is approximately 110.84 KB compressed. Themes remain lazy-loaded.
+- 18 backend tests and 6 content/save-comparison tests passed.
+- All 22 browser workflow scenarios passed, including the new Neo-brutalist palette preview/cancel/apply/save/reload scenario and all previous workflow regressions.
+- All ten upgraded designs passed 200 responsive/content cases at 360, 390, 768, 1024 and 1440px, with populated, sparse, legacy, long-text, broken-image and light/dark palette fixtures. Neon Terminal's real destinations and keyboard view controls, and Aurora's pause/resume, offscreen pause, dynamic reduced motion and static preview also passed.
+- Forty desktop/phone hero and work screenshots were captured. The five new designs were visually reviewed. Editorial's final portrait positioning adjustment was rebuilt and its 20 layout cases were repeated.
+- All 33 registered designs still passed the three rendering smoke fixtures each (99 cases). The other 23 designs require their own content, visual and interaction upgrades.
+
+Tests use isolated API fixtures and fallback fonts. They do not establish live authentication, production database writes, provider output, physical-device behaviour or the complete release checklist. The preview continues to use the existing backend as described in `docs/ROLLBACK.md`; new project-story fields require the upgraded backend to persist there.
+
+The original version and the first reviewed design batch have separate backup branches. This batch extends only `upgrade/porty-batches-1-3`; production remains on the original source. The original master checklist remains unchanged.

@@ -1,6 +1,6 @@
 # Portfolio rendering contract
 
-This contract is implemented for Minimalist (`minimalist`, Swiss Design), Dark Luxe (`dark-luxe`, Luxury Typography), Scrapbook (`scrapbook`), Y2K Aesthetic (`y2k-aesthetic`) and Product Showcase (`product-showcase`). All registered themes receive normalized input, but the other designs still require individual content and interaction review.
+This contract is implemented for ten designs: Minimalist (`minimalist`, Swiss Design), Dark Luxe (`dark-luxe`, Luxury Typography), Scrapbook (`scrapbook`), Y2K Aesthetic (`y2k-aesthetic`), Product Showcase (`product-showcase`), Aurora (`aurora`), Editorial (`editorial`), Neon Terminal (`neon-terminal`), Brutalist (`brutalist`) and Neumorphic (`neumorphic`). All registered themes receive normalized input, but the other designs still require individual content and interaction review.
 
 ## Data boundary
 
@@ -27,7 +27,7 @@ Shared components live in `frontend/src/components/themes/common/PortfolioParts.
 
 Use one `h1`, a main landmark, a skip link, real section anchors and native controls. Only render navigation for sections that exist. Keep all supplied text available without line clamping. Avoid fake interactive decorations; decorative window marks and device dots are hidden from assistive technology.
 
-Optional portraits and empty sections must not leave broken columns. Narrow layouts stack content and wrap links and long strings. Animations and transitions stop for reduced motion and static previews. These five themes do not require WebGL or continuous animation loops.
+Optional portraits and empty sections must not leave broken columns. Narrow layouts stack content and wrap links and long strings. Animations and transitions stop for reduced motion and static previews. These ten themes do not require WebGL or JavaScript animation loops. Aurora's decorative CSS atmosphere has a native pause control and pauses when its hero is offscreen or the document is hidden. Neon Terminal exposes actual section destinations and keyboard-operable card/compact project views. Theme controls do not invent connection status, files or portfolio facts.
 
 ## Compatibility and verification
 
@@ -41,6 +41,6 @@ npm run test:browser --prefix frontend
 npm run test:themes --prefix frontend
 ```
 
-Browser tests use isolated API fixtures, not production services. `test:themes` checks the five designs with populated, sparse and legacy portfolios, up to eight projects, real supplied destinations, failed images, long strings, custom palettes and reduced motion. Widths are 360, 390, 768, 1024 and 1440px. Optional `PORTY_THEME_FILTER` limits that suite; `PORTY_TEST_FILTER` limits workflow scenarios. `PORTY_CHROME_PATH` selects an installed Chromium executable.
+Browser tests use isolated API fixtures, not production services. `test:themes` checks the ten designs with populated, sparse and legacy portfolios, up to eight projects, real supplied destinations, failed images, long strings, light/dark custom palettes and reduced motion. Widths are 360, 390, 768, 1024 and 1440px. It also checks Neon Terminal's real file destinations and keyboard view switching, and Aurora's motion controls, offscreen pause, dynamic reduced motion and static preview. Optional `PORTY_THEME_FILTER` limits that suite; `PORTY_TEST_FILTER` limits workflow scenarios. `PORTY_CHROME_PATH` selects an installed Chromium executable.
 
-The remaining 28 designs, eight planned new themes, physical device checks and the complete release matrix remain follow-up work. Smoke rendering alone does not establish those release gates.
+The remaining 23 registered designs, eight planned new themes, physical device checks and the complete release matrix remain follow-up work. Smoke rendering alone does not establish those release gates.

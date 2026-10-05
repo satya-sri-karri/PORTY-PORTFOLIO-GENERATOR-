@@ -3,8 +3,8 @@ const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
-const output = path.join(__dirname, 'artifacts', 'batch-3'); fs.mkdirSync(output, { recursive: true });
-const themes = ['minimalist', 'dark-luxe', 'scrapbook', 'y2k-aesthetic', 'product-showcase'];
+const output = path.join(__dirname, 'artifacts', 'design-batch-2'); fs.mkdirSync(output, { recursive: true });
+const themes = ['minimalist', 'dark-luxe', 'scrapbook', 'y2k-aesthetic', 'product-showcase', 'aurora', 'editorial', 'neon-terminal', 'brutalist', 'neumorphic'];
 const selectedThemes = themes.filter(id => !process.env.PORTY_THEME_FILTER || id.includes(process.env.PORTY_THEME_FILTER));
 const svg = source => 'data:image/svg+xml;base64,' + Buffer.from(source).toString('base64');
 const screenshot = svg('<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600"><rect width="960" height="600" fill="#e7ecdf"/><rect x="45" y="45" width="870" height="510" rx="16" fill="#fafbf7"/><text x="85" y="118" font-family="sans-serif" font-size="24" fill="#22342d">THE COMMUNITY JOURNAL · TEST FIXTURE</text><rect x="85" y="160" width="500" height="260" rx="10" fill="#c8d4b8"/><text x="112" y="245" font-family="serif" font-size="45" fill="#22342d">Small stories.</text><text x="112" y="304" font-family="serif" font-size="45" fill="#22342d">A shared place.</text><rect x="620" y="160" width="240" height="78" rx="8" fill="#ece8de"/><rect x="620" y="262" width="240" height="78" rx="8" fill="#dce5d5"/><text x="85" y="492" font-family="sans-serif" font-size="18" fill="#22342d">A local browser fixture, not a production project screenshot.</text></svg>');
@@ -28,6 +28,7 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       active = { ...data, theme }; await page.setViewportSize({ width, height: 1000 }); await page.goto('http://127.0.0.1:3110/p/local-theme-fixture');
       await page.locator('.portfolio-v4 h1').waitFor();
       assert.equal(await page.locator('.portfolio-v4 h1').innerText(), data.name);
+      assert.equal(await page.locator('.portfolio-v4 h1').count(), 1);
       assert.deepEqual(errors, []);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
       if (overflow) { console.log(await page.evaluate(() => ({ doc: document.documentElement.scrollWidth, viewport: innerWidth, client: document.documentElement.clientWidth, elements: [...document.querySelectorAll('body *')].filter(el => el.getBoundingClientRect().right > document.documentElement.clientWidth + 1 || el.getBoundingClientRect().left < -1).slice(0, 12).map(el => ({ class: el.className, width: el.getBoundingClientRect().width, left: el.getBoundingClientRect().left, right: el.getBoundingClientRect().right })) }))); await page.screenshot({ path: path.join(output, 'layout-failure.png') }); }
@@ -49,6 +50,8 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
             const stories = page.locator('.pf-story'); assert.equal(await stories.count(), 8);
             for (const story of await stories.all()) if (!(await story.evaluate(el => el.open))) await story.locator('summary').click();
             assert.equal(await page.getByText('We demonstrated the prototype at our class review.', { exact: true }).count(), 8);
+            assert.equal(await page.locator('.pf-skills span').count(), full.skills.length);
+            assert.equal(await page.getByRole('link', { name: 'Email', exact: false }).getAttribute('href'), `mailto:${full.contact.email}`);
           } else if (!variant.projects.length) {
             assert.equal(await page.locator('#pf-work, #pf-experience, #pf-credentials, #pf-profiles, #pf-contact').count(), 0);
           }
@@ -63,6 +66,29 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       }
       await render({ name: 'Anya Legacy', projects: [{ title: 'Legacy project' }] }, theme, 390); cases++;
       await page.getByRole('heading', { name: 'Legacy project', exact: true }).waitFor();
+      for (const width of [360, 1440]) {
+        await render({ ...full, projects: full.projects.slice(0, 2), themeColors: { bg: '#12161e', text: '#edf0fa', accent: '#c1b0f0' } }, theme, width); cases++;
+        assert.equal(await page.locator('.portfolio-v4').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(18, 22, 30)');
+        assert.equal(await page.locator('.portfolio-v4').evaluate(el => getComputedStyle(el).color), 'rgb(237, 240, 250)');
+      }
+      if (theme === 'neon-terminal') {
+        for (const width of [360, 1440]) {
+          await render(full, theme, width);
+          await page.getByRole('button', { name: 'Compact view', exact: true }).click();
+          assert.equal(await page.getByRole('button', { name: 'Compact view', exact: true }).getAttribute('aria-pressed'), 'true');
+          assert.equal(await page.locator('.terminal-compact .pf-project').count(), 8);
+          assert.equal(await page.locator('.pf-project-links a').count(), 16);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+          const files = page.getByRole('navigation', { name: 'Portfolio files' });
+          await files.getByRole('link', { name: 'credentials.md', exact: false }).click();
+          assert.equal(new URL(page.url()).hash, '#pf-credentials');
+          await files.getByRole('link', { name: 'projects/', exact: false }).click();
+          await page.getByRole('button', { name: 'Card view', exact: true }).focus(); await page.keyboard.press('Space');
+          assert.equal(await page.locator('.terminal-compact').count(), 0);
+          assert.equal(await page.getByRole('button', { name: 'Card view', exact: true }).getAttribute('aria-pressed'), 'true');
+        }
+        console.log('PASS terminal file destinations and keyboard card/compact switching at phone and desktop widths');
+      }
       const visual = { ...full, projects: full.projects.slice(0, 3) };
       for (const width of [1440, 390]) {
         await render(visual, theme, width);
@@ -71,6 +97,32 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       }
       console.log(`PASS ${theme}: content, destinations, five widths, sparse/long/broken-image cases`);
     }
+    if (selectedThemes.includes('aurora')) {
+      await render(full, 'aurora', 1440);
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationName), 'none');
+      assert.equal(await page.locator('.aurora-motion').count(), 0);
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.getByRole('button', { name: 'Pause atmosphere', exact: true }).waitFor();
+      await page.waitForFunction(() => document.querySelector('.aurora-hero')?.dataset.animate === 'true');
+      await page.getByRole('button', { name: 'Pause atmosphere', exact: true }).click();
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationPlayState), 'paused');
+      await page.getByRole('button', { name: 'Animate atmosphere', exact: true }).click();
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationPlayState), 'running');
+      await page.locator('#pf-contact').scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => document.querySelector('.aurora-hero')?.dataset.animate === 'false');
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationPlayState), 'paused');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationName), 'none');
+      await page.goto('http://127.0.0.1:3110/theme-preview');
+      await page.getByText('Waiting for preview…').waitFor();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.evaluate(data => window.postMessage({ type: 'porty:theme-data', data: { ...data, theme: 'aurora' }, staticPreview: true }, location.origin), full);
+      await page.locator('.pf-static h1').waitFor();
+      assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationName), 'none');
+      assert.equal(await page.locator('.aurora-motion').count(), 0);
+      console.log('PASS Aurora pause/resume, offscreen pause, dynamic reduced motion and static preview');
+    }
+    assert.deepEqual(errors, []);
     fs.writeFileSync(path.join(output, 'verification.json'), JSON.stringify({ themes: selectedThemes, cases, widths: [360, 390, 768, 1024, 1440], errors, externalFonts: 'blocked for deterministic fallback-font checks' }, null, 2));
     console.log(`${cases} theme layout/content cases passed; ${selectedThemes.length * 4} review screenshots saved.`);
     await context.close();

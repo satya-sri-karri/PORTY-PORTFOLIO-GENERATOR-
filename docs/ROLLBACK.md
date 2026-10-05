@@ -9,7 +9,9 @@ The user authorized preserving the original version and pushing the tested upgra
 
 The original commit had a successful Vercel deployment reported by GitHub. Its deployment record is https://vercel.com/satya-sri-karris-projects/porty/3V66bCU4zPMTv6LJCNd8P27mWsoG . The backup preserves repository source, not hosting environment variables or a database snapshot.
 
-All three local improvement batches are pushed together as one reviewable upgrade commit. The upgrade branch can be compared with the backup without changing the production branch. An automatic preview deployment, if enabled in the connected hosting project, is separate from production promotion.
+The initial three development checkpoints were pushed together; subsequent fixes and the second design batch extend the same upgrade branch. The upgrade branch can be compared with the backup without changing the production branch. Vercel builds this branch as a preview, separate from production promotion.
+
+The reviewed first design batch, including the preview login routing fix, is preserved at `47901c8d87666ae64d535fadbf58a7b2ec2dac20` on `backup/design-batch-1-2026-10-05` and the local tag `porty-design-batch-1-2026-10-05`. This additional checkpoint allows restoring the reviewed upgrades as well as the original version.
 
 ## Restore the original site if the upgrade is promoted
 
