@@ -28,3 +28,9 @@ Project-story schema additions are optional and retain existing project IDs. Rev
 - The original master checklist was preserved byte-for-byte.
 
 See `docs/LOCAL_REVIEW.md` for local-service setup and the remaining release checks. Real development-database, authentication/email, AI-provider and physical-device checks have not been replaced by browser API fixtures.
+
+## Preview login routing
+
+The Vercel preview may have no `REACT_APP_API_URL` because production-only environment values do not apply to preview builds. The frontend then requests `/api` on its own origin. `frontend/vercel.json` now routes `/api/:path*` to the existing Render API before the React Router fallback, so login POST requests reach Express instead of the static frontend (which returned HTTP 405).
+
+The Render address was confirmed from the original production JavaScript bundle. This connects the preview to the existing backend and account database; it does not upgrade or replace that backend. Saving in the preview can modify the same account records as the original site. Newly added project-story fields still require the upgraded backend before they can persist there.
