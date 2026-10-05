@@ -395,7 +395,7 @@ const ProjectsSection = ({ form, set, addItem, updateItem, moveItem, removeItem,
   const counter = useRef(0);
   while (keys.current.length < form.projects.length) keys.current.push(++counter.current);
   return <div>
-    <p className="form-hint">Arrange your projects with Move up/down. Featured selection and project stories are supported by Minimalist, Dark Luxe, Scrapbook, Y2K Aesthetic, Product Showcase, Aurora, Editorial, Neon Terminal, Brutalist, and Neumorphic.</p>
+    <p className="form-hint">Arrange your projects with Move up/down. Featured selection and project stories are supported by Minimalist, Dark Luxe, Scrapbook, Y2K Aesthetic, Product Showcase, Aurora, Editorial, Neon Terminal, Brutalist, Neumorphic, Kinetic, Executive, Retro Wave, Organic, and Bento Grid.</p>
     {form.projects.map((p, i) => <ProjectEditor key={keys.current[i]} p={p} i={i} updateItem={updateItem} token={token} count={form.projects.length}
       onMove={to => { const [key] = keys.current.splice(i, 1); keys.current.splice(to, 0, key); moveItem("projects", i, to); }}
       onFeature={() => set("projects", form.projects.map((project, index) => ({ ...project, featured: index === i ? !project.featured : false })))}

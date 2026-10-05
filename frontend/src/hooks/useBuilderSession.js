@@ -120,13 +120,14 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
         : await createPortfolio({ ...submitted, clientRequestId: requestId.current }, token);
       const nextId = wasEdit ? record.current : response.data.id;
       const slug = response.data.shareSlug || submitted.shareSlug;
+      const completedAt = response.data.updatedAt || new Date().toISOString();
       record.current = nextId;
-      const nextForm = { ...latest.current, _id: nextId, shareSlug: slug };
+      const nextForm = { ...latest.current, _id: nextId, shareSlug: slug, updatedAt: completedAt };
       // A retried create can return a record saved before the response was lost.
       // Keep newer edits marked unsaved until the owner explicitly saves them.
       baseline.current = response.data.reused ? "recovered-server-record" : contentSnapshot(submitted);
       setSavedContent(baseline.current);
-      setSavedAt(new Date().toISOString());
+      setSavedAt(completedAt);
       load(nextForm);
       const warning = removeStored("localStorage", key);
       removeStored("sessionStorage", "porty:preview:v1");

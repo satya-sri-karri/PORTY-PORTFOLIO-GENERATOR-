@@ -13,6 +13,8 @@ The initial three development checkpoints were pushed together; subsequent fixes
 
 The reviewed first design batch, including the preview login routing fix, is preserved at `47901c8d87666ae64d535fadbf58a7b2ec2dac20` on `backup/design-batch-1-2026-10-05` and the local tag `porty-design-batch-1-2026-10-05`. This additional checkpoint allows restoring the reviewed upgrades as well as the original version.
 
+The second design batch is preserved at `35dc3f10f22e652c6d923f64cfeb99a0650c6e6f` on `backup/design-batch-2-2026-10-05` and the local tag `porty-design-batch-2-2026-10-05`. The third design batch extends the same preview branch, leaving all earlier checkpoints available.
+
 ## Restore the original site if the upgrade is promoted
 
 Keep the backup branch and tag. If the upgrade is merged into the production branch, revert the corresponding merge or squash commit and redeploy that branch with the existing frontend and backend environment settings. Use a normal revert commit rather than force-pushing or deleting history. If unrelated changes were added afterward, review the revert before publishing it.
@@ -24,8 +26,8 @@ Project-story schema additions are optional and retain existing project IDs. Rev
 ## Validation already completed
 
 - Frontend production build passed.
-- 18 backend tests, 6 content tests and 21 browser workflow scenarios passed.
-- 90 responsive/content cases passed for the five upgraded/new designs.
+- 18 backend tests, 6 content tests and 23 browser workflow scenarios passed.
+- 300 responsive/content cases passed for fifteen upgraded/new designs, with keyboard controls and static/reduced-motion checks. The final small Kinetic touch-target and Bento control-label adjustments received focused rechecks.
 - All 33 registered themes passed three rendering smoke fixtures each (99 cases).
 - The original master checklist was preserved byte-for-byte.
 

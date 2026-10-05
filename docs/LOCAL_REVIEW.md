@@ -90,7 +90,7 @@ The original master checklist is preserved alongside this guide. It intentionall
 
 Batch 3 establishes the rendering contract and content adaptation for the first five designs: Swiss Design through Minimalist, Luxury Typography through Dark Luxe, Scrapbook, Y2K Aesthetic, and Product Showcase. The catalog now contains 33 themes with all original IDs preserved.
 
-The second design batch upgrades Aurora, Editorial, Neon Terminal, Brutalist and Neumorphic. Next: continue reviewing and upgrading the other 23 registered themes in the checklist order, create the remaining eight planned new themes, and replace the dashboard cover generator with actual captures.
+The second design batch upgrades Aurora, Editorial, Neon Terminal, Brutalist and Neumorphic; the third adds Kinetic, Executive, Retro Wave, Organic and Bento Grid. Next: continue reviewing and upgrading the other 18 registered themes in the checklist order, create the remaining eight planned new themes, and replace the dashboard cover generator with actual captures.
 
 Resume import, guest trial/onboarding, sharing kit, metadata/analytics improvements, accessibility across all themes, the full 123-case theme fixture matrix, and target-user observation remain later work. The all-theme smoke checks do not establish full design or interaction validation of the other themes.
 
@@ -199,3 +199,31 @@ Review in Theme & Publish: search for each design, switch desktop/phone preview,
 Tests use isolated API fixtures and fallback fonts. They do not establish live authentication, production database writes, provider output, physical-device behaviour or the complete release checklist. The preview continues to use the existing backend as described in `docs/ROLLBACK.md`; new project-story fields require the upgraded backend to persist there.
 
 The original version and the first reviewed design batch have separate backup branches. This batch extends only `upgrade/porty-batches-1-3`; production remains on the original source. The original master checklist remains unchanged.
+
+## Third design batch — Kinetic through Bento Grid (5 October 2026)
+
+This is the third design batch, following the first and second design batches above. Historical development-checkpoint numbering is retained in earlier notes.
+
+- Kinetic follows the Signature Studio direction: expressive typography, framed portrait and project imagery, finite coordinated entrance transitions and native Gallery / Index project controls. Both views retain every project, story and destination, including on phones.
+- Executive now uses considered business typography, evidence-led project briefs and a career ledger with responsive date columns. Skills show supplied names without fabricated proficiency percentages.
+- Retro Wave now has a coherent synthwave horizon and static perspective grid. Readable project liner notes show complete descriptions and real destinations. Night drive and Daybreak palettes use the existing colour settings; no continuous grid animation runs.
+- Organic now has a subtle paper texture, a natural portrait frame and image-led projects. Split layouts stack on phones and long identities wrap. Missing or failed portraits remove the empty image column.
+- Bento Grid now uses content-sized modular tiles. All skills, experience, credentials, achievements and coding profiles remain available. The initial four-project collection has a labelled View all control; it expands to every project and preserves the selected featured project first. Collapse keeps keyboard focus on the same control.
+- Theme IDs and names remain unchanged. All five share factual content handling, real contact/profile/credential destinations, project stories and image failure fallbacks. The rendering contract now covers fifteen of the 33 registered designs.
+- The save/reload checks uncovered a create-route status bug: the Saved timestamp was lost when create changed to edit. The completed timestamp now travels with the saved form through that route transition. Content comparisons still ignore server metadata, and a regression waits for the transition state to be consumed before checking the status.
+
+Review in Theme & Publish: preview each of the five designs with your own content, switch desktop/phone layout, then Apply and save. Try Electric studio for Kinetic, Navy dossier for Executive, Daybreak for Retro Wave, Forest for Organic and Blue hour for Bento. Cancel a palette preview to check that saved settings remain intact. In the full Kinetic preview, switch Gallery / Index. Add more than four projects to Bento and use View all / Show first 4 projects with keyboard or touch.
+
+The second design batch has its own backup branch and local tag; see `docs/ROLLBACK.md`. This batch updates only the upgrade preview branch. Production source and the original master checklist remain unchanged. The preview still uses the existing backend; project-story persistence there requires deploying the upgraded backend.
+
+## Verified results for the third design batch
+
+- Production frontend build passed; initial JavaScript is approximately 111.15 KB compressed. New theme modules remain lazy-loaded and the shared batch stylesheet is approximately 4.71 KB compressed.
+- All 18 backend tests and 6 content/save-comparison tests passed.
+- All 23 browser workflow scenarios passed after the create-route timestamp fix. The new scenario checks reversible palette preview and actual save/reload for all five existing theme IDs. The create regression now checks status after navigation state is consumed.
+- All fifteen upgraded designs passed 300 layout/content cases across five widths (360, 390, 768, 1024 and 1440px), populated/sparse/legacy portfolios, eight projects, long text, failed images and light/dark overrides. Kinetic's Gallery / Index keyboard switching and Bento's expansion/collapse, focus retention and featured ordering passed at phone and desktop widths.
+- The five third-batch designs received a further 100-case pass with static-preview checks. Kinetic's single-iteration entrance and dynamic reduced-motion response passed; Retro Wave's grid has no animation loop. Final Kinetic touch targets and Bento's clearer Show first 4 projects label were rebuilt and rechecked in the focused 40-case suite.
+- All 33 registered themes still passed their three isolated rendering smoke fixtures (99 cases). Sixty hero/work screenshots were captured across the fifteen upgraded themes, with the five new desktop heroes and phone project layouts visually reviewed.
+- The original master checklist remains byte-for-byte unchanged. Git whitespace checks passed.
+
+These checks use isolated API fixtures and fallback fonts. They do not verify live account authentication, production database writes, email, AI provider output, physical devices or the full release checklist. Eighteen registered designs and eight planned new designs remain for later batches.

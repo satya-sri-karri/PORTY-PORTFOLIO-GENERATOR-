@@ -3,9 +3,9 @@ const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
-const output = path.join(__dirname, 'artifacts', 'design-batch-2'); fs.mkdirSync(output, { recursive: true });
-const themes = ['minimalist', 'dark-luxe', 'scrapbook', 'y2k-aesthetic', 'product-showcase', 'aurora', 'editorial', 'neon-terminal', 'brutalist', 'neumorphic'];
-const selectedThemes = themes.filter(id => !process.env.PORTY_THEME_FILTER || id.includes(process.env.PORTY_THEME_FILTER));
+const output = path.join(__dirname, 'artifacts', 'design-batch-3'); fs.mkdirSync(output, { recursive: true });
+const themes = ['minimalist', 'dark-luxe', 'scrapbook', 'y2k-aesthetic', 'product-showcase', 'aurora', 'editorial', 'neon-terminal', 'brutalist', 'neumorphic', 'kinetic', 'executive', 'retro-wave', 'organic', 'bento'];
+const selectedThemes = themes.filter(id => !process.env.PORTY_THEME_FILTER || process.env.PORTY_THEME_FILTER.split(',').some(filter => id.includes(filter)));
 const svg = source => 'data:image/svg+xml;base64,' + Buffer.from(source).toString('base64');
 const screenshot = svg('<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600"><rect width="960" height="600" fill="#e7ecdf"/><rect x="45" y="45" width="870" height="510" rx="16" fill="#fafbf7"/><text x="85" y="118" font-family="sans-serif" font-size="24" fill="#22342d">THE COMMUNITY JOURNAL · TEST FIXTURE</text><rect x="85" y="160" width="500" height="260" rx="10" fill="#c8d4b8"/><text x="112" y="245" font-family="serif" font-size="45" fill="#22342d">Small stories.</text><text x="112" y="304" font-family="serif" font-size="45" fill="#22342d">A shared place.</text><rect x="620" y="160" width="240" height="78" rx="8" fill="#ece8de"/><rect x="620" y="262" width="240" height="78" rx="8" fill="#dce5d5"/><text x="85" y="492" font-family="sans-serif" font-size="18" fill="#22342d">A local browser fixture, not a production project screenshot.</text></svg>');
 const portrait = svg('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="625"><rect width="500" height="625" fill="#cbcdbf"/><circle cx="250" cy="235" r="90" fill="#7c8b7c"/><path d="M65 625 Q80 340 250 340 Q420 340 435 625" fill="#7c8b7c"/><text x="25" y="595" font-family="sans-serif" font-size="15" fill="#22342d">Illustrative portrait fixture</text></svg>');
@@ -41,6 +41,13 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       for (const variant of [full, { ...basic, projects: [project()] }, { ...basic, title: '', about: '', location: '' }]) {
         for (const width of [360, 390, 768, 1024, 1440]) {
           await render(variant, theme, width); cases++;
+          if (theme === 'bento' && variant.projects.length > 4) {
+            assert.equal(await page.locator('.pf-project').count(), 4);
+            const expand = page.getByRole('button', { name: `View all ${variant.projects.length} projects`, exact: true });
+            await expand.focus(); await page.keyboard.press('Enter');
+            assert.equal(await page.getByRole('button', { name: 'Show first 4 projects', exact: true }).getAttribute('aria-expanded'), 'true');
+            assert.equal(await page.locator('.pf-project').count(), variant.projects.length);
+          }
           for (const item of variant.projects) await page.getByRole('heading', { name: item.title, exact: true }).waitFor();
           assert.equal(await page.locator('.pf-project-links a').count(), variant.projects.length * 2);
           if (variant === full) {
@@ -71,6 +78,37 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
         assert.equal(await page.locator('.portfolio-v4').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(18, 22, 30)');
         assert.equal(await page.locator('.portfolio-v4').evaluate(el => getComputedStyle(el).color), 'rgb(237, 240, 250)');
       }
+      if (theme === 'kinetic') {
+        for (const width of [360, 1440]) {
+          await render(full, theme, width);
+          assert.ok((await page.getByRole('button', { name: 'Index view', exact: true }).boundingBox()).height >= 44);
+          await page.getByRole('button', { name: 'Index view', exact: true }).click();
+          assert.equal(await page.getByRole('button', { name: 'Index view', exact: true }).getAttribute('aria-pressed'), 'true');
+          assert.equal(await page.locator('.kinetic-index .pf-project').count(), 8);
+          assert.equal(await page.locator('.pf-project-links a').count(), 16);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+          await page.getByRole('button', { name: 'Gallery view', exact: true }).focus(); await page.keyboard.press('Space');
+          assert.equal(await page.locator('.kinetic-index').count(), 0);
+          assert.equal(await page.getByRole('button', { name: 'Gallery view', exact: true }).getAttribute('aria-pressed'), 'true');
+        }
+        console.log('PASS Kinetic gallery/index views and keyboard switching retain every project and destination');
+      }
+      if (theme === 'bento') {
+        for (const width of [360, 1440]) {
+          await render({ ...full, projects: full.projects.map((item, i) => ({ ...item, featured: i === 6 })) }, theme, width);
+          assert.equal(await page.locator('.pf-project h3').first().innerText(), full.projects[6].title);
+          assert.equal(await page.locator('.pf-project').count(), 4);
+          await page.getByRole('button', { name: 'View all 8 projects', exact: true }).focus(); await page.keyboard.press('Space');
+          assert.equal(await page.locator('.pf-project').count(), 8);
+          assert.equal(await page.locator('.pf-project-links a').count(), 16);
+          assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+          await page.getByRole('button', { name: 'Show first 4 projects', exact: true }).click();
+          assert.equal(await page.locator('.pf-project').count(), 4);
+          assert.equal(await page.getByRole('button', { name: 'View all 8 projects', exact: true }).getAttribute('aria-expanded'), 'false');
+          assert.equal(await page.getByRole('button', { name: 'View all 8 projects', exact: true }).evaluate(el => el === document.activeElement), true);
+        }
+        console.log('PASS Bento keyboard expansion/collapse, focus retention and featured ordering expose all eight projects');
+      }
       if (theme === 'neon-terminal') {
         for (const width of [360, 1440]) {
           await render(full, theme, width);
@@ -97,6 +135,26 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       }
       console.log(`PASS ${theme}: content, destinations, five widths, sparse/long/broken-image cases`);
     }
+    const thirdBatch = ['kinetic', 'executive', 'retro-wave', 'organic', 'bento'].filter(theme => selectedThemes.includes(theme));
+    for (const theme of thirdBatch) {
+      await render(full, theme, 1440);
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      if (theme === 'kinetic') {
+        assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationName), 'pf-kinetic-arrive');
+        assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationIterationCount), '1');
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationName), 'none');
+      }
+      if (theme === 'retro-wave') assert.equal(await page.locator('.retro-grid').evaluate(el => getComputedStyle(el).animationName), 'none');
+      await page.goto('http://127.0.0.1:3110/theme-preview'); await page.getByText('Waiting for preview…').waitFor();
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      await page.evaluate(({ data, theme }) => window.postMessage({ type: 'porty:theme-data', data: { ...data, theme }, staticPreview: true }, location.origin), { data: full, theme });
+      await page.locator('.pf-static h1').waitFor();
+      const animated = await page.locator('.pf-static *').evaluateAll(elements => elements.filter(el => getComputedStyle(el).animationName !== 'none').length);
+      assert.equal(animated, 0, theme + ' animated inside static preview');
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+    }
+    if (thirdBatch.length) console.log('PASS third-batch static previews, finite Kinetic entrance and dynamic reduced motion; Retro Wave has no grid loop');
     if (selectedThemes.includes('aurora')) {
       await render(full, 'aurora', 1440);
       assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationName), 'none');

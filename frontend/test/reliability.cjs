@@ -82,6 +82,11 @@ let passed = 0;
       await page.goto(url + '/builder'); await fill(page);
       await saveButton(page).click(); await page.waitForURL('**/builder/abc123');
       await page.getByText('Saved at', { exact: false }).waitFor();
+      // Wait for the create route's resume state to be consumed, then verify
+      // the saved timestamp survives instead of accepting a transient status.
+      await page.waitForFunction(() => !window.history.state?.usr?.resumeData);
+      await page.getByText('Saved at', { exact: false }).waitFor();
+      assert.equal(await page.getByText('New private draft', { exact: true }).count(), 0);
       await page.getByPlaceholder('John Doe').fill('Anya Updated');
       await saveButton(page).click(); await page.getByText('Saved at', { exact: false }).waitFor();
       assert.deepEqual(api.counts(), { posts: 1, puts: 1, attempts: 1, dashboardAttempts: 0 });
@@ -433,6 +438,39 @@ let passed = 0;
       await page.getByRole('button', { name: 'Cancel', exact: true }).click();
       assert.equal(api.records.get('abc123').themeColors.bg, '#F7DE4F');
       assert.equal(api.records.size, 1);
+    });
+    await test('third design batch palettes preview reversibly and survive save/reload with existing IDs', async page => {
+      const api = await fixtures(page); await page.goto(url + '/builder'); await fill(page);
+      const choices = [
+        ['Kinetic', 'kinetic', 'Electric studio', { bg: '#171717', text: '#FAF6EB', accent: '#FFE500' }],
+        ['Executive', 'executive', 'Navy dossier', { bg: '#122335', text: '#F2F0E8', accent: '#D4B16F' }],
+        ['Retro Wave', 'retro-wave', 'Daybreak', { bg: '#F8EDF5', text: '#351B3F', accent: '#9E275F' }],
+        ['Organic', 'organic', 'Forest', { bg: '#202E24', text: '#EDF0E3', accent: '#B5C69C' }],
+        ['Bento Grid', 'bento', 'Blue hour', { bg: '#161E2C', text: '#EEF2FB', accent: '#98B9FF' }],
+      ];
+      for (const [name, id, palette, colours] of choices) {
+        await page.getByRole('button', { name: 'Theme & Publish', exact: true }).click();
+        await page.getByLabel('Search themes by name or style').fill(name);
+        const previous = api.records.get('abc123')?.theme;
+        const card = page.getByRole('button', { name: `Preview ${name}`, exact: true });
+        await card.click(); await page.getByRole('button', { name: palette, exact: true }).click();
+        await page.frameLocator(`iframe[title="${name} theme preview"]`).getByRole('heading', { name: 'Anya', exact: true }).waitFor();
+        await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+        assert.equal(api.records.get('abc123')?.theme, previous);
+        await card.click(); await page.getByRole('button', { name: palette, exact: true }).click();
+        await page.getByRole('button', { name: 'Apply Theme', exact: true }).click();
+        await saveButton(page).click(); await page.waitForURL('**/builder/abc123');
+        await page.getByText('Saved at', { exact: false }).waitFor();
+        assert.equal(api.records.get('abc123').theme, id);
+        assert.deepEqual(api.records.get('abc123').themeColors, colours);
+        await page.reload(); await page.setViewportSize({ width: 390, height: 900 });
+        await page.getByRole('button', { name: 'Theme & Publish', exact: true }).click();
+        await page.getByLabel('Search themes by name or style').fill(name); await card.click();
+        assert.equal(await page.getByLabel('Background', { exact: true }).inputValue(), colours.bg.toLowerCase());
+        await page.frameLocator(`iframe[title="${name} theme preview"]`).getByRole('heading', { name: 'Anya', exact: true }).waitFor();
+        await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+      }
+      assert.equal(api.records.size, 1); assert.equal(api.counts().posts, 1); assert.equal(api.counts().puts, 4);
     });
     await test('all registered lazy-loaded themes render minimal, populated and empty-optional content in isolation', async page => {
       const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '../../backend/themeCatalog.json'), 'utf8'));
