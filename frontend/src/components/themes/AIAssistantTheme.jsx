@@ -5,7 +5,7 @@ const AIAssistantTheme = ({ data }) => {
     certifications, achievements, codingProfiles, contact, socialLinks, themeColors = {} } = data;
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
-    { role: "assistant", text: `Hello! I'm an AI assistant representing **${name}**. Ask me about their skills, projects, experience, or anything else!` },
+    { role: "assistant", text: `Hello! I'm **${name}**’s portfolio guide. Choose a topic to browse the information they supplied. I answer preset topics from this portfolio.` },
   ]);
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ const AIAssistantTheme = ({ data }) => {
   ].filter(s => s.href);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
     const q = input.toLowerCase();
     setMessages(prev => [...prev, { role: "user", text: input }]);
     setInput("");
@@ -27,8 +27,8 @@ const AIAssistantTheme = ({ data }) => {
     setTimeout(() => {
       let reply = "";
       if (q.includes("skill") || q.includes("tech") || q.includes("know")) {
-        reply = `**${name}** has expertise in: ${(skills || []).join(", ") || "various technologies."}`;
-      } else if (q.includes("project") || q.includes("build") || q.includes("work")) {
+        reply = `**${name}** lists these skills: ${(skills || []).join(", ") || "No skills listed yet."}`;
+      } else if (q.includes("project") || q.includes("build") || (q.includes("work") && !q.includes("history"))) {
         const p = projects || [];
         reply = p.length > 0 ? p.map(pj => `• **${pj.title}**: ${pj.description?.substring(0, 80)}`).join("\n") : "No projects listed yet.";
       } else if (q.includes("experience") || q.includes("job") || q.includes("work history")) {
@@ -46,7 +46,7 @@ const AIAssistantTheme = ({ data }) => {
       } else if (q.includes("contact") || q.includes("email") || q.includes("reach")) {
         reply = `You can reach **${name}** via:\n${contact?.email ? `• Email: ${contact.email}\n` : ""}${contact?.phone ? `• Phone: ${contact.phone}\n` : ""}${socials.map(s => `• ${s.label}: ${s.href}`).join("\n")}`;
       } else if (q.includes("about") || q.includes("who") || q.includes("intro")) {
-        reply = `**${name}**${title ? ` — ${title}` : ""}\n\n${about || "A passionate developer."}`;
+        reply = `**${name}**${title ? ` — ${title}` : ""}\n\n${about || "No biography listed yet."}`;
       } else {
         reply = `I can tell you about **${name}**'s skills, projects, experience, certifications, achievements, coding profiles, or contact info. Try asking something specific!`;
       }
@@ -71,8 +71,8 @@ const AIAssistantTheme = ({ data }) => {
           {name?.charAt(0) || "A"}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Chatting with {name}</div>
-          <div style={{ fontSize: 11, color: ACCENT }}>● Online</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{name}’s portfolio guide</div>
+          <div style={{ fontSize: 11, color: ACCENT }}>Browse saved portfolio information</div>
         </div>
         {avatarUrl && (
           <img src={avatarUrl} alt="" onError={e => e.target.style.display = "none"}
@@ -84,7 +84,7 @@ const AIAssistantTheme = ({ data }) => {
         {messages.map((m, i) => (
           <div key={i} style={{ display: "flex", flexDirection: m.role === "user" ? "row-reverse" : "row", gap: 10, alignItems: "flex-start" }}>
             <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, background: m.role === "user" ? "#444" : ACCENT, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff" }}>
-              {m.role === "user" ? "U" : "AI"}
+              {m.role === "user" ? "U" : "P"}
             </div>
             <div style={{
               maxWidth: "80%", padding: "12px 16px", borderRadius: 16,
@@ -103,7 +103,7 @@ const AIAssistantTheme = ({ data }) => {
         ))}
         {loading && (
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <div style={{ width: 28, height: 28, borderRadius: "50%", background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff" }}>AI</div>
+            <div style={{ width: 28, height: 28, borderRadius: "50%", background: ACCENT, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff" }}>P</div>
             <div style={{ padding: "12px 16px", borderRadius: 16, borderBottomLeftRadius: 4, background: BUBBLE_ASST, fontSize: 20, display: "flex", gap: 3 }}>
               <span style={{ animation: "dotPulse 1s infinite" }}>.</span>
               <span style={{ animation: "dotPulse 1s infinite 0.2s" }}>.</span>

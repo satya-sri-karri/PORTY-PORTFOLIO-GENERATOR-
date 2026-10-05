@@ -5,16 +5,18 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useParams, useNavigate } from "react-router-dom";
+import useAISuggestion from "../hooks/useAISuggestion";
+import AITextReview from "../components/builder/AITextReview";
+import ThemePicker from "../components/builder/ThemePicker";
+import ThemeFrame from "../components/builder/ThemeFrame";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import useBuilderSession from "../hooks/useBuilderSession";
 import { usePortfolioForm } from "../hooks/usePortfolioForm";
 import {
-  createPortfolio, updatePortfolio, getPortfolioById,
-  generateBio, suggestSkills, generateProjectDesc, recommendTheme,
+  generateBio, suggestSkills, generateProjectDesc,
 } from "../utils/api";
-import { getAllThemes, getTheme, THEME_GROUPS } from "../registry/themeRegistry";
 import ThumbnailGenerator from "../components/shared/ThumbnailGenerator";
 import LineSidebar from "../components/shared/LineSidebar";
 import DotField from "../components/shared/DotField";
@@ -64,30 +66,31 @@ const FormRow = ({ children }) => (
 );
 
 const Toggle = ({ on, onChange, label }) => (
-  <div className="toggle-row" onClick={onChange} style={{ cursor: "pointer" }}>
+  <button type="button" role="switch" aria-checked={on} className="toggle-row" onClick={onChange} style={{ cursor: "pointer", background: "transparent", border: "none", textAlign: "left" }}>
     <div className={`toggle-track ${on ? "on" : ""}`}>
       <div className="toggle-thumb" />
     </div>
     <span className="toggle-label">{label}</span>
-  </div>
+  </button>
 );
 
 // ── Section renderers ─────────────────────────────────────────────────────────
 
 const PersonalSection = ({ form, set, token }) => {
-  const [bioLoading, setBioLoading] = useState(false);
-  const [bioError, setBioError] = useState("");
+  const bioAI = useAISuggestion();
   const [avatarError, setAvatarError] = useState("");
   const fileRef = useRef(null);
 
-  const handleGenerateBio = async () => {
-    if (!form.name) return setBioError("Add your name first.");
-    setBioLoading(true); setBioError("");
-    try {
-      const res = await generateBio({ name: form.name, title: form.title, skills: form.skills, experience: form.experience }, token);
-      set("about", res.bio);
-    } catch (e) { setBioError(e.message); }
-    finally { setBioLoading(false); }
+  const handleGenerateBio = () => {
+    if (!form.name.trim()) return bioAI.setError("Add your name first.");
+    if (!form.about.trim() && !form.title.trim() && !form.skills.length && !form.experience.length) {
+      return bioAI.setError("Add your role, skills, experience, or a few notes about yourself first.");
+    }
+    bioAI.run(async signal => {
+      const res = await generateBio({ name: form.name, title: form.title, about: form.about, skills: form.skills, experience: form.experience }, token, signal);
+      if (typeof res.bio !== "string" || !res.bio.trim()) throw new Error("No bio was returned. Try again.");
+      return res.bio;
+    });
   };
 
   const handleAvatarFile = (file) => {
@@ -124,21 +127,22 @@ const PersonalSection = ({ form, set, token }) => {
   return (
     <div>
       <div className="form-group">
-        <label className="form-label">Full Name *</label>
-        <input className="form-input" placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)} />
+        <label className="form-label" htmlFor="portfolio-name">Full Name *</label>
+        <input id="portfolio-name" autoComplete="name" className="form-input" placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)} />
       </div>
       <div className="form-group">
-        <label className="form-label">Professional Title</label>
-        <input className="form-input" placeholder="Full Stack Developer · ML Engineer" value={form.title} onChange={e => set("title", e.target.value)} />
+        <label className="form-label" htmlFor="portfolio-title">Professional Title</label>
+        <input id="portfolio-title" autoComplete="organization-title" className="form-input" placeholder="Full Stack Developer · ML Engineer" value={form.title} onChange={e => set("title", e.target.value)} />
       </div>
       <div className="form-group">
-        <label className="form-label" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span>About Me *</span>
-          <AIButton onClick={handleGenerateBio} loading={bioLoading}>Generate Bio</AIButton>
-        </label>
-        {bioError && <div className="form-error" style={{ marginBottom: 6 }}>⚠ {bioError}</div>}
-        <textarea className="form-input" rows={5} placeholder="Write a compelling bio…" value={form.about} onChange={e => set("about", e.target.value)} />
-        <div className="form-hint">{form.about.length}/2000 · Or click ✦ Generate Bio to let AI write it</div>
+        <div className="form-label" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <label htmlFor="portfolio-about">About Me *</label>
+          <AIButton onClick={handleGenerateBio} loading={bioAI.loading}>Generate Bio</AIButton>
+        </div>
+
+        <textarea id="portfolio-about" maxLength={2000} className="form-input" rows={5} placeholder="Write a compelling bio…" value={form.about} onChange={e => set("about", e.target.value)} />
+        <div className="form-hint">{form.about.length}/2000 · Generate Bio creates a draft for you to review</div>
+        <AITextReview ai={bioAI} value={form.about} onChange={v => set("about", v)} onRetry={handleGenerateBio} label="bio" />
       </div>
       <FormRow>
         <div className="form-group">
@@ -170,18 +174,18 @@ const PersonalSection = ({ form, set, token }) => {
 };
 
 const SkillsSection = ({ form, set, skillInput, setSkillInput, addSkill, addSkillDirect, removeSkill, token }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const skillsAI = useAISuggestion();
+  const [chosen, setChosen] = useState([]);
   const SUGGESTED = ["JavaScript","TypeScript","React","Node.js","Python","MongoDB","Express","PostgreSQL","Docker","AWS","Git","REST APIs","GraphQL","Next.js","Redux","Vue.js","Angular","MySQL","Firebase","Linux"];
 
-  const handleSuggest = async () => {
-    if (!form.title) return setError("Add your professional title first.");
-    setLoading(true); setError("");
-    try {
-      const res = await suggestSkills({ title: form.title, currentSkills: form.skills }, token);
-      res.skills.forEach(s => addSkillDirect(s));
-    } catch (e) { setError(e.message); }
-    finally { setLoading(false); }
+  const handleSuggest = () => {
+    if (!form.title.trim()) return skillsAI.setError("Add your professional title first.");
+    skillsAI.run(async signal => {
+      const res = await suggestSkills({ title: form.title, currentSkills: form.skills }, token, signal);
+      if (!Array.isArray(res.skills) || res.skills.some(s => typeof s !== "string")) throw new Error("No usable skills were returned. Try again.");
+      setChosen([]);
+      return [...new Set(res.skills.map(s => s.trim()).filter(s => s && !form.skills.some(existing => existing.toLowerCase() === s.toLowerCase())))];
+    });
   };
 
   return (
@@ -192,10 +196,21 @@ const SkillsSection = ({ form, set, skillInput, setSkillInput, addSkill, addSkil
           <span className="ai-panel-title">AI Skill Suggester</span>
         </div>
         <div className="ai-panel-desc">Let AI suggest relevant skills based on your role.</div>
-        {error && <div className="form-error" style={{ marginBottom: 8 }}>⚠ {error}</div>}
-        <AIButton onClick={handleSuggest} loading={loading}>Suggest Skills for "{form.title || "my role"}"</AIButton>
+        {skillsAI.error && <div className="form-error" role="alert">{skillsAI.error}</div>}
+        <AIButton onClick={handleSuggest} loading={skillsAI.loading}>Suggest Skills for "{form.title || "my role"}"</AIButton>
       </div>
 
+      {skillsAI.suggestion && <div className="ai-review" aria-label="Skill suggestions">
+        <p>Select only skills you can demonstrate. Suggestions are not claims about your experience.</p>
+        <div className="skill-choices">{skillsAI.suggestion.map(skill => <label key={skill}>
+          <input type="checkbox" checked={chosen.includes(skill)} onChange={e => setChosen(prev => e.target.checked ? [...prev, skill] : prev.filter(s => s !== skill))} /> {skill}
+        </label>)}</div>
+        {!skillsAI.suggestion.length && <p>No new suggestions. Try another request or add skills yourself.</p>}
+        <div className="review-actions">
+          <button type="button" className="btn btn-primary btn-sm" disabled={!chosen.length || skillsAI.loading} onClick={() => { chosen.forEach(addSkillDirect); skillsAI.setSuggestion(null); setChosen([]); }}>Add selected skills</button>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => skillsAI.setSuggestion(null)}>Dismiss suggestions</button>
+        </div>
+      </div>}
       <div className="form-group">
         <label className="form-label">Add Skills</label>
         <div style={{ display: "flex", gap: 8 }}>
@@ -212,7 +227,7 @@ const SkillsSection = ({ form, set, skillInput, setSkillInput, addSkill, addSkil
           {form.skills.map((s, i) => (
             <span key={i} className="tag">
               {s}
-              <span className="tag-remove" onClick={() => removeSkill(i)}>×</span>
+              <button type="button" className="tag-remove" aria-label={`Remove ${s}`} onClick={() => removeSkill(i)}>×</button>
             </span>
           ))}
         </div>
@@ -246,6 +261,7 @@ const fileToResizedDataUrl = (file, maxW, maxH, quality) =>
       const img = new Image();
       img.onerror = () => reject(new Error("Could not read that image."));
       img.onload = () => {
+        try {
         const scale = Math.min(1, maxW / img.width, maxH / img.height);
         const w = Math.max(1, Math.round(img.width * scale));
         const h = Math.max(1, Math.round(img.height * scale));
@@ -257,6 +273,7 @@ const fileToResizedDataUrl = (file, maxW, maxH, quality) =>
         ctx.fillRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
         resolve(canvas.toDataURL("image/jpeg", quality));
+        } catch { reject(new Error("Could not process that image. Try another file.")); }
       };
       img.src = reader.result;
     };
@@ -264,6 +281,9 @@ const fileToResizedDataUrl = (file, maxW, maxH, quality) =>
   });
 
 const ProjectImageField = ({ value, onChange }) => {
+  const changeRef = useRef(onChange); changeRef.current = onChange;
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const fileRef = useRef(null);
@@ -280,7 +300,7 @@ const ProjectImageField = ({ value, onChange }) => {
       if (dataUrl.length > MAX_DATA_URL_CHARS) {
         return setError("That image is too large to store. Try a smaller or simpler image.");
       }
-      onChange(dataUrl);
+      if (mounted.current) changeRef.current(dataUrl);
     } catch (e) {
       setError(e.message || "Could not process that image.");
     } finally {
@@ -317,66 +337,71 @@ const ProjectImageField = ({ value, onChange }) => {
   );
 };
 
-const ProjectsSection = ({ form, addItem, updateItem, removeItem, token }) => {
-  const [aiLoading, setAiLoading] = useState({});
-  const [aiErrors, setAiErrors] = useState({});
-  const [techInputs, setTechInputs] = useState({});
-
-  const handleGenDesc = async (i) => {
-    const p = form.projects[i];
-    if (!p.title) return setAiErrors(prev => ({ ...prev, [i]: "Add a project title first." }));
-    setAiLoading(prev => ({ ...prev, [i]: true }));
-    setAiErrors(prev => ({ ...prev, [i]: "" }));
-    try {
-      const res = await generateProjectDesc({ title: p.title, techStack: p.techStack }, token);
-      updateItem("projects", i, "description", res.description);
-    } catch (e) { setAiErrors(prev => ({ ...prev, [i]: e.message })); }
-    finally { setAiLoading(prev => ({ ...prev, [i]: false })); }
+const ProjectEditor = ({ p, i, updateItem, onRemove, onMove, count, onFeature, token }) => {
+  const ai = useAISuggestion();
+  const [techInput, setTechInput] = useState(null);
+  const handleGenerate = () => {
+    if (!p.title.trim()) return ai.setError("Add a project title first.");
+    if (!p.description.trim() && ![p.problem, p.contribution, p.process, p.outcome].some(value => value?.trim())) return ai.setError("Add a few facts about what you built and your contribution first. AI can then refine your description.");
+    ai.run(async signal => {
+      const res = await generateProjectDesc({ title: p.title, description: p.description, techStack: p.techStack, problem: p.problem, contribution: p.contribution, process: p.process, outcome: p.outcome }, token, signal);
+      if (typeof res.description !== "string" || !res.description.trim()) throw new Error("No description was returned. Try again.");
+      return res.description;
+    });
   };
-
-  return (
-    <div>
-      {form.projects.map((p, i) => (
-        <SubCard key={i} title={`Project ${i + 1}`} onRemove={() => removeItem("projects", i)}>
-          <div className="form-group">
-            <label className="form-label">Title *</label>
-            <input className="form-input" placeholder="E-Commerce Platform" value={p.title} onChange={e => updateItem("projects", i, "title", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span>Description</span>
-              <AIButton onClick={() => handleGenDesc(i)} loading={aiLoading[i]}>Write with AI</AIButton>
-            </label>
-            {aiErrors[i] && <div className="form-error" style={{ marginBottom: 6 }}>⚠ {aiErrors[i]}</div>}
-            <textarea className="form-input" rows={3} placeholder="What does it do? What problem does it solve?" value={p.description} onChange={e => updateItem("projects", i, "description", e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Tech Stack (comma-separated)</label>
-            <input className="form-input" placeholder="React, Node.js, MongoDB" value={techInputs[i] !== undefined ? techInputs[i] : p.techStack?.join(", ") || ""}
-              onChange={e => setTechInputs(prev => ({ ...prev, [i]: e.target.value }))}
-              onBlur={e => { updateItem("projects", i, "techStack", e.target.value.split(",").map(t => t.trim()).filter(Boolean)); setTechInputs(prev => { const n = { ...prev }; delete n[i]; return n; }); }} />
-          </div>
-          <ProjectImageField value={p.image} onChange={v => updateItem("projects", i, "image", v)} />
-          <FormRow>
-            <div className="form-group">
-              <label className="form-label">Live URL</label>
-              <input className="form-input" type="url" placeholder="https://myapp.com" value={p.link} onChange={e => updateItem("projects", i, "link", e.target.value)} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">GitHub URL</label>
-              <input className="form-input" type="url" placeholder="https://github.com/…" value={p.github} onChange={e => updateItem("projects", i, "github", e.target.value)} />
-            </div>
-          </FormRow>
-        </SubCard>
-      ))}
-      {form.projects.length < 8 && (
-        <button type="button" className="add-row-btn"
-          onClick={() => addItem("projects", { title: "", description: "", link: "", github: "", image: "", techStack: [] })}>
-          + Add Project
-        </button>
-      )}
+  return <SubCard title={`Project ${i + 1}`} onRemove={onRemove}>
+    <div className="review-actions">
+      <button type="button" className="btn btn-secondary btn-sm" aria-label={`Move project ${i + 1} up`} disabled={i === 0} onClick={() => onMove(i - 1)}>↑ Move up</button>
+      <button type="button" className="btn btn-secondary btn-sm" aria-label={`Move project ${i + 1} down`} disabled={i === count - 1} onClick={() => onMove(i + 1)}>↓ Move down</button>
+      <button type="button" className={`btn btn-sm ${p.featured ? "btn-primary" : "btn-ghost"}`} aria-pressed={Boolean(p.featured)} onClick={onFeature}>{p.featured ? "★ Featured project" : "☆ Feature project"}</button>
     </div>
-  );
+    <div className="form-group">
+      <label className="form-label" htmlFor={`project-title-${i}`}>Title *</label>
+      <input id={`project-title-${i}`} className="form-input" placeholder="E-Commerce Platform" value={p.title} onChange={e => updateItem("projects", i, "title", e.target.value)} />
+    </div>
+    <div className="form-group">
+      <div className="form-label review-actions">
+        <label htmlFor={`project-description-${i}`}>Description</label>
+        <AIButton onClick={handleGenerate} loading={ai.loading}>Write with AI</AIButton>
+      </div>
+      <textarea id={`project-description-${i}`} className="form-input" rows={4} placeholder="What does it do? What problem does it solve?" value={p.description} onChange={e => updateItem("projects", i, "description", e.target.value)} />
+      <p className="form-hint">Describe the problem, your contribution, tools, and any outcome you can support. Leave unknown results out.</p>
+      <AITextReview ai={ai} value={p.description} onChange={v => updateItem("projects", i, "description", v)} onRetry={handleGenerate} label={`project-${i + 1}`} />
+    </div>
+    <div className="form-group">
+      <label className="form-label" htmlFor={`project-tech-${i}`}>Tech Stack (comma-separated)</label>
+      <input id={`project-tech-${i}`} className="form-input" placeholder="React, Node.js, MongoDB" value={techInput ?? (p.techStack || []).join(", ")}
+        onChange={e => { setTechInput(e.target.value); updateItem("projects", i, "techStack", e.target.value.split(",").map(t => t.trim()).filter(Boolean)); }} onBlur={() => setTechInput(null)} />
+    </div>
+    <details className="builder-project-story">
+      <summary>Add a project story (optional)</summary>
+      <p className="form-hint">Add only facts you can support. These fields appear in the five upgraded themes and help AI refine your description.</p>
+      {[["problem", "The problem", "Who needed this, and what problem did they have?"], ["contribution", "My contribution", "What did you personally design or build?"], ["process", "The process", "How did you approach it? Which decisions mattered?"], ["outcome", "The outcome", "What changed? Use measured results only when you have them."]].map(([field, label, placeholder]) => <div className="form-group" key={field}>
+        <label className="form-label" htmlFor={`project-${field}-${i}`}>{label}</label>
+        <textarea className="form-input" id={`project-${field}-${i}`} placeholder={placeholder} rows={3} value={p[field] || ""} onChange={e => updateItem("projects", i, field, e.target.value)} />
+      </div>)}
+    </details>
+    <ProjectImageField value={p.image} onChange={v => updateItem("projects", i, "image", v)} />
+    <FormRow>
+      <div className="form-group"><label className="form-label">Live URL</label><input className="form-input" type="url" placeholder="https://myapp.com" value={p.link} onChange={e => updateItem("projects", i, "link", e.target.value)} /></div>
+      <div className="form-group"><label className="form-label">GitHub URL</label><input className="form-input" type="url" placeholder="https://github.com/…" value={p.github} onChange={e => updateItem("projects", i, "github", e.target.value)} /></div>
+    </FormRow>
+  </SubCard>;
+};
+
+const ProjectsSection = ({ form, set, addItem, updateItem, moveItem, removeItem, token }) => {
+  // Keys belong to editors, not array positions. Removing one cannot move its AI draft to another project.
+  const keys = useRef([]);
+  const counter = useRef(0);
+  while (keys.current.length < form.projects.length) keys.current.push(++counter.current);
+  return <div>
+    <p className="form-hint">Arrange your projects with Move up/down. Featured selection and project stories are supported by Minimalist, Dark Luxe, Scrapbook, Y2K Aesthetic, Product Showcase, Aurora, Editorial, Neon Terminal, Brutalist, Neumorphic, Kinetic, Executive, Retro Wave, Organic, and Bento Grid.</p>
+    {form.projects.map((p, i) => <ProjectEditor key={keys.current[i]} p={p} i={i} updateItem={updateItem} token={token} count={form.projects.length}
+      onMove={to => { const [key] = keys.current.splice(i, 1); keys.current.splice(to, 0, key); moveItem("projects", i, to); }}
+      onFeature={() => set("projects", form.projects.map((project, index) => ({ ...project, featured: index === i ? !project.featured : false })))}
+      onRemove={() => { keys.current.splice(i, 1); removeItem("projects", i); }} />)}
+    {form.projects.length < 8 && <button type="button" className="add-row-btn" onClick={() => addItem("projects", { title: "", description: "", link: "", github: "", image: "", techStack: [] })}>+ Add Project</button>}
+  </div>;
 };
 
 const ExperienceSection = ({ form, addItem, updateItem, removeItem }) => (
@@ -568,282 +593,46 @@ const ContactSection = ({ form, setNested }) => (
   </div>
 );
 
-const ThemeSection = ({ form, set, token }) => {
-  const allThemes = getAllThemes().sort((a, b) => a.name.localeCompare(b.name));
-  const groups = Object.keys(THEME_GROUPS);
-  const [activeGroup, setActiveGroup] = useState("All");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiRec, setAiRec] = useState(null);
-  const [previewThemeId, setPreviewThemeId] = useState(null);
-  const [colorState, setColorState] = useState(null);
-
-  const filtered = activeGroup === "All"
-    ? allThemes
-    : allThemes.filter(t => THEME_GROUPS[activeGroup].includes(t.id));
-  const previewTheme = previewThemeId ? getTheme(previewThemeId) : null;
-
-  const openTheme = (theme) => {
-    setPreviewThemeId(theme.id);
-    const existing = (form.theme === theme.id && form.themeColors) ? form.themeColors : {};
-    setColorState({
-      accent: existing.accent || theme.colors.accent,
-      bg: existing.bg || theme.colors.bg,
-      text: existing.text || theme.colors.text,
-    });
-  };
-
-  const closeTheme = () => { setPreviewThemeId(null); setColorState(null); };
-
-  const applyTheme = () => {
-    if (!previewTheme || !colorState) return;
-    set("theme", previewTheme.id);
-    set("themeColors", { ...colorState });
-    closeTheme();
-  };
-
-  const modalColors = colorState || previewTheme?.colors || { accent: "#ffffff", bg: "#000000", text: "#ffffff" };
-
-  const handleAIRecommend = async () => {
-    setAiLoading(true); setAiRec(null);
-    try {
-      const res = await recommendTheme({ title: form.title, skills: form.skills, about: form.about }, token);
-      setAiRec(res);
-    } catch (e) { }
-    finally { setAiLoading(false); }
-  };
-
-  return (
-    <div>
-      {/* AI theme recommender */}
-      <div className="ai-panel" style={{ marginBottom: 28 }}>
-        <div className="ai-panel-header">
-          <span style={{ fontSize: 16 }}>✦</span>
-          <span className="ai-panel-title">AI Theme Recommender</span>
-        </div>
-        <div className="ai-panel-desc">Let AI pick the best theme based on your profile.</div>
-        <AIButton onClick={handleAIRecommend} loading={aiLoading}>Recommend My Theme</AIButton>
-        {aiRec && (
-          <div className="ai-result">
-            <strong>Recommended: {getTheme(aiRec.theme)?.name}</strong>
-            <p style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 4 }}>{aiRec.reason}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Visibility toggle */}
-      <div className="form-group">
-        <label className="form-label">Visibility</label>
-        <Toggle on={form.isPublic} onChange={() => set("isPublic", !form.isPublic)}
-          label={form.isPublic ? "Public — anyone with link can view" : "Private — only you can view"} />
-      </div>
-
-      {/* Group filter chips */}
-      <div className="form-group">
-        <label className="form-label">Choose Theme ({filtered.length} of {allThemes.length})</label>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
-          {groups.map(g => (
-            <button key={g} type="button" onClick={() => setActiveGroup(g)}
-              className="btn btn-sm"
-              style={{
-                background: activeGroup === g ? "var(--accent)" : "transparent",
-                color: activeGroup === g ? "#fff" : "var(--text-secondary)",
-                border: activeGroup === g ? "1px solid var(--accent)" : "1px solid var(--glass-border)",
-                borderRadius: 20,
-                padding: "4px 14px",
-                fontSize: 12,
-                fontWeight: 500,
-              }}>
-              {g}
-            </button>
-          ))}
-        </div>
-        <div className="theme-grid">
-          {filtered.map(theme => {
-            const selected = form.theme === theme.id;
-            return (
-              <button key={theme.id} type="button" onClick={() => openTheme(theme)}
-                className={`theme-card ${selected ? "selected" : ""}`}
-                style={{ textAlign: "left", cursor: "pointer", background: "transparent" }}>
-                {/* Mini preview */}
-                <div className="theme-preview" style={{ background: theme.preview.bg }}>
-                  {/* Fake nav */}
-                  <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div style={{ width: 16, height: 16, borderRadius: 4, background: theme.preview.accent }} />
-                    <div style={{ height: 6, width: 50, borderRadius: 3, background: "rgba(255,255,255,0.15)" }} />
-                  </div>
-                  {/* Fake hero */}
-                  <div style={{ padding: "12px 14px" }}>
-                    <div style={{ height: 10, width: "60%", borderRadius: 4, background: "rgba(255,255,255,0.7)", marginBottom: 8 }} />
-                    <div style={{ height: 7, width: "80%", borderRadius: 3, background: "rgba(255,255,255,0.3)", marginBottom: 5 }} />
-                    <div style={{ height: 7, width: "65%", borderRadius: 3, background: "rgba(255,255,255,0.2)", marginBottom: 14 }} />
-                    {/* Fake cards */}
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {[70, 50, 60].map((w, i) => (
-                        <div key={i} style={{ height: 26, width: w, borderRadius: 5, background: i === 0 ? theme.preview.accent : "rgba(255,255,255,0.08)" }} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="theme-card-footer">
-                  <div>
-                    <div className="theme-card-name">{theme.name}</div>
-                    <div className="theme-card-persona">{theme.persona}</div>
-                  </div>
-                  {selected && <span style={{ color: theme.preview.accent, fontSize: 16 }}>✓</span>}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Theme preview modal — portal to body for correct fixed positioning */}
-      {previewTheme && createPortal(
-        <div className="preview-overlay" onClick={closeTheme}>
-          <div className="preview-modal" onClick={e => e.stopPropagation()}>
-            <button className="preview-close" onClick={closeTheme}>✕</button>
-
-            <div className="preview-block" style={{ background: modalColors.bg }}>
-              <div className="preview-nav">
-                <div className="preview-dot" style={{ background: modalColors.accent }} />
-                <div className="preview-bar" />
-              </div>
-              <div className="preview-hero">
-                <div className="preview-heading" />
-                <div className="preview-line" />
-                <div className="preview-line" style={{ width: "65%" }} />
-              </div>
-              <div className="preview-cards">
-                <div className="preview-card" style={{ background: modalColors.accent + "30" }} />
-                <div className="preview-card" />
-                <div className="preview-card" />
-              </div>
-            </div>
-
-            <div className="preview-info">
-              <h3 className="preview-name">{previewTheme.name}</h3>
-              <p className="preview-persona">{previewTheme.persona}</p>
-              <p className="preview-desc">{previewTheme.description}</p>
-
-              {previewTheme.tags && (
-                <div className="preview-tags">
-                  {previewTheme.tags.map(t => <span key={t} className="bg">{t}</span>)}
-                </div>
-              )}
-
-              <div className="color-fields">
-                <div className="color-field">
-                  <label className="color-field-label">
-                    <span style={{ width: 12, height: 12, borderRadius: 3, background: modalColors.accent, display: "inline-block", border: "1px solid var(--glass-border)" }} />
-                    Accent
-                  </label>
-                  <input type="color" value={modalColors.accent}
-                    onChange={e => setColorState({ ...colorState, accent: e.target.value })} />
-                </div>
-                <div className="color-field">
-                  <label className="color-field-label">
-                    <span style={{ width: 12, height: 12, borderRadius: 3, background: modalColors.bg, display: "inline-block", border: "1px solid var(--glass-border)" }} />
-                    Background
-                  </label>
-                  <input type="color" value={modalColors.bg}
-                    onChange={e => setColorState({ ...colorState, bg: e.target.value })} />
-                </div>
-                <div className="color-field">
-                  <label className="color-field-label">
-                    <span style={{ width: 12, height: 12, borderRadius: 3, background: modalColors.text, display: "inline-block", border: "1px solid var(--glass-border)" }} />
-                    Text
-                  </label>
-                  <input type="color" value={modalColors.text}
-                    onChange={e => setColorState({ ...colorState, text: e.target.value })} />
-                </div>
-              </div>
-
-              <div className="preview-actions">
-                <button className="btn btn-primary" onClick={applyTheme}>
-                  Apply Theme
-                </button>
-                <button className="btn btn-secondary" onClick={closeTheme}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-    </div>
-  );
-};
+const ThemeSection = ThemePicker;
 
 // ── Main BuilderPage ──────────────────────────────────────────────────────────
 
 const BuilderPage = () => {
   const { id } = useParams();
   const isEdit = Boolean(id);
-  const { token } = useAuth();
+  const { token, user, storageError: authStorageError } = useAuth();
+  const location = useLocation();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("personal");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(null);
-  const [loadingEdit, setLoadingEdit] = useState(isEdit);
+  const [view, setView] = useState("edit");
+  const [previewDevice, setPreviewDevice] = useState(() => window.matchMedia("(min-width: 1280px)").matches ? "desktop" : "mobile");
+  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 1280px)").matches);
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1280px)");
+    const change = () => { setWide(media.matches); setPreviewDevice(media.matches ? "desktop" : "mobile"); }; media.addEventListener("change", change);
+    return () => media.removeEventListener("change", change);
+  }, []);
   const [thumbnail, setThumbnail] = useState("");
 
   const {
     form, skillInput, setSkillInput,
     set, setNested,
     addSkill, addSkillDirect, removeSkill,
-    addItem, updateItem, removeItem,
+    addItem, updateItem, moveItem, removeItem,
     load,
   } = usePortfolioForm();
 
-  // Load existing portfolio in edit mode
-  useEffect(() => {
-    if (!isEdit) return;
-    getPortfolioById(id, token)
-      .then(res => load(res.data))
-      .catch(() => setError("Failed to load portfolio."))
-      .finally(() => setLoadingEdit(false));
-  }, [id, isEdit, token]); // eslint-disable-line
-
-  // Restore last-previewed draft in create mode (e.g. after "Back to Builder")
-  useEffect(() => {
-    if (isEdit) return;
-    try {
-      const raw = sessionStorage.getItem("preview-data-v3");
-      if (raw) load(JSON.parse(raw));
-    } catch { }
-  }, [isEdit, load]);
-
-  const handlePreview = () => {
-    sessionStorage.setItem("preview-data-v3", JSON.stringify(form));
-    window.open("/preview", "_blank");
-  };
-
+  const session = useBuilderSession({ id, token, user, form, load, navigate, location });
+  const { ready, loadError, error, storageError, recoverable, saving, success, setSuccess } = session;
+  const handlePreview = session.preview;
   const handleSave = async () => {
-    if (!form.name.trim() || !form.about.trim()) {
-      setError("Name and About are required. Go to Personal Info.");
-      setActiveSection("personal");
-      return;
-    }
-    setSaving(true); setError("");
-    const saveData = { ...form };
-    if (thumbnail) saveData.thumbnail = thumbnail;
-    try {
-      if (isEdit) {
-        await updatePortfolio(id, saveData, token);
-        setSuccess({ id, slug: form.shareSlug, isEdit: true });
-      } else {
-        const res = await createPortfolio(saveData, token);
-        setSuccess({ id: res.data.id, slug: res.data.shareSlug, isEdit: false });
-      }
-    } catch (e) { setError(e.message); }
-    finally { setSaving(false); }
+    const saved = await session.save(thumbnail);
+    if (saved === false && (!form.name.trim() || !form.about.trim())) setActiveSection("personal");
   };
 
   const renderSection = () => {
-    const props = { form, set, setNested, addItem, updateItem, removeItem, token };
+    const props = { form, onFullPreview: handlePreview, set, setNested, addItem, updateItem, moveItem, removeItem, token };
     switch (activeSection) {
       case "personal":     return <PersonalSection {...props} />;
       case "skills":       return <SkillsSection {...props} skillInput={skillInput} setSkillInput={setSkillInput} addSkill={addSkill} addSkillDirect={addSkillDirect} removeSkill={removeSkill} />;
@@ -860,7 +649,15 @@ const BuilderPage = () => {
 
   const currentNav = NAV.find(n => n.id === activeSection);
 
-  if (loadingEdit) return (
+  if (loadError) return (
+    <main className="container" style={{ paddingTop: 48 }}>
+      <div className="alert alert-error" role="alert">{loadError}</div>
+      <button className="btn btn-primary" onClick={session.retryLoad}>Retry</button>
+      <Link className="btn btn-secondary" to="/login" state={{ from: location }}>Sign in again</Link>
+      <Link className="btn btn-secondary" to="/dashboard">Dashboard</Link>
+    </main>
+  );
+  if (!ready) return (
     <div className="builder-layout">
       <div className="builder-sidebar" style={{ padding: "24px 16px" }}>
         {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
@@ -896,15 +693,15 @@ const BuilderPage = () => {
       {success && (
         <div className="toast fade-up">
           <span>🎉 {success.isEdit ? "Updated" : "Created"} — </span>
-          <a href={`/p/${success.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-light)", textDecoration: "underline" }}>View portfolio</a>
+          <Link to={success.isPublic ? `/p/${success.slug}` : `/preview/${success.id}`} style={{ color: "var(--accent-light)", textDecoration: "underline" }}>View portfolio</Link>
           <button type="button" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer", fontSize: 14, marginLeft: 8, padding: 0, lineHeight: 1 }}>✕</button>
         </div>
       )}
       {/* Hidden thumbnail capture — re-captures when theme changes */}
       {form.name && <ThumbnailGenerator key={form.theme + form.name} data={{ name: form.name, title: form.title, theme: form.theme }} onCapture={setThumbnail} />}
-      <div className="builder-layout" style={{ position: "relative", zIndex: 1 }}>
+      <div className={`builder-layout builder-with-preview view-${view}`} style={{ position: "relative", zIndex: 1 }}>
         {/* Sidebar */}
-        <aside className="builder-sidebar" style={{ display: "flex", flexDirection: "column", background: "transparent", borderRight: "none", padding: "var(--space-6) 0" }}>
+        <aside className="builder-sidebar builder-sidebar-active" style={{ display: "flex", flexDirection: "column", background: "transparent", borderRight: "none", padding: "var(--space-6) 0" }}>
           <div className="builder-sidebar-header glass" style={{ margin: "0 8px 12px", borderRadius: 10, padding: "12px 16px", border: "none" }}>
             <div className="builder-sidebar-title">{isEdit ? "Edit Portfolio" : "New Portfolio"}</div>
           </div>
@@ -932,17 +729,18 @@ const BuilderPage = () => {
             <button className="btn btn-secondary btn-sm" onClick={handlePreview} style={{ width: "100%", justifyContent: "center" }}>
               👁 Preview
             </button>
-            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving} style={{ width: "100%", justifyContent: "center" }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving || Boolean(recoverable)} style={{ width: "100%", justifyContent: "center" }}>
               {saving
                 ? <><span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} /> {isEdit ? "Saving…" : "Creating…"}</>
-                : isEdit ? "💾 Save Changes" : "🚀 Generate Portfolio"
+                : isEdit ? "💾 Save Changes" : form.isPublic ? "Publish Portfolio" : "Save Private Portfolio"
               }
             </button>
           </div>
         </aside>
 
+        <div className="builder-view-switch review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={view === "edit"} onClick={() => setView("edit")}>Edit details</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={view === "preview"} onClick={() => setView("preview")}>Live preview</button></div>
         {/* Main content */}
-        <main style={{ overflow: "auto", padding: "var(--space-6) var(--space-6) var(--space-6) 0" }}>
+        <main className="builder-content" style={{ overflow: "auto", padding: "var(--space-6) var(--space-6) var(--space-6) 0" }}>
           <div className="builder-main glass" style={{ borderRadius: 16, padding: "var(--space-8) var(--space-10)", border: "none" }}>
             <div className="builder-section-title">{currentNav?.label}</div>
             <div className="builder-section-sub">
@@ -957,11 +755,21 @@ const BuilderPage = () => {
               {activeSection === "theme" && "Pick a visual identity for your portfolio"}
             </div>
 
-            {error && <div className="alert alert-error" style={{ marginBottom: 20 }}>⚠ {error}</div>}
+            <div role="status" className="builder-save-status">{session.status}</div>
+            <p className="form-hint">{form.isPublic ? "Saving publishes your changes to your live portfolio." : "Saving keeps this portfolio private. Turn on Public in Theme & Publish when you are ready to share."}</p>
+            {(storageError || authStorageError) && <div className="alert alert-error" role="alert">{storageError || authStorageError}</div>}
+            {recoverable && <div className="alert alert-info" role="status">
+              <p>A draft from {new Date(recoverable.savedAt).toLocaleString()} is available. Choose whether to recover it or {isEdit ? "keep the saved version" : "start a new portfolio"}.</p>
+              <button className="btn btn-primary btn-sm" onClick={session.recover}>Recover draft</button>
+              <button className="btn btn-secondary btn-sm" onClick={session.discard}>{isEdit ? "Keep saved version" : "Start new portfolio"}</button>
+            </div>}
+            {error && <div className="alert alert-error" role="alert" style={{ marginBottom: 20 }}>⚠ {error}
+              {error.includes("session") && <Link to="/login" state={{ from: location }}> Sign in again</Link>}
+            </div>}
 
             {success && (
               <div className="alert alert-success" style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span>✅ {success.isEdit ? "Portfolio updated!" : "Portfolio created!"} — <a href={`/p/${success.slug}`} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline" }}>View it here</a></span>
+                <span>✅ {success.isEdit ? "Portfolio updated!" : "Portfolio created!"} — <Link to={success.isPublic ? `/p/${success.slug}` : `/preview/${success.id}`} style={{ color: "inherit", textDecoration: "underline" }}>View it here</Link></span>
                 <button type="button" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: 16, padding: 0, lineHeight: 1 }}>✕</button>
               </div>
             )}
@@ -990,6 +798,13 @@ const BuilderPage = () => {
             </div>
           </div>
         </main>
+        <aside className="builder-live-preview glass" aria-label="Live portfolio preview">
+          <h2>Live preview</h2>
+          <p className="form-hint">Changes appear here as you type.</p>
+          <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "desktop"} onClick={() => setPreviewDevice("desktop")}>Desktop layout</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "mobile"} onClick={() => setPreviewDevice("mobile")}>Mobile layout</button></div>
+          {(wide || view === "preview") && <ThemeFrame data={form} device={previewDevice} height={500} title="Live portfolio preview" />}
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handlePreview}>Open full preview</button>
+        </aside>
       </div>
     </div>
   );

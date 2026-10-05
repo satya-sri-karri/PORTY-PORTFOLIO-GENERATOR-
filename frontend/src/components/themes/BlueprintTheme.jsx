@@ -60,10 +60,10 @@ const BlueprintTheme = ({ data }) => {
         <div style={{ ...blueprintCard, marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontSize: 11, color: MUTED, marginBottom: 4 }}>PROJECT: {name?.toUpperCase().replace(/ /g, "_")}</div>
-            <div style={{ fontSize: 11, color: MUTED }}>DISCIPLINE: {title?.toUpperCase() || "ENGINEERING"}</div>
+            <div style={{ fontSize: 11, color: MUTED }}>DISCIPLINE: {title?.toUpperCase() || "PORTFOLIO"}</div>
           </div>
           <div style={{ fontSize: 11, color: MUTED, textAlign: "right" }}>
-            <div>SHEET 1 OF 5</div>
+            <div>SHEET {tabs.findIndex(t => t.id === active) + 1} OF {tabs.length}</div>
             <div>SCALE: 1:1</div>
           </div>
         </div>

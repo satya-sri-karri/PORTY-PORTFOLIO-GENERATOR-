@@ -1,0 +1,229 @@
+# PORTY local review — batches 1, 2 and 3
+
+These notes record the local checkpoints before publication. On 5 October 2026, the user authorized a GitHub backup and an upgrade-branch push. See `docs/ROLLBACK.md` for the original-version reference and publication plan; the historical local/uncommitted statements below describe those earlier checkpoints.
+
+These batches implement the reliability foundation, real theme previews, reviewable AI suggestions, and the first five theme designs from the master checklist. This is a review checkpoint, not completion of the full roadmap or a production release.
+
+Baseline: `1a7fd43922411be3660c1c7646f7d5458e5d0c36` on `main`.
+Local branch: `local/porty-improvements`.
+Changes are local and uncommitted. No GitHub writes, push, deployment, production API requests, account creation, or production database changes were performed.
+
+## Changes available to review
+
+- Static homepage/authentication backgrounds survive unavailable WebGL, shader/initialization failures and context loss. Graphics resources and listeners are released. Decorative loops stop for reduced motion or hidden pages.
+- Creating a portfolio moves to editing its ID. Subsequent saves update that record. Concurrent clicks are guarded; server request IDs make retrying a lost create response safe.
+- Drafts are scoped by account and portfolio. New, recover, and edit paths are distinct. Autosave is debounced; recovery is explicit; drafts clear after a successful save. Entered text survives save failures.
+- Preview opens in the same tab and returns to the originating builder with its unsaved content. No popup permission is needed. Browser history snapshots are consumed once so reloads cannot silently restore outdated data.
+- Private portfolios have authenticated owner previews. New portfolios start private. The builder explains when Save keeps a record private or updates a public portfolio.
+- Dashboard loading, empty, failed and loaded states are separate. Failed requests offer Retry. Private links cannot be copied for public sharing. Public view counts are described as page loads, including repeat visits.
+- Clipboard and sharing results are awaited. Failures show feedback; share cancellation does not claim success. Share feedback cannot block subsequent button clicks.
+- Storage failures, expired sessions, failed uploads, saves and AI recommendations show useful feedback. Sign-in returns to the requested route.
+- Builder section controls are native keyboard-accessible buttons. Visibility uses switch semantics. Mobile navigation scrolls horizontally; save and preview remain reachable. Compact header actions prevent narrow-screen overflow.
+- Invented skill percentages, project distances, randomly assigned project status and availability claims are removed. Existing theme IDs are unchanged. The Assistant theme accurately describes its preset portfolio replies, and work-history requests no longer route to projects. Blueprint displays its actual active sheet.
+
+## Run with your local services
+
+Keep your existing backend environment settings on your computer. The bundle contains examples only; no live credentials were copied here.
+
+From the project root:
+
+```sh
+npm install
+npm ci --prefix backend
+npm ci --prefix frontend
+```
+
+Create `backend/.env` using `backend/.env.example` if it does not already exist. Configure your development MongoDB, JWT secret, email service and AI keys. Prefer a development database for review.
+
+```sh
+npm run dev
+```
+
+Open `http://localhost:3000`. If Create React App reports an `allowedHosts` configuration error on your machine, you can review the production build instead; this avoids the development-server issue observed in this execution environment:
+
+```sh
+npm run dev:backend
+```
+
+In a second terminal:
+
+```sh
+npm run build --prefix frontend
+npm run review --prefix frontend
+```
+
+For this production-build review, create `frontend/.env.local` with `REACT_APP_API_URL=http://localhost:5000/api` **before building**, so real requests reach your local backend. The review server is bound to your computer's loopback address. It does not publish or deploy anything.
+
+## Review in this order
+
+1. Sign in, create a new portfolio, enter a name and biography, and save privately. Confirm the address becomes `/builder/<id>`.
+2. Save again after editing. Confirm the dashboard still contains one record and its link has not changed.
+3. Type unsaved changes, reload, and choose Recover draft. Then start a separate new portfolio and choose Start new portfolio when offered recovery.
+4. Open Preview, return to editing, and confirm unsaved text and the original record are retained.
+5. Open the saved private preview from the dashboard. Its public `/p/<slug>` address should remain unavailable to signed-out visitors.
+6. Turn on Public in Theme & Publish and save. Open the public link in a signed-out browser. Editing and saving that record should retain its link.
+7. Disconnect the backend to check dashboard Retry and failed-save feedback. Reconnect it and retry without re-entering content.
+8. Review keyboard navigation and a 360/390px phone layout. Repeat on your actual Android device when available.
+
+## Automated verification
+
+```sh
+npm test --prefix backend
+npm run build --prefix frontend
+npx --prefix frontend playwright install chromium
+npm run test:browser --prefix frontend
+npm run test:content --prefix frontend
+npm run test:themes --prefix frontend
+```
+
+The browser checks start their own loopback review server, intercept API requests with test fixtures, and block external font requests so checks use available fallback fonts. They require a prior frontend build. A system Chromium can be selected using `PORTY_CHROME_PATH`.
+
+Backend tests exercise the actual Express router and JWT middleware with an in-memory model double: create retry, concurrent requests, stable links, protected metadata, private access, owner authorization and expired sessions. They do not establish that MongoDB index creation works in your database.
+
+Browser checks exercise actual built React pages: create/edit/reload/preview, recovery, save failure, dashboard retry, storage failure, expired sessions, five viewport widths, WebGL-disabled entry pages, clipboard failure/share cancellation, changed theme fixtures, upload/AI failure and real WebGL context loss.
+
+Still requiring your environment: real MongoDB round trips and the new compound request-ID index, actual login/OTP/email delivery, real AI providers, all existing uploaded-image formats, and physical Android testing. The browser API fixtures do not replace those checks.
+
+## Remaining roadmap
+
+The original master checklist is preserved alongside this guide. It intentionally remains unchecked: it describes the entire product and its release gates.
+
+Batch 3 establishes the rendering contract and content adaptation for the first five designs: Swiss Design through Minimalist, Luxury Typography through Dark Luxe, Scrapbook, Y2K Aesthetic, and Product Showcase. The catalog now contains 33 themes with all original IDs preserved.
+
+The second design batch upgrades Aurora, Editorial, Neon Terminal, Brutalist and Neumorphic; the third adds Kinetic, Executive, Retro Wave, Organic and Bento Grid. Next: continue reviewing and upgrading the other 18 registered themes in the checklist order, create the remaining eight planned new themes, and replace the dashboard cover generator with actual captures.
+
+Resume import, guest trial/onboarding, sharing kit, metadata/analytics improvements, accessibility across all themes, the full 123-case theme fixture matrix, and target-user observation remain later work. The all-theme smoke checks do not establish full design or interaction validation of the other themes.
+
+## Verified results for the batch 1 checkpoint
+
+- Production frontend build: passed.
+- Backend route/JWT tests: 8 passed.
+- Browser integration scenarios: 13 passed.
+- Builder widths: 360, 390, 768, 1024 and 1440px checked for page overflow and reachable controls.
+- Real software WebGL context-loss check: passed; the canvas was removed and sign-in fields stayed usable.
+- Mobile and desktop screenshots: visually reviewed for the repaired workflow.
+- Git diff whitespace check: passed.
+
+These are local checks with development fixtures; they are not a claim that all 30 current themes or the planned 41-theme collection passed full release validation.
+
+## Same-tab preview follow-up
+
+Dashboard Preview and both saved-portfolio links now use in-app navigation. The builder Preview button also keeps the current tab. A browser regression checks saved-portfolio links and dashboard previews at desktop and phone widths, verifies the owner preview loads, and asserts that no popup or second tab is created. The frontend production build and all 13 browser scenarios passed after this change.
+
+
+## Batch 2 — theme discovery and AI review
+
+- The builder shows a live preview beside the form at 1280px and wider. Smaller screens have Edit details / Live preview buttons; Save and the full Preview remain available. Narrow screens start with the phone preview layout.
+- Theme cards render actual theme components in separate documents. Only nearby previews mount; documents unmount when out of view. Theme CSS cannot leak into the builder or other previews.
+- Current user content appears in each theme. Entirely blank portfolios use explicitly labeled sample content. Once any real content is supplied, sample projects and claims are removed.
+- Search matches theme name, description, persona and tags, combined with existing category filters.
+- Theme dialogs offer desktop/phone layouts, three curated palettes, Reset colours, and text/background and accent/background contrast guidance. Apply commits settings; Cancel and Escape leave settings untouched. Focus stays inside the dialog and returns to its trigger.
+- Open full preview stays in the same tab and offers direct, accessible portfolio browsing in its own document. Theme headers cannot cover Back to Builder. Returning restores the builder's original settings if the previewed theme was not applied.
+- Bio and project AI drafts appear in editable review panels. Apply, dismiss, try another, and restore previous text are explicit actions. Restoring is offered while the applied text is unchanged, so subsequent manual edits are protected.
+- AI skill suggestions require individual selection before being added. Duplicate and existing suggestions are filtered.
+- Project rewrites require supplied facts. Biography requests include actual notes and no longer default to an invented developer/student identity or job search. Provider output still requires the user's factual review.
+- AI failures show plain-language retry feedback. Leaving an editor aborts its request. Project editor keys survive removal, preventing a delayed reply from attaching to another project.
+- The recommender considers all 30 existing themes and returns three distinct validated IDs with reasons. No saved theme identifiers were changed.
+- Browser smoke checks found Netflix Portfolio omitted the full identity and biography entirely. Its introduction now shows the supplied name, role and bio even without a featured project; project/source labels are explicit and the fabricated NEW badge is removed.
+- Theme modules are lazy-loaded behind loading/error fallbacks. Terminal typing is static in previews and for reduced motion. Matrix graphics have guarded setup, static preview/reduced-motion rendering, colour-aware drawing, resize rebuilding and visibility pause.
+
+Review these changes with your own content before approving a push. In Theme & Publish, search for Aurora, open it, change a palette and Cancel; confirm your saved theme does not change. Repeat and Apply; save, reload and confirm the palette remains. On a phone, switch Edit details / Live preview and return to verify text is retained. Request a bio or project rewrite, edit the suggestion, apply it, then restore the original. Request skills and add just one selected suggestion.
+
+The original checklist remains unchanged and unchecked; these notes record the implemented subset. Individual theme designs, saved dashboard cover captures, guest onboarding and new themes remain unfinished.
+
+
+## Verified results for batch 2 (5 October 2026)
+
+- Production frontend build: passed; initial JavaScript is approximately 107.5 KB compressed, down from 156.1 KB before theme lazy loading. Individual theme chunks load on demand.
+- Backend tests: 15 passed, including factual prompt construction, input/output validation, three distinct existing theme recommendations, authentication and catalog compatibility.
+- Browser scenarios: 20 passed. These cover the batch 1 regressions plus AI edit/apply/retry/dismiss/restore, manual edits during generation, selected skills, project removal during a request, theme search and recommendation display, dialog keyboard focus and Escape, contrast feedback, palette reset/save, live desktop/phone previews and same-tab unconfirmed-theme return.
+- Theme rendering smoke checks: all 30 existing themes with minimal, populated and empty-optional fixtures (90 cases), checked for lazy-load/runtime failures and retained identity. This is not full link, interaction, visual or mobile validation of each theme.
+- Desktop and 390px preview screenshots: visually reviewed.
+- Original master checklist: byte-for-byte preserved.
+- Git whitespace and cumulative patch application checks: passed.
+
+The complete local bundle includes batches 1 and 2. Changes remain uncommitted on the local improvement branch. No push or deployment was performed. Real MongoDB, login/OTP/email and Groq output still require verification with your configured development services.
+
+## Batch 3 — first five designs and project stories
+
+- Minimalist now follows the Swiss Design direction with a typography grid, strong rules, and optional portrait. Dark Luxe follows Luxury Typography with serif headings, restrained warm colours and larger project imagery. Both retain their saved IDs and names.
+- Three new designs are registered in discovery, live preview, public rendering and the AI recommendation catalog: Scrapbook, Y2K Aesthetic, and Product Showcase. They have separate visual treatments and share factual content handling.
+- Rendering normalizes missing legacy fields without changing saved records. Empty optional sections and their navigation links disappear. These five themes display all supplied projects, skills, work history, certifications, achievements, coding profiles, contact methods and social links.
+- Project screenshots fit their frames without cropping. Missing images receive explicitly labelled typographic covers; failed images receive an unavailable label. Missing or failed portraits do not leave an empty portrait column. No fake metrics or outcomes are supplied.
+- Reorder projects with Move up / Move down. Mark one project as featured or clear that choice. These five designs show the chosen project first while retaining the saved array order for editing.
+- Optional project-story fields record the problem, your contribution, the process and the outcome. Native expandable stories show only supplied facts. Product Showcase opens the first story. Other registered themes retain these fields in the record but have not yet been updated to display them.
+- Project AI rewrites use the supplied story facts, including when the short description is empty. Suggestions still require review and Apply.
+- Editor identity follows reordered projects. Late image uploads cannot attach to another project after its editor is removed.
+- The save indicator compares object values consistently after normalization. Applying a palette and saving no longer leaves a false Unsaved changes status caused solely by object key order.
+- The landing page now uses the actual registered theme count and accurately describes reviewable drafts.
+
+Review: create two projects, add story facts to one, move it down, mark it featured, select Product Showcase and save. Confirm Saved at appears, the full preview shows the featured project first, and returning/reloading keeps the editor order and all facts. Try each of the five designs with your own portrait, one screenshot, and no images. Check phone navigation, project destinations, and story expansion.
+
+The implementation contract is documented in `docs/THEME_CONTRACT.md`. The original master checklist is preserved unchanged.
+
+## Verified results for batch 3 (5 October 2026)
+
+- Production frontend build: passed; initial JavaScript is approximately 110.6 KB compressed. Theme modules remain lazy-loaded.
+- Backend tests: 18 passed. New tests check factual project-story prompts and actual Mongoose project-schema compatibility with existing IDs and legacy records. No database is contacted.
+- Content and save-comparison tests: 6 passed, including sparse legacy data, safe web destinations, nonmutating featured ordering, readable button labels and object-key-independent saved status.
+- Browser integration scenarios: 21 passed, including project reorder/feature/story save, preview and reload, plus the previous workflow regressions.
+- All-theme rendering smoke checks: 33 registered themes with minimal, populated and empty-optional fixtures (99 cases). These check runtime failures and identity retention, not full mobile, destination or visual correctness of every theme.
+- First-five layout/content checks: 90 cases across 360, 390, 768, 1024 and 1440px, plus long strings, custom colours, failed images and missing legacy fields. Checks include all eight fixture projects, actual supplied link destinations, optional-section navigation and story expansion. Reduced motion is enabled and external fonts are blocked for deterministic fallback-font checks.
+- Desktop and phone screenshots of the new designs were visually inspected. The Scrapbook tablet overflow found during testing was corrected.
+- Original checklist preservation, whitespace, ZIP integrity and cumulative patch application: checked before packaging.
+
+The batch 3 bundle includes all three development checkpoints. At that checkpoint the changes were local; they were subsequently pushed to the upgrade branch with the user's authorization. Real development MongoDB round trips, login/OTP/email, AI provider output and physical Android testing remain for your configured environment.
+
+## Second design batch — next five themes (5 October 2026)
+
+This continues the first design batch above. It is separate from the earlier development checkpoint called Batch 2, which covered theme discovery and AI review.
+
+- Aurora now has a serif introduction and a restrained luminous atmosphere. Its native pause/resume control, reduced-motion response, offscreen pause and static preview keep motion optional. It displays all supplied content without a graphics dependency.
+- Editorial now uses a magazine masthead, split introduction and lead project story, followed by every remaining project. Screenshots fit their frames; portraits are optional.
+- Neon Terminal now has a working portfolio file explorer with real section anchors, an actual README introduction and keyboard-operable Card / Compact project views. Both views keep every project and destination available.
+- Brutalist now uses large framed typography, hard shadows and responsive project cards. Additional Neo-brutalism and Neo lilac palettes can be previewed, cancelled, applied and saved through the existing colour settings.
+- Neumorphic now has raised profile surfaces and rounded project cards with readable text and borders. Its surfaces also adapt to dark custom colours.
+- All five retain their existing saved IDs and names, show supplied optional sections and project facts, hide empty sections, and preserve the builder's ordering and featured-project rules. The shared content contract now covers ten designs. The registry still has 33 themes.
+
+Review in Theme & Publish: search for each design, switch desktop/phone preview, Apply and save. On Brutalist, preview Neo-brutalism and Cancel before applying it; reload to check your saved colours. In the full Neon Terminal preview, use the file links and switch between Card and Compact views. In Aurora, use Pause atmosphere; a system reduced-motion preference removes the animated atmosphere automatically.
+
+## Verified results for the second design batch
+
+- Production frontend build passed; initial JavaScript is approximately 110.84 KB compressed. Themes remain lazy-loaded.
+- 18 backend tests and 6 content/save-comparison tests passed.
+- All 22 browser workflow scenarios passed, including the new Neo-brutalist palette preview/cancel/apply/save/reload scenario and all previous workflow regressions.
+- All ten upgraded designs passed 200 responsive/content cases at 360, 390, 768, 1024 and 1440px, with populated, sparse, legacy, long-text, broken-image and light/dark palette fixtures. Neon Terminal's real destinations and keyboard view controls, and Aurora's pause/resume, offscreen pause, dynamic reduced motion and static preview also passed.
+- Forty desktop/phone hero and work screenshots were captured. The five new designs were visually reviewed. Editorial's final portrait positioning adjustment was rebuilt and its 20 layout cases were repeated.
+- All 33 registered designs still passed the three rendering smoke fixtures each (99 cases). The other 23 designs require their own content, visual and interaction upgrades.
+
+Tests use isolated API fixtures and fallback fonts. They do not establish live authentication, production database writes, provider output, physical-device behaviour or the complete release checklist. The preview continues to use the existing backend as described in `docs/ROLLBACK.md`; new project-story fields require the upgraded backend to persist there.
+
+The original version and the first reviewed design batch have separate backup branches. This batch extends only `upgrade/porty-batches-1-3`; production remains on the original source. The original master checklist remains unchanged.
+
+## Third design batch — Kinetic through Bento Grid (5 October 2026)
+
+This is the third design batch, following the first and second design batches above. Historical development-checkpoint numbering is retained in earlier notes.
+
+- Kinetic follows the Signature Studio direction: expressive typography, framed portrait and project imagery, finite coordinated entrance transitions and native Gallery / Index project controls. Both views retain every project, story and destination, including on phones.
+- Executive now uses considered business typography, evidence-led project briefs and a career ledger with responsive date columns. Skills show supplied names without fabricated proficiency percentages.
+- Retro Wave now has a coherent synthwave horizon and static perspective grid. Readable project liner notes show complete descriptions and real destinations. Night drive and Daybreak palettes use the existing colour settings; no continuous grid animation runs.
+- Organic now has a subtle paper texture, a natural portrait frame and image-led projects. Split layouts stack on phones and long identities wrap. Missing or failed portraits remove the empty image column.
+- Bento Grid now uses content-sized modular tiles. All skills, experience, credentials, achievements and coding profiles remain available. The initial four-project collection has a labelled View all control; it expands to every project and preserves the selected featured project first. Collapse keeps keyboard focus on the same control.
+- Theme IDs and names remain unchanged. All five share factual content handling, real contact/profile/credential destinations, project stories and image failure fallbacks. The rendering contract now covers fifteen of the 33 registered designs.
+- The save/reload checks uncovered a create-route status bug: the Saved timestamp was lost when create changed to edit. The completed timestamp now travels with the saved form through that route transition. Content comparisons still ignore server metadata, and a regression waits for the transition state to be consumed before checking the status.
+
+Review in Theme & Publish: preview each of the five designs with your own content, switch desktop/phone layout, then Apply and save. Try Electric studio for Kinetic, Navy dossier for Executive, Daybreak for Retro Wave, Forest for Organic and Blue hour for Bento. Cancel a palette preview to check that saved settings remain intact. In the full Kinetic preview, switch Gallery / Index. Add more than four projects to Bento and use View all / Show first 4 projects with keyboard or touch.
+
+The second design batch has its own backup branch and local tag; see `docs/ROLLBACK.md`. This batch updates only the upgrade preview branch. Production source and the original master checklist remain unchanged. The preview still uses the existing backend; project-story persistence there requires deploying the upgraded backend.
+
+## Verified results for the third design batch
+
+- Production frontend build passed; initial JavaScript is approximately 111.15 KB compressed. New theme modules remain lazy-loaded and the shared batch stylesheet is approximately 4.71 KB compressed.
+- All 18 backend tests and 6 content/save-comparison tests passed.
+- All 23 browser workflow scenarios passed after the create-route timestamp fix. The new scenario checks reversible palette preview and actual save/reload for all five existing theme IDs. The create regression now checks status after navigation state is consumed.
+- All fifteen upgraded designs passed 300 layout/content cases across five widths (360, 390, 768, 1024 and 1440px), populated/sparse/legacy portfolios, eight projects, long text, failed images and light/dark overrides. Kinetic's Gallery / Index keyboard switching and Bento's expansion/collapse, focus retention and featured ordering passed at phone and desktop widths.
+- The five third-batch designs received a further 100-case pass with static-preview checks. Kinetic's single-iteration entrance and dynamic reduced-motion response passed; Retro Wave's grid has no animation loop. Final Kinetic touch targets and Bento's clearer Show first 4 projects label were rebuilt and rechecked in the focused 40-case suite.
+- All 33 registered themes still passed their three isolated rendering smoke fixtures (99 cases). Sixty hero/work screenshots were captured across the fifteen upgraded themes, with the five new desktop heroes and phone project layouts visually reviewed.
+- The original master checklist remains byte-for-byte unchanged. Git whitespace checks passed.
+
+These checks use isolated API fixtures and fallback fonts. They do not verify live account authentication, production database writes, email, AI provider output, physical devices or the full release checklist. Eighteen registered designs and eight planned new designs remain for later batches.

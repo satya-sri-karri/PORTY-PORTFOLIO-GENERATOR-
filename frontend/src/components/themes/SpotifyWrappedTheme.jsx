@@ -263,7 +263,7 @@ const SpotifyWrappedTheme = ({ data }) => {
             <div style={{ width: 90, height: 90, borderRadius: "50%", background: `linear-gradient(135deg, ${GREEN}, #000)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, marginBottom: 24, animation: "pulse 2.5s infinite" }}>♪</div>
             <div style={{ fontSize: 13, color: GREEN, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 8 }}>Connect</div>
             <h2 style={{ fontSize: "clamp(2.5rem, 6vw, 4rem)", fontWeight: 900, marginBottom: 12, lineHeight: 1.1 }}>Let's make<br />something great</h2>
-            <p style={{ fontSize: 15, color: MUTED, maxWidth: 420, marginBottom: 32, lineHeight: 1.8 }}>Open to collaborations, new projects, and opportunities.</p>
+            <p style={{ fontSize: 15, color: MUTED, maxWidth: 420, marginBottom: 32, lineHeight: 1.8 }}>Find my contact links below.</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
               {contact?.email && <a href={`mailto:${contact.email}`} style={{ padding: "14px 32px", borderRadius: 999, background: GREEN, color: "#000", fontSize: 14, fontWeight: 800, textDecoration: "none" }}>✉ {contact.email}</a>}
               {contact?.phone && <a href={`tel:${contact.phone}`} style={{ padding: "14px 32px", borderRadius: 999, border: `1px solid #333`, color: MUTED, fontSize: 14, textDecoration: "none", fontWeight: 600 }}>📞 {contact.phone}</a>}

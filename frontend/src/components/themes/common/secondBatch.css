@@ -1,0 +1,214 @@
+/* Second design batch: every selector and animation is scoped. */
+.pf-aurora { background-image: radial-gradient(ellipse at 70% 4%, color-mix(in srgb, var(--pf-accent) 13%, transparent), transparent 42%); }
+.pf-aurora h1, .pf-aurora h2, .pf-aurora h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; letter-spacing: -.045em; }
+.pf-aurora .pf-nav { background: color-mix(in srgb, var(--pf-bg) 97%, transparent); }
+.pf-aurora .pf-brand-mark { background: transparent; color: var(--pf-accent); font-size: 28px; }
+.pf-aurora .aurora-hero { position: relative; text-align: center; padding: 110px 32px 100px; isolation: isolate; overflow: hidden; }
+.pf-aurora .aurora-introduction { position: relative; z-index: 1; max-width: 830px; margin: auto; }
+.pf-aurora .aurora-introduction h1 { font-size: clamp(4rem, 8.5vw, 8rem); margin: 24px 0; }
+.pf-aurora .pf-role { color: var(--pf-accent); font-size: 20px; }
+.pf-aurora .pf-bio { margin: 28px auto 0; max-width: 55ch; }
+.pf-aurora .pf-portrait { border-radius: 50%; width: 84px; height: 84px; object-fit: cover; margin: 28px auto; padding: 5px; border: 1px solid var(--pf-line); }
+.pf-aurora .pf-skills, .pf-aurora .pf-actions { justify-content: center; }
+.pf-aurora .pf-skills span { border-radius: 20px; background: color-mix(in srgb, var(--pf-bg) 92%, var(--pf-accent)); }
+.pf-aurora .pf-button { border-radius: 26px; }
+.pf-aurora .aurora-atmosphere { position: absolute; inset: 0; pointer-events: none; z-index: -1; background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--pf-accent) 9%, transparent), transparent 60%); }
+.pf-aurora .aurora-orbit { position: absolute; width: 88%; height: 64%; border: 1px solid color-mix(in srgb, var(--pf-accent) 15%, transparent); border-radius: 50%; left: 6%; top: 15%; transform: rotate(-18deg); animation: pf-aurora-drift 18s ease-in-out infinite alternate; animation-play-state: paused; }
+.pf-aurora .aurora-orbit-second { transform: rotate(18deg); animation-direction: alternate-reverse; animation-delay: -9s; }
+.pf-aurora [data-animate="true"] .aurora-orbit { animation-play-state: running; }
+@keyframes pf-aurora-drift { from { translate: 0 -8px; scale: .97; } to { translate: 0 8px; scale: 1.02; } }
+.pf-aurora .aurora-motion { display: block; margin: 42px auto 0; background: transparent; border: 1px solid var(--pf-line); color: var(--pf-muted); font-size: 11px; border-radius: 20px; padding: 8px 14px; cursor: pointer; }
+.pf-aurora .pf-project { border: 1px solid var(--pf-line); border-radius: 24px; padding: 12px; background: color-mix(in srgb, var(--pf-bg) 96%, var(--pf-text)); }
+.pf-aurora .pf-project-media { border: none; border-radius: 15px; }
+.pf-aurora .pf-project-body { padding: 24px 18px 20px; }
+.pf-aurora .pf-project-body h3 { font-size: 32px; }
+.pf-aurora .pf-cover-glyph { font-family: Georgia, serif; font-weight: 400; font-style: italic; }
+.pf-aurora .pf-credential { background: color-mix(in srgb, var(--pf-bg) 97%, var(--pf-text)); border-radius: 18px; }
+.pf-aurora .pf-contact { text-align: center; }
+.pf-aurora .pf-contact-links { justify-content: center; }
+/* Editorial: a masthead, split cover, lead story and genuine project index. */
+.pf-editorial h1, .pf-editorial h2, .pf-editorial h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; }
+.pf-editorial .pf-nav { border-bottom: 2px solid var(--pf-text); }
+.pf-editorial .pf-brand-mark { border-radius: 0; background: var(--pf-text); color: var(--pf-bg); font-family: Georgia, serif; }
+.pf-editorial .editorial-hero { padding-top: 36px; }
+.pf-editorial .editorial-masthead { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--pf-line); padding-bottom: 18px; margin-bottom: 54px; text-transform: uppercase; letter-spacing: .15em; font-size: 10px; color: var(--pf-muted); }
+.pf-editorial .editorial-cover { display: grid; grid-template-columns: 1.25fr 1fr; gap: 58px; }
+.pf-editorial .editorial-identity { padding-right: 42px; border-right: 1px solid var(--pf-line); min-width: 0; }
+.pf-editorial .editorial-identity h1 { font-size: clamp(4rem, 7.5vw, 7rem); margin: 28px 0 36px; line-height: .99; }
+.pf-editorial .pf-role { color: var(--pf-accent); font-size: 17px; }
+.pf-editorial .editorial-opening { min-width: 0; }
+.pf-editorial .editorial-cover:not(:has(.pf-portrait, .pf-bio, .pf-actions a)) { display: block; }
+.pf-editorial .editorial-cover:not(:has(.pf-portrait, .pf-bio, .pf-actions a)) .editorial-identity { border-right: none; }
+.pf-editorial .editorial-opening .pf-portrait { height: 245px; object-position: center 25%; margin-bottom: 28px; }
+.pf-editorial .editorial-note { border-top: 3px solid var(--pf-accent); padding-top: 24px; }
+.pf-editorial .editorial-note .pf-bio { font-family: Georgia, serif; font-size: 19px; margin-top: 14px; }
+.pf-editorial .pf-button { background: var(--pf-text); color: var(--pf-bg); border-color: var(--pf-text); border-radius: 0; }
+.pf-editorial .pf-skills span { border-radius: 0; border-left: 2px solid var(--pf-accent); }
+.pf-editorial .pf-section-heading { border-bottom: 1px solid var(--pf-line); padding-bottom: 25px; }
+.pf-editorial .editorial-project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 36px; }
+.pf-editorial .editorial-project { min-width: 0; border-bottom: 1px solid var(--pf-line); padding-bottom: 26px; }
+.pf-editorial .editorial-lead-project { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start; }
+.pf-editorial .editorial-lead-project .pf-project-body { padding-top: 0; }
+.pf-editorial .editorial-lead-project h3 { font-size: 38px; }
+.pf-editorial .pf-project-body h3 { font-size: 29px; }
+.pf-editorial .pf-project-media { border: none; }
+.pf-editorial .pf-cover-glyph { font-family: Georgia, serif; }
+.pf-editorial .pf-tech li { background: transparent; border: none; padding-left: 0; color: var(--pf-accent); }
+.pf-editorial .pf-credential { border: none; border-top: 2px solid var(--pf-text); padding: 24px 0; }
+/* Terminal: file navigation and real content, with two project presentations. */
+.pf-terminal { font-family: 'JetBrains Mono', 'Courier New', monospace; }
+.pf-terminal .pf-nav { border-bottom: 1px solid var(--pf-line); padding-top: 18px; padding-bottom: 18px; }
+.pf-terminal .pf-brand-mark { border-radius: 3px; font-size: 13px; width: 34px; }
+.pf-terminal .pf-nav nav { gap: 18px; }
+.pf-terminal .terminal-workspace { display: grid; grid-template-columns: 190px minmax(0, 1fr); max-width: 1320px; margin: 0 auto; }
+.pf-terminal .terminal-explorer { border-right: 1px solid var(--pf-line); padding: 46px 22px; align-self: start; position: sticky; top: 75px; }
+.pf-terminal .terminal-explorer nav { display: grid; gap: 14px; margin-top: 28px; }
+.pf-terminal .terminal-explorer a { text-decoration: none; font-size: 12px; overflow-wrap: anywhere; }
+.pf-terminal .terminal-explorer a span { color: var(--pf-accent); margin-right: 10px; }
+.pf-terminal .terminal-explorer a:hover { color: var(--pf-accent); }
+.pf-terminal .terminal-explorer-note { border-top: 1px solid var(--pf-line); margin-top: 32px; padding-top: 20px; color: var(--pf-muted); font-size: 10px; }
+.pf-terminal .terminal-content { width: calc(100% - 80px); }
+.pf-terminal .terminal-hero { padding: 58px 0; }
+.pf-terminal .terminal-window { border: 1px solid var(--pf-line); border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--pf-bg) 98%, var(--pf-text)); }
+.pf-terminal .terminal-window-bar { display: flex; gap: 20px; align-items: center; border-bottom: 1px solid var(--pf-line); padding: 12px 18px; background: var(--pf-surface); font-size: 11px; color: var(--pf-muted); }
+.pf-terminal .terminal-window-dots { display: flex; gap: 5px; }
+.pf-terminal .terminal-window-dots i { width: 7px; height: 7px; border: 1px solid var(--pf-muted); border-radius: 50%; }
+.pf-terminal .terminal-window-language { margin-left: auto; font-size: 10px; }
+.pf-terminal .terminal-readme { padding: 36px; }
+.pf-terminal .terminal-identity { display: flex; justify-content: space-between; align-items: start; gap: 24px; margin: 22px 0 26px; }
+.pf-terminal .terminal-identity > div { min-width: 0; }
+.pf-terminal h1 { font-size: clamp(2.6rem, 5vw, 5.5rem); letter-spacing: -.055em; }
+.pf-terminal .pf-role { font-size: 16px; margin-top: 18px; color: var(--pf-accent); }
+.pf-terminal .terminal-identity .pf-portrait { width: 70px; height: 70px; border-radius: 4px; flex-shrink: 0; }
+.pf-terminal .pf-bio { font-size: 14px; }
+.pf-terminal .terminal-skills { margin-top: 28px; scroll-margin-top: 100px; }
+.pf-terminal .terminal-skills h2 { font-size: 12px; letter-spacing: 0; color: var(--pf-muted); }
+.pf-terminal .terminal-skills .pf-skills { margin-top: 12px; }
+.pf-terminal .pf-skills span { border-radius: 3px; font-size: 10px; }
+.pf-terminal .pf-actions { gap: 20px; }
+.pf-terminal .pf-button { font-size: 11px; }
+.pf-terminal .terminal-view-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 20px; }
+.pf-terminal .terminal-view-controls > span { margin-right: auto; }
+.pf-terminal .terminal-view-controls button { border: 1px solid var(--pf-line); border-radius: 4px; background: transparent; padding: 8px 12px; cursor: pointer; font-size: 11px; }
+.pf-terminal .terminal-view-controls button[aria-pressed="true"] { background: var(--pf-accent); color: var(--pf-on-accent); border-color: var(--pf-accent); }
+.pf-terminal .pf-section { padding: 50px 0; }
+.pf-terminal .pf-section-heading h2 { font-size: 29px; letter-spacing: -.04em; }
+.pf-terminal .pf-project { border: 1px solid var(--pf-line); border-radius: 6px; overflow: hidden; }
+.pf-terminal .pf-project-body { padding: 22px; }
+.pf-terminal .pf-project-body h3 { font-size: 21px; }
+.pf-terminal .pf-description, .pf-terminal .pf-story dd { font-size: 12px; }
+.pf-terminal .pf-project-links a { font-size: 11px; }
+.pf-terminal .pf-project-media { border: none; border-bottom: 1px solid var(--pf-line); }
+.pf-terminal .pf-cover-glyph { font-size: 5rem; }
+.pf-terminal .pf-tech li { font-size: 10px; }
+.pf-terminal .terminal-compact .pf-project-grid { grid-template-columns: 1fr; }
+.pf-terminal .terminal-compact .pf-project { display: grid; grid-template-columns: minmax(120px, .7fr) minmax(0, 1.8fr); align-items: start; }
+.pf-terminal .terminal-compact .pf-project-media { border-bottom: none; border-right: 1px solid var(--pf-line); }
+.pf-terminal .terminal-compact .pf-project-body { padding: 20px; }
+.pf-terminal .pf-timeline-row { grid-template-columns: 145px minmax(0, 1fr); gap: 24px; }
+.pf-terminal .pf-credential { border-radius: 5px; }
+.pf-terminal .pf-contact h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+/* Brutalist / Neo-brutalist: bold ink, hard shadows and reversible palettes. */
+.pf-brutalist .pf-nav { border-bottom: 3px solid var(--pf-text); }
+.pf-brutalist .pf-brand-mark { border-radius: 0; background: var(--pf-text); color: var(--pf-bg); transform: rotate(-5deg); }
+.pf-brutalist .brutalist-heading { border: 3px solid var(--pf-text); padding: 34px; position: relative; box-shadow: 9px 9px 0 var(--pf-text); }
+.pf-brutalist .brutalist-heading h1 { font-size: clamp(4rem, 9vw, 8rem); font-weight: 900; letter-spacing: -.07em; margin-top: 22px; margin-right: 75px; }
+.pf-brutalist .brutalist-arrow { position: absolute; right: 28px; bottom: 28px; font-size: 70px; line-height: 1; color: var(--pf-accent); }
+.pf-brutalist .brutalist-intro { display: grid; grid-template-columns: 1fr 1.7fr; gap: 44px; margin-top: 58px; }
+.pf-brutalist .brutalist-with-portrait { grid-template-columns: 1fr 1.6fr .6fr; }
+.pf-brutalist .pf-role { font-size: 20px; font-weight: 650; }
+.pf-brutalist .pf-portrait { border: 2px solid var(--pf-text); box-shadow: 5px 5px 0 var(--pf-text); aspect-ratio: 1; }
+.pf-brutalist .pf-skills span { border: 1px solid var(--pf-text); border-radius: 0; padding: 5px 8px; }
+.pf-brutalist .pf-button { border: 2px solid var(--pf-text); border-radius: 0; box-shadow: 4px 4px 0 var(--pf-text); }
+.pf-brutalist .pf-section { border-top: 3px solid var(--pf-text); }
+.pf-brutalist .pf-section-heading h2 { font-weight: 800; letter-spacing: -.055em; }
+.pf-brutalist .pf-project { border: 2px solid var(--pf-text); box-shadow: 6px 6px 0 var(--pf-text); }
+.pf-brutalist .pf-project-grid { gap: 38px; }
+.pf-brutalist .pf-project-media { border: none; border-bottom: 2px solid var(--pf-text); }
+.pf-brutalist .pf-cover-glyph { font-weight: 900; }
+.pf-brutalist .pf-project-body { padding: 26px; }
+.pf-brutalist .pf-project-body h3 { font-size: 28px; font-weight: 800; }
+.pf-brutalist .pf-tech li { border: 1px solid var(--pf-text); border-radius: 0; }
+.pf-brutalist .pf-story { border-top: 2px solid var(--pf-text); }
+.pf-brutalist .pf-credential { border: 2px solid var(--pf-text); box-shadow: 4px 4px 0 var(--pf-text); }
+.pf-brutalist .pf-solo-project .pf-project { gap: 0; }
+.pf-brutalist .pf-solo-project .pf-project-media { border-right: 2px solid var(--pf-text); border-bottom: none; }
+.pf-brutalist .brutalist-with-portrait:not(:has(.pf-portrait)) { grid-template-columns: 1fr 1.7fr; }
+.pf-brutalist .brutalist-intro:not(:has(.pf-role, .pf-location, .pf-skills)) { grid-template-columns: 1fr; }
+/* Neumorphic: palette-aware raised/inset surfaces, with readable boundaries. */
+.pf-neumorphic { --neu-shadow: color-mix(in srgb, var(--pf-bg) 80%, #000); --neu-light: color-mix(in srgb, var(--pf-bg) 88%, #fff); --neu-raised: 9px 9px 24px var(--neu-shadow), -9px -9px 24px var(--neu-light); }
+.pf-neumorphic .pf-nav { background: var(--pf-bg); }
+.pf-neumorphic .pf-brand-mark { background: var(--pf-bg); color: var(--pf-accent); box-shadow: 3px 3px 8px var(--neu-shadow), -3px -3px 8px var(--neu-light); border: 1px solid var(--pf-line); }
+.pf-neumorphic .neumorphic-hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: 54px; align-items: center; }
+.pf-neumorphic .neumorphic-profile { min-width: 0; }
+.pf-neumorphic .neumorphic-profile h1 { font-size: clamp(3.8rem, 7vw, 6.5rem); margin: 24px 0; }
+.pf-neumorphic .neumorphic-avatar:has(.pf-portrait) { width: 105px; height: 105px; border-radius: 50%; padding: 8px; box-shadow: var(--neu-raised); margin-bottom: 36px; }
+.pf-neumorphic .neumorphic-avatar .pf-portrait { aspect-ratio: 1; border-radius: 50%; }
+.pf-neumorphic .neumorphic-introduction { padding: 38px; border-radius: 28px; box-shadow: inset 6px 6px 15px var(--neu-shadow), inset -6px -6px 15px var(--neu-light); border: 1px solid var(--pf-line); min-width: 0; }
+.pf-neumorphic .neumorphic-hero:not(:has(.pf-bio, .pf-skills, .pf-actions a)) { grid-template-columns: 1fr; }
+.pf-neumorphic .neumorphic-hero:not(:has(.pf-bio, .pf-skills, .pf-actions a)) .neumorphic-introduction { display: none; }
+.pf-neumorphic .pf-skills span { border-radius: 18px; }
+.pf-neumorphic .pf-actions { gap: 22px; }
+.pf-neumorphic .pf-button { border-radius: 24px; border-color: var(--pf-line); box-shadow: 3px 3px 8px var(--neu-shadow), -3px -3px 8px var(--neu-light); }
+.pf-neumorphic .pf-project { border: 1px solid var(--pf-line); border-radius: 22px; box-shadow: var(--neu-raised); padding: 14px; background: var(--pf-bg); }
+.pf-neumorphic .pf-project-grid { gap: 44px; }
+.pf-neumorphic .pf-project-media { border-radius: 13px; }
+.pf-neumorphic .pf-project-body { padding: 24px 12px 12px; }
+.pf-neumorphic .pf-project-body h3 { font-size: 26px; }
+.pf-neumorphic .pf-cover-glyph { color: var(--pf-accent); }
+.pf-neumorphic .pf-story { padding: 16px; border: 1px solid var(--pf-line); border-radius: 10px; background: var(--pf-surface); }
+.pf-neumorphic .pf-credential { border-radius: 18px; box-shadow: 5px 5px 14px var(--neu-shadow), -5px -5px 14px var(--neu-light); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pf-brutalist:not(.pf-static) .pf-button:hover { translate: 2px 2px; box-shadow: 2px 2px 0 var(--pf-text); }
+  .pf-neumorphic:not(.pf-static) .pf-button:hover { box-shadow: inset 2px 2px 6px var(--neu-shadow), inset -2px -2px 6px var(--neu-light); }
+  .pf-aurora:not(.pf-static) .pf-project-media img, .pf-editorial:not(.pf-static) .pf-project-media img { transition: transform .3s ease; }
+  .pf-aurora:not(.pf-static) .pf-project-media:hover img, .pf-editorial:not(.pf-static) .pf-project-media:hover img { transform: scale(1.02); }
+}
+@media (max-width: 1000px) {
+  .pf-terminal .terminal-workspace { grid-template-columns: 1fr; }
+  .pf-terminal .terminal-explorer { position: relative; top: auto; border-right: none; border-bottom: 1px solid var(--pf-line); padding: 22px 24px; }
+  .pf-terminal .terminal-explorer nav { display: flex; flex-wrap: wrap; gap: 12px 22px; margin-top: 16px; }
+  .pf-terminal .terminal-explorer-note { display: none; }
+  .pf-terminal .terminal-content { width: calc(100% - 48px); }
+}
+@media (max-width: 760px) {
+  .pf-aurora .aurora-hero { padding: 64px 4px; }
+  .pf-aurora .aurora-introduction h1 { font-size: clamp(3rem, 13vw, 5rem); }
+  .pf-aurora .pf-bio { font-size: 15px; }
+  .pf-aurora .pf-project-body { padding: 20px 10px 16px; }
+  .pf-editorial .editorial-hero { padding-top: 26px; }
+  .pf-editorial .editorial-masthead { margin-bottom: 36px; font-size: 9px; }
+  .pf-editorial .editorial-cover { grid-template-columns: 1fr; gap: 34px; }
+  .pf-editorial .editorial-identity { border-right: none; padding-right: 0; }
+  .pf-editorial .editorial-identity h1 { font-size: clamp(3.4rem, 14vw, 5.5rem); margin: 24px 0; }
+  .pf-editorial .editorial-opening .pf-portrait { height: 260px; }
+  .pf-editorial .editorial-note .pf-bio { font-size: 17px; }
+  .pf-editorial .editorial-project-grid { grid-template-columns: 1fr; gap: 36px; }
+  .pf-editorial .editorial-lead-project { display: block; }
+  .pf-editorial .editorial-lead-project .pf-project-body { padding-top: 22px; }
+  .pf-editorial .editorial-lead-project h3 { font-size: 29px; }
+  .pf-terminal .terminal-explorer { padding: 20px; }
+  .pf-terminal .terminal-explorer a { font-size: 11px; }
+  .pf-terminal .terminal-content { width: calc(100% - 40px); }
+  .pf-terminal .terminal-window-bar { padding: 12px; gap: 14px; }
+  .pf-terminal .terminal-readme { padding: 25px 18px; }
+  .pf-terminal .terminal-identity { flex-wrap: wrap; gap: 20px; }
+  .pf-terminal .terminal-identity .pf-portrait { width: 55px; height: 55px; }
+  .pf-terminal h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
+  .pf-terminal .terminal-skills .pf-skills { gap: 6px; }
+  .pf-terminal .pf-project-body { padding: 20px 16px; }
+  .pf-terminal .pf-timeline-row { grid-template-columns: 1fr; gap: 10px; }
+  .pf-terminal .terminal-compact .pf-project { display: block; }
+  .pf-terminal .terminal-compact .pf-project-media { border-right: none; border-bottom: 1px solid var(--pf-line); }
+  .pf-brutalist .brutalist-heading { padding: 25px 20px; box-shadow: 5px 5px 0 var(--pf-text); }
+  .pf-brutalist .brutalist-heading h1 { font-size: clamp(3.2rem, 13vw, 5rem); margin-right: 0; }
+  .pf-brutalist .brutalist-arrow { position: static; display: block; font-size: 48px; margin-top: 22px; }
+  .pf-brutalist .brutalist-intro, .pf-brutalist .brutalist-with-portrait, .pf-brutalist .brutalist-with-portrait:not(:has(.pf-portrait)) { grid-template-columns: 1fr; gap: 25px; margin-top: 40px; }
+  .pf-brutalist .pf-portrait { width: 100px; }
+  .pf-brutalist .pf-project-body { padding: 24px 18px; }
+  .pf-brutalist .pf-solo-project .pf-project-media { border-right: none; border-bottom: 2px solid var(--pf-text); }
+  .pf-neumorphic .neumorphic-hero { grid-template-columns: 1fr; gap: 34px; }
+  .pf-neumorphic .neumorphic-profile h1 { font-size: clamp(3rem, 12vw, 5rem); }
+  .pf-neumorphic .neumorphic-introduction { padding: 28px 24px; border-radius: 20px; }
+  .pf-neumorphic .pf-project { padding: 10px; }
+}

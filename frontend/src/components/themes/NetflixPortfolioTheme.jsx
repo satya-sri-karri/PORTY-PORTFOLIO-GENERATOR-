@@ -49,8 +49,9 @@ const NetflixPortfolioTheme = ({ data }) => {
     { label: "Home", id: "nf-hero" },
     ...(projects?.length > 1 ? [{ label: "Projects", id: "nf-projects" }] : []),
     ...(experience?.length > 0 ? [{ label: "Experience", id: "nf-experience" }] : []),
-    { label: "About", id: "nf-about" },
-  ], [projects, experience]);
+    ...(about ? [{ label: "About", id: "nf-about" }] : []),
+    ...(contact?.email || contact?.phone || socials.length ? [{ label: "Contact", id: "nf-contact" }] : []),
+  ], [projects, experience, about, contact, socials.length]);
 
   const scrollToSection = useCallback((id) => {
     const el = document.getElementById(id);
@@ -86,8 +87,15 @@ const NetflixPortfolioTheme = ({ data }) => {
         </div>
       </div>
 
+      <section id="nf-hero" style={{ padding: "110px 32px 72px", maxWidth: 1100, margin: "0 auto" }}>
+        <p style={{ color: RED, fontSize: 12, fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", marginBottom: 14 }}>My portfolio</p>
+        <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", lineHeight: 1.1, fontWeight: 900, overflowWrap: "anywhere", marginBottom: 14 }}>{name}</h1>
+        {title && <p style={{ color: TEXT, fontSize: 20, marginBottom: 18 }}>{title}</p>}
+        {about && <p id="nf-about" style={{ color: MUTED, maxWidth: 700, fontSize: 16, lineHeight: 1.8, scrollMarginTop: 90 }}>{about}</p>}
+      </section>
+
       {featured && (
-        <div id="nf-hero" style={{
+        <div id="nf-featured" style={{
           height: "75vh", minHeight: 420,
           background: featured.image ? `linear-gradient(to top, ${BG}, transparent 60%), url(${featured.image}) center/cover no-repeat` : `linear-gradient(135deg, ${BG}, #1A0A0A)`,
           backgroundSize: "cover", backgroundPosition: "center",
@@ -96,10 +104,9 @@ const NetflixPortfolioTheme = ({ data }) => {
         }}>
           <div style={{ maxWidth: 560, animation: "nfUp 0.7s ease" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-              <span style={{ fontSize: 12, color: RED, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Featured Title</span>
-              <span style={{ fontSize: 11, padding: "2px 10px", border: `1px solid ${DIM}60`, color: MUTED, borderRadius: 4 }}>NEW</span>
+              <span style={{ fontSize: 12, color: RED, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Featured project</span>
             </div>
-            <h1 style={{ fontSize: "clamp(2.8rem, 7vw, 5rem)", fontWeight: 900, marginBottom: 14, lineHeight: 1 }}>{featured.title}</h1>
+            <h2 style={{ fontSize: "clamp(2.8rem, 7vw, 5rem)", fontWeight: 900, marginBottom: 14, lineHeight: 1 }}>{featured.title}</h2>
             <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, marginBottom: 20, maxWidth: 480 }}>{featured.description}</p>
             <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
               {featured.techStack?.map((t, i) => (
@@ -109,18 +116,18 @@ const NetflixPortfolioTheme = ({ data }) => {
             <div style={{ display: "flex", gap: 14 }}>
               {featured.link && <a href={featured.link} target="_blank" rel="noopener noreferrer"
                 style={{ padding: "12px 30px", background: RED, color: "#fff", borderRadius: 4, fontSize: 15, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
-                ▶ Play
+                View project
               </a>}
               {featured.github && <a href={featured.github} target="_blank" rel="noopener noreferrer"
                 style={{ padding: "12px 30px", border: `1px solid ${DIM}60`, color: TEXT, borderRadius: 4, fontSize: 15, fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
-                + My List
+                Source code
               </a>}
             </div>
           </div>
         </div>
       )}
 
-      <div style={{ padding: "0 60px 60px", marginTop: -50, position: "relative", zIndex: 10 }}>
+      <div style={{ padding: "0 60px 60px", marginTop: featured ? -50 : 0, position: "relative", zIndex: 10 }}>
 
         {skills?.length > 0 && (
           <div style={{ marginBottom: 40, animation: "nfUp 0.5s ease" }}>
@@ -158,8 +165,8 @@ const NetflixPortfolioTheme = ({ data }) => {
                   <div style={{ padding: 16 }}>
                     <p style={{ fontSize: 12, color: MUTED, lineHeight: 1.6, marginBottom: 12, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.description}</p>
                     <div style={{ display: "flex", gap: 10 }}>
-                      {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: TEXT, fontWeight: 700, textDecoration: "none" }}>▶ Watch</a>}
-                      {p.github && <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: MUTED, textDecoration: "none" }}>+ My List</a>}
+                      {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: TEXT, fontWeight: 700, textDecoration: "none" }}>View project</a>}
+                      {p.github && <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: MUTED, textDecoration: "none" }}>Source code</a>}
                     </div>
                   </div>
                 </div>
@@ -244,12 +251,12 @@ const NetflixPortfolioTheme = ({ data }) => {
           </div>
         )}
 
-        <div id="nf-about" style={{
+        <div id="nf-contact" style={{
           marginTop: 40, padding: "56px 0", textAlign: "center",
           borderTop: `1px solid ${DIM}25`, animation: "nfUp 0.5s ease",
         }}>
-          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, marginBottom: 10 }}>Ready to collaborate?</h2>
-          <p style={{ fontSize: 14, color: MUTED, marginBottom: 28, maxWidth: 500, margin: "0 auto 28px", lineHeight: 1.7 }}>Let's create something amazing together. Reach out anytime.</p>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, marginBottom: 10 }}>Contact</h2>
+          <p style={{ fontSize: 14, color: MUTED, marginBottom: 28, maxWidth: 500, margin: "0 auto 28px", lineHeight: 1.7 }}>Find me through the links below.</p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
             {contact?.email && <a href={`mailto:${contact.email}`} style={{ padding: "14px 32px", background: RED, color: "#fff", borderRadius: 4, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>✉ {contact.email}</a>}
             {contact?.phone && <a href={`tel:${contact.phone}`} style={{ padding: "14px 32px", border: `1px solid ${DIM}60`, color: MUTED, borderRadius: 4, fontSize: 15, textDecoration: "none", fontWeight: 600 }}>📞 {contact.phone}</a>}

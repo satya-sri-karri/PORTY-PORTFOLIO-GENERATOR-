@@ -36,7 +36,7 @@ const LineSidebar = ({
               style={{ '--marker-length': `${markerLength}px`, '--marker-gap': `${markerGap}px`, '--tick-scale': tickScale, '--item-gap': `${itemGap}px` }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => { if (hoveredIndex === index) setHoveredIndex(null); }}
-              onClick={() => { setActiveIndex(index); onItemClick?.(index, label); }}
+
             >
               {showMarker && (
                 <span className="line-sidebar__marker"
@@ -54,7 +54,7 @@ const LineSidebar = ({
                   }}
                 />
               )}
-              <span className="line-sidebar__label"
+              <button type="button" aria-current={isActive ? "step" : undefined} onClick={() => { setActiveIndex(index); onItemClick?.(index, label); }} className="line-sidebar__label"
                 style={{
                   color: isHovered || isActive ? accentColor : textColor,
                   transform: `translateX(${isHovered || isActive ? maxShift : 0}px)`,
@@ -68,7 +68,7 @@ const LineSidebar = ({
                   </span>
                 )}
                 <span>{label}</span>
-              </span>
+              </button>
             </li>
           );
         })}

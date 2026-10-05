@@ -26,3 +26,6 @@ Thumbs.db
 *.pdf
 *.docx
 *.ipynb
+
+# Generated browser verification output
+frontend/test/artifacts/

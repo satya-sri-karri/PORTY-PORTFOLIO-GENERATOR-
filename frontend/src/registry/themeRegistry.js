@@ -1,191 +1,206 @@
+import { lazy } from "react";
 /**
  * Theme Registry
  * Maps theme ID → { component, config, preview }
  * Every theme consumes the same `data` prop — pluggable architecture
  */
 
-import AuroraTheme           from "../components/themes/AuroraTheme";
-import MinimalistTheme       from "../components/themes/MinimalistTheme";
-import EditorialTheme        from "../components/themes/EditorialTheme";
-import NeonTerminalTheme     from "../components/themes/NeonTerminalTheme";
-import BrutalistTheme        from "../components/themes/BrutalistTheme";
-import NeumorphicTheme       from "../components/themes/NeumorphicTheme";
-import KineticTheme          from "../components/themes/KineticTheme";
-import ExecutiveTheme        from "../components/themes/ExecutiveTheme";
-import RetroWaveTheme        from "../components/themes/RetroWaveTheme";
-import OrganicTheme          from "../components/themes/OrganicTheme";
-import BentoTheme            from "../components/themes/BentoTheme";
-import DarkLuxeTheme         from "../components/themes/DarkLuxeTheme";
-import AppleVisionTheme      from "../components/themes/AppleVisionTheme";
-import BlueprintTheme        from "../components/themes/BlueprintTheme";
-import Cyberpunk2077Theme    from "../components/themes/Cyberpunk2077Theme";
-import AIAssistantTheme      from "../components/themes/AIAssistantTheme";
-import Interactive3DTheme    from "../components/themes/Interactive3DTheme";
-import TimelineJourneyTheme  from "../components/themes/TimelineJourneyTheme";
-import DashboardPortfolioTheme from "../components/themes/DashboardPortfolioTheme";
-import SpaceExplorerTheme    from "../components/themes/SpaceExplorerTheme";
-import InfiniteCanvasTheme   from "../components/themes/InfiniteCanvasTheme";
-import StorybookTheme        from "../components/themes/StorybookTheme";
-import SpotifyWrappedTheme   from "../components/themes/SpotifyWrappedTheme";
-import NetflixPortfolioTheme from "../components/themes/NetflixPortfolioTheme";
-import GoogleMapsPortfolioTheme from "../components/themes/GoogleMapsPortfolioTheme";
-import ComicBookTheme        from "../components/themes/ComicBookTheme";
-import TerminalOSTheme       from "../components/themes/TerminalOSTheme";
-import NewspaperTheme        from "../components/themes/NewspaperTheme";
-import MuseumTheme           from "../components/themes/MuseumTheme";
-import HackerMatrixTheme     from "../components/themes/HackerMatrixTheme";
+const AuroraTheme = lazy(() => import("../components/themes/AuroraTheme"));
+const MinimalistTheme = lazy(() => import("../components/themes/MinimalistTheme"));
+const EditorialTheme = lazy(() => import("../components/themes/EditorialTheme"));
+const NeonTerminalTheme = lazy(() => import("../components/themes/NeonTerminalTheme"));
+const BrutalistTheme = lazy(() => import("../components/themes/BrutalistTheme"));
+const NeumorphicTheme = lazy(() => import("../components/themes/NeumorphicTheme"));
+const KineticTheme = lazy(() => import("../components/themes/KineticTheme"));
+const ExecutiveTheme = lazy(() => import("../components/themes/ExecutiveTheme"));
+const RetroWaveTheme = lazy(() => import("../components/themes/RetroWaveTheme"));
+const OrganicTheme = lazy(() => import("../components/themes/OrganicTheme"));
+const BentoTheme = lazy(() => import("../components/themes/BentoTheme"));
+const DarkLuxeTheme = lazy(() => import("../components/themes/DarkLuxeTheme"));
+const AppleVisionTheme = lazy(() => import("../components/themes/AppleVisionTheme"));
+const BlueprintTheme = lazy(() => import("../components/themes/BlueprintTheme"));
+const Cyberpunk2077Theme = lazy(() => import("../components/themes/Cyberpunk2077Theme"));
+const AIAssistantTheme = lazy(() => import("../components/themes/AIAssistantTheme"));
+const Interactive3DTheme = lazy(() => import("../components/themes/Interactive3DTheme"));
+const TimelineJourneyTheme = lazy(() => import("../components/themes/TimelineJourneyTheme"));
+const DashboardPortfolioTheme = lazy(() => import("../components/themes/DashboardPortfolioTheme"));
+const SpaceExplorerTheme = lazy(() => import("../components/themes/SpaceExplorerTheme"));
+const InfiniteCanvasTheme = lazy(() => import("../components/themes/InfiniteCanvasTheme"));
+const StorybookTheme = lazy(() => import("../components/themes/StorybookTheme"));
+const SpotifyWrappedTheme = lazy(() => import("../components/themes/SpotifyWrappedTheme"));
+const NetflixPortfolioTheme = lazy(() => import("../components/themes/NetflixPortfolioTheme"));
+const GoogleMapsPortfolioTheme = lazy(() => import("../components/themes/GoogleMapsPortfolioTheme"));
+const ComicBookTheme = lazy(() => import("../components/themes/ComicBookTheme"));
+const TerminalOSTheme = lazy(() => import("../components/themes/TerminalOSTheme"));
+const NewspaperTheme = lazy(() => import("../components/themes/NewspaperTheme"));
+const MuseumTheme = lazy(() => import("../components/themes/MuseumTheme"));
+const HackerMatrixTheme = lazy(() => import("../components/themes/HackerMatrixTheme"));
+
+const ScrapbookTheme = lazy(() => import("../components/themes/ScrapbookTheme"));
+const Y2KAestheticTheme = lazy(() => import("../components/themes/Y2KAestheticTheme"));
+const ProductShowcaseTheme = lazy(() => import("../components/themes/ProductShowcaseTheme"));
 
 const THEME_REGISTRY = {
   aurora: {
     id: "aurora",
     name: "Aurora",
-    persona: "Creative generalist",
-    description: "Glassmorphism, animated gradient mesh, dreamy layers",
-    colors: { bg: "#0D0D1A", accent: "#A78BFA", text: "#E8E8FF" },
-    tags: ["Creative", "Visual", "Artistic"],
+    persona: "Ethereal / creative generalist",
+    description: "Luminous atmosphere, delicate serif type, complete project stories and pausable motion",
+    colors: { bg: "#101525", accent: "#C1B0F0", text: "#EDF0FA" },
+    tags: ["Ethereal", "Creative", "Visual", "Artistic"],
     component: AuroraTheme,
     preview: {
-      bg: "linear-gradient(135deg, #0D0D1A 0%, #1A0D2E 50%, #0D1A2E 100%)",
-      accent: "#A78BFA",
+      bg: "#101525",
+      accent: "#C1B0F0",
     },
   },
   minimalist: {
     id: "minimalist",
     name: "Minimalist",
-    persona: "Senior developer / PM",
-    description: "Extreme whitespace, Swiss typography, pure clarity",
-    colors: { bg: "#FAFAFA", accent: "#111111", text: "#111111" },
-    tags: ["Clean", "Professional", "Focused"],
+    persona: "Swiss Design / precise typography",
+    description: "Swiss typographic grids, confident hierarchy, purposeful rules and responsive project layouts",
+    colors: { bg: "#F7F6F2", accent: "#B33B28", text: "#20211F" },
+    tags: ["Swiss Design", "Clean", "Professional", "Focused"],
     component: MinimalistTheme,
     preview: {
-      bg: "#FAFAFA",
-      accent: "#111111",
+      bg: "#F7F6F2",
+      accent: "#B33B28",
     },
   },
   editorial: {
     id: "editorial",
     name: "Editorial",
     persona: "Designer / writer",
-    description: "Magazine layout, asymmetric grid, bold serif headlines",
-    colors: { bg: "#F5F0E8", accent: "#C84B31", text: "#1A1A1A" },
+    description: "Magazine cover, asymmetric lead story, complete project index and grounded case studies",
+    colors: { bg: "#F5F0E8", accent: "#A13825", text: "#25211E" },
     tags: ["Design", "Editorial", "Print"],
     component: EditorialTheme,
     preview: {
       bg: "#F5F0E8",
-      accent: "#C84B31",
+      accent: "#A13825",
     },
   },
   "neon-terminal": {
     id: "neon-terminal",
     name: "Neon Terminal",
     persona: "Developer / hacker",
-    description: "Code editor aesthetic, syntax highlighting, CLI vibes",
-    colors: { bg: "#0C0C0C", accent: "#00FF41", text: "#00FF41" },
+    description: "Readable code-editor workspace, functional file navigation and card/compact project views",
+    colors: { bg: "#101518", accent: "#70ECAB", text: "#E0E9E4" },
     tags: ["Developer", "Terminal", "Hacker"],
     component: NeonTerminalTheme,
     preview: {
-      bg: "#0C0C0C",
-      accent: "#00FF41",
+      bg: "#101518",
+      accent: "#70ECAB",
     },
   },
   brutalist: {
     id: "brutalist",
     name: "Brutalist",
     persona: "Bold creative / artist",
-    description: "Raw, high-contrast, oversized type, deliberate anti-design",
-    colors: { bg: "#F5F5F5", accent: "#FF0000", text: "#000000" },
-    tags: ["Bold", "Creative", "Provocative"],
+    description: "Oversized ink typography, outlines, hard shadows and curated Neo-brutalist palettes",
+    colors: { bg: "#F5F5F0", accent: "#C53924", text: "#191916" },
+    tags: ["Neo-brutalism", "Bold", "Creative", "Provocative"],
+    palettes: [
+      { name: "Raw red", bg: "#F5F5F0", text: "#191916", accent: "#C53924" },
+      { name: "Neo-brutalism", bg: "#F7DE4F", text: "#191916", accent: "#5B2C8E" },
+      { name: "Neo lilac", bg: "#DED5F1", text: "#231C2E", accent: "#9B2F28" },
+    ],
     component: BrutalistTheme,
     preview: {
-      bg: "#F5F5F5",
-      accent: "#FF2D00",
+      bg: "#F5F5F0",
+      accent: "#C53924",
     },
   },
   neumorphic: {
     id: "neumorphic",
     name: "Neumorphic",
     persona: "Product / UI designer",
-    description: "Soft shadows, embossed surfaces, tactile depth",
-    colors: { bg: "#E8EAF0", accent: "#6366F1", text: "#2D2F36" },
+    description: "Palette-aware embossed surfaces, readable contrast and tactile project cards",
+    colors: { bg: "#E8ECED", accent: "#4659A8", text: "#263339" },
     tags: ["Design", "Soft UI", "Tactile"],
     component: NeumorphicTheme,
     preview: {
-      bg: "#E8EAF0",
-      accent: "#6366F1",
+      bg: "#E8ECED",
+      accent: "#4659A8",
     },
   },
   kinetic: {
     id: "kinetic",
     name: "Kinetic",
     persona: "Motion designer / frontend",
-    description: "Bold color blocks, scroll-driven reveals, magnetic energy",
-    colors: { bg: "#050505", accent: "#FFE500", text: "#FFFFFF" },
+    description: "Expressive Signature Studio typography, framed imagery and working gallery/index project views",
+    colors: { bg: "#F3EDE3", accent: "#AD3820", text: "#24221E" },
     tags: ["Motion", "Energy", "Frontend"],
+    palettes: [{ name: "Electric studio", bg: "#171717", text: "#FAF6EB", accent: "#FFE500" }],
     component: KineticTheme,
     preview: {
-      bg: "#050505",
-      accent: "#FFE500",
+      bg: "#F3EDE3",
+      accent: "#AD3820",
     },
   },
   executive: {
     id: "executive",
     name: "Executive",
     persona: "Consultant / business",
-    description: "Navy + gold, corporate gravitas, structured layout",
-    colors: { bg: "#0A1628", accent: "#C9A84C", text: "#E8EAF0" },
+    description: "Considered business typography, complete project evidence and a responsive career ledger",
+    colors: { bg: "#F5F3EE", accent: "#795A28", text: "#192D3E" },
     tags: ["Business", "Formal", "Professional"],
+    palettes: [{ name: "Navy dossier", bg: "#122335", text: "#F2F0E8", accent: "#D4B16F" }],
     component: ExecutiveTheme,
     preview: {
-      bg: "#0A1628",
-      accent: "#C9A84C",
+      bg: "#F5F3EE",
+      accent: "#795A28",
     },
   },
   "retro-wave": {
     id: "retro-wave",
     name: "Retro Wave",
     persona: "Game dev / creative coder",
-    description: "80s synthwave, neon grid, chrome text, perspective grid",
-    colors: { bg: "#0A001F", accent: "#FF006E", text: "#FFFFFF" },
+    description: "Synthwave horizon, static perspective grid, readable liner notes and complete project stories",
+    colors: { bg: "#140D25", accent: "#FF93CF", text: "#F8ECFA" },
     tags: ["Retro", "Gaming", "80s"],
+    palettes: [{ name: "Night drive", bg: "#140D25", text: "#F8ECFA", accent: "#FF93CF" }, { name: "Daybreak", bg: "#F8EDF5", text: "#351B3F", accent: "#9E275F" }],
     component: RetroWaveTheme,
     preview: {
-      bg: "linear-gradient(180deg, #0A001F 0%, #1A0040 100%)",
-      accent: "#FF006E",
+      bg: "#140D25",
+      accent: "#FF93CF",
     },
   },
   organic: {
     id: "organic",
     name: "Organic",
     persona: "Photographer / wellness",
-    description: "Earthy tones, soft curves, big imagery, natural flow",
-    colors: { bg: "#F5F0E8", accent: "#6B7C5E", text: "#2C2416" },
+    description: "Natural paper texture, expressive portrait framing and image-led responsive projects",
+    colors: { bg: "#F1EEE4", accent: "#526342", text: "#303D2F" },
     tags: ["Nature", "Wellness", "Photography"],
+    palettes: [{ name: "Forest", bg: "#202E24", text: "#EDF0E3", accent: "#B5C69C" }],
     component: OrganicTheme,
     preview: {
-      bg: "#F5F0E8",
-      accent: "#6B7C5E",
+      bg: "#F1EEE4",
+      accent: "#526342",
     },
   },
   bento: {
     id: "bento",
     name: "Bento Grid",
     persona: "Modern SaaS / startup dev",
-    description: "Apple-style modular bento boxes, micro-interactions",
-    colors: { bg: "#000000", accent: "#2997FF", text: "#FFFFFF" },
+    description: "Content-sized modular tiles, every optional section and an accessible View all project collection",
+    colors: { bg: "#F0F2F5", accent: "#315DD2", text: "#202D3B" },
     tags: ["Modern", "SaaS", "Startup"],
+    palettes: [{ name: "Blue hour", bg: "#161E2C", text: "#EEF2FB", accent: "#98B9FF" }],
     component: BentoTheme,
     preview: {
-      bg: "#000000",
-      accent: "#2997FF",
+      bg: "#F0F2F5",
+      accent: "#315DD2",
     },
   },
   "dark-luxe": {
     id: "dark-luxe",
     name: "Dark Luxe",
-    persona: "Freelancer / agency",
-    description: "Deep black, gold accents, cinematic, premium feel",
-    colors: { bg: "#080808", accent: "#C9A84C", text: "#FFFFFF" },
-    tags: ["Luxury", "Cinematic", "Agency"],
+    persona: "Luxury typography / editorial",
+    description: "Warm dark surfaces, luxurious serif typography, substantial project imagery and complete credentials",
+    colors: { bg: "#141612", accent: "#DBC39A", text: "#F4EFDF" },
+    tags: ["Luxury Typography", "Editorial", "Elegant", "Dark"],
     component: DarkLuxeTheme,
     preview: {
       bg: "#080808",
@@ -426,6 +441,37 @@ const THEME_REGISTRY = {
       accent: "#00FF41",
     },
   },
+  scrapbook: {
+    id: "scrapbook",
+    name: "Scrapbook",
+    persona: "Personal storytelling / creative",
+    description: "Textured paper, photo mounts, handwritten details and unfolding project stories",
+    colors: { bg: "#EEE7DA", accent: "#7A3D2C", text: "#302B27" },
+    tags: ["Personal", "Creative", "Paper", "Warm"],
+    component: ScrapbookTheme,
+    preview: { bg: "#EEE7DA", accent: "#7A3D2C" },
+  },
+  "y2k-aesthetic": {
+    id: "y2k-aesthetic",
+    name: "Y2K Aesthetic",
+    persona: "Digital creative / playful",
+    description: "Chrome lettering, translucent browser windows, soft iridescence and tactile controls",
+    colors: { bg: "#E9EDF8", accent: "#464396", text: "#22283E" },
+    tags: ["Y2K", "Chrome", "Playful", "Digital"],
+    component: Y2KAestheticTheme,
+    preview: { bg: "linear-gradient(135deg, #E9EDF8, #DDD9EE)", accent: "#464396" },
+  },
+  "product-showcase": {
+    id: "product-showcase",
+    name: "Product Showcase",
+    persona: "Product designer / builder",
+    description: "Actual screenshots in device frames and clear case studies using your real project evidence",
+    colors: { bg: "#F4F5F0", accent: "#315E46", text: "#202A27" },
+    tags: ["Product", "Case Study", "Professional", "Clean"],
+    component: ProductShowcaseTheme,
+    preview: { bg: "#F4F5F0", accent: "#315E46" },
+  },
+
 };
 
 export const THEME_GROUPS = {
@@ -436,16 +482,16 @@ export const THEME_GROUPS = {
     "interactive-3d", "timeline-journey", "dashboard-portfolio", "space-explorer",
     "infinite-canvas", "storybook", "spotify-wrapped", "netflix-portfolio",
     "google-maps-portfolio", "comic-book", "terminal-os", "newspaper",
-    "museum", "hacker-matrix"
+    "museum", "hacker-matrix", "scrapbook", "y2k-aesthetic", "product-showcase"
   ],
-  "Minimal": ["minimalist", "organic"],
-  "Bold": ["brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book"],
-  "Creative": ["aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook"],
-  "Professional": ["executive", "neumorphic", "bento", "apple-vision", "blueprint", "dashboard-portfolio"],
+  "Minimal": ["minimalist", "organic", "product-showcase"],
+  "Bold": ["brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book", "y2k-aesthetic"],
+  "Creative": ["aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook", "scrapbook", "y2k-aesthetic"],
+  "Professional": ["executive", "neumorphic", "bento", "apple-vision", "blueprint", "dashboard-portfolio", "product-showcase"],
   "Developer": ["neon-terminal", "terminal-os", "hacker-matrix", "ai-assistant", "timeline-journey"],
   "Social": ["spotify-wrapped", "netflix-portfolio", "google-maps-portfolio", "newspaper", "museum"],
 };
 
-export const getTheme = (id) => THEME_REGISTRY[id] || THEME_REGISTRY["minimalist"];
+export const getTheme = (id) => Object.prototype.hasOwnProperty.call(THEME_REGISTRY, id) ? THEME_REGISTRY[id] : THEME_REGISTRY["minimalist"];
 export const getAllThemes = () => Object.values(THEME_REGISTRY);
 export default THEME_REGISTRY;

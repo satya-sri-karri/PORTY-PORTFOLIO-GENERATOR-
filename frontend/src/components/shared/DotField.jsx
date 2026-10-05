@@ -36,9 +36,12 @@ const DotField = memo(({
     const canvas = canvasRef.current;
     const glowEl = glowRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d', { alpha: true });
+    let ctx;
+    try { ctx = canvas.getContext('2d', { alpha: true }); } catch { return; }
+    if (!ctx) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let resizeTimer;
+    let stopped = false;
 
     function doResize() {
       const rect = canvas.parentElement.getBoundingClientRect();
@@ -47,8 +50,6 @@ const DotField = memo(({
 
       canvas.width = w * dpr;
       canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       sizeRef.current = {
@@ -58,6 +59,7 @@ const DotField = memo(({
       };
 
       buildDots(w, h);
+      if (motion.matches && !document.hidden) tick();
     }
 
     function buildDots(w, h) {
@@ -81,6 +83,7 @@ const DotField = memo(({
     }
 
     function onMouseMove(e) {
+      if (motion.matches) return;
       const s = sizeRef.current;
       mouseRef.current.x = e.pageX - s.offsetX;
       mouseRef.current.y = e.pageY - s.offsetY;
@@ -101,6 +104,7 @@ const DotField = memo(({
     let frameCount = 0;
 
     function tick() {
+      if (stopped) return;
       frameCount++;
       const dots = dotsRef.current;
       const m = mouseRef.current;
@@ -194,15 +198,28 @@ const DotField = memo(({
 
       ctx.fill();
 
-      rafRef.current = requestAnimationFrame(tick);
+      rafRef.current = null;
+      if (!motion.matches && !document.hidden) rafRef.current = requestAnimationFrame(tick);
     }
 
     doResize();
     const ro = new ResizeObserver(() => { doResize(); });
     ro.observe(canvas.parentElement);
 
+    const onVisibility = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      if (!document.hidden) tick();
+    };
+    const onMotion = () => {
+      mouseRef.current.x = mouseRef.current.y = -9999;
+      engagement.current = glowOpacity.current = 0;
+      onVisibility();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    motion.addEventListener('change', onMotion);
     window.addEventListener('mousemove', onMouseMove, { passive: true });
-    rafRef.current = requestAnimationFrame(tick);
+    tick();
 
     rebuildRef.current = () => {
       const { w, h } = sizeRef.current;
@@ -210,6 +227,9 @@ const DotField = memo(({
     };
 
     return () => {
+      stopped = true;
+      document.removeEventListener('visibilitychange', onVisibility);
+      motion.removeEventListener('change', onMotion);
       ro.disconnect();
       cancelAnimationFrame(rafRef.current);
       clearInterval(speedInterval);
@@ -222,7 +242,7 @@ const DotField = memo(({
   }, [dotRadius, dotSpacing]);
 
   return (
-    <div className="dot-field-container" {...rest}>
+    <div aria-hidden="true" className="dot-field-container" {...rest}>
       <canvas
         ref={canvasRef}
         style={{

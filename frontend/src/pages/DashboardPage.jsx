@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -61,31 +61,47 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [retry, setRetry] = useState(0);
 
+  const refresh = useCallback(() => setRetry(n => n + 1), []);
   useEffect(() => {
+    let active = true;
+    setLoading(true); setLoadError("");
     getMyPortfolios(token)
-      .then(res => setPortfolios(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [token]);
+      .then(res => { if (active) setPortfolios(res.data); })
+      .catch(e => { if (active) setLoadError(e.message || "Could not load your portfolios."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [token, retry]);
 
-  const copyLink = (slug, id) => {
-    navigator.clipboard.writeText(`${window.location.origin}/p/${slug}`);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const copyLink = async (slug, id) => {
+    setActionError(""); setCopiedId(null);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/p/${slug}`);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch { setActionError("Could not copy the link. Select and copy the address shown on the portfolio card."); }
   };
 
   const handleDelete = async id => {
     if (!window.confirm("Delete this portfolio? This cannot be undone.")) return;
-    setDeletingId(id);
+    setDeletingId(id); setActionError("");
     try {
       await deletePortfolio(id, token);
       setPortfolios(prev => prev.filter(p => p._id !== id));
-    } catch { alert("Failed to delete."); }
+    } catch (e) { setActionError(e.message || "Could not delete this portfolio. Try again."); }
     finally { setDeletingId(null); }
   };
 
   if (loading) return <SkeletonDashboard />;
+  if (loadError) return <main className="container" style={{ paddingTop: 48 }}>
+    <h1>Your portfolios could not be loaded</h1>
+    <div className="alert alert-error" role="alert">{loadError}</div>
+    <button className="btn btn-primary" onClick={refresh}>Retry</button>
+    {loadError.includes("session") && <Link to="/login" state={{ from: { pathname: "/dashboard" } }} className="btn btn-secondary">Sign in again</Link>}
+  </main>;
 
   const totalViews = portfolios.reduce((a, p) => a + (p.views || 0), 0);
 
@@ -108,10 +124,12 @@ const DashboardPage = () => {
           <p style={{ margin: "4px 0 0" }}>Manage and share your portfolios</p>
         </div>
 
+        {actionError && <div className="alert alert-error" role="alert">{actionError}</div>}
+        <p className="form-hint">Page views count public page loads, including repeat visits.</p>
         <div className="stat-cards">
           {[
             { label: "Portfolios", value: portfolios.length, icon: "◈" },
-            { label: "Total Views", value: totalViews, icon: "👁" },
+            { label: "Page views", value: totalViews, icon: "👁" },
             { label: "Public", value: portfolios.filter(p => p.isPublic).length, icon: "🌐" },
           ].map(s => (
             <div key={s.label} className="stat-card glass" style={{ borderRadius: 16 }}>
@@ -159,9 +177,10 @@ const DashboardPage = () => {
                   </div>
 
                   <div className="portfolio-card-url" style={{ borderRadius: 10 }}>
-                    <span>{shareUrl}</span>
+                    <span style={{ overflowWrap: "anywhere" }}>{p.isPublic ? shareUrl : "Private — only you can preview this portfolio"}</span>
                     <button
                       className="btn btn-sm"
+                      disabled={!p.isPublic}
                       onClick={() => copyLink(p.shareSlug, p._id)}
                       style={{ background: copiedId === p._id ? "#22C55E" : "var(--glass-bg)", color: copiedId === p._id ? "#fff" : "var(--text-secondary)", border: "none", padding: "4px 10px", fontSize: 11, borderRadius: 6, flexShrink: 0, fontWeight: 500 }}
                     >
@@ -172,14 +191,15 @@ const DashboardPage = () => {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <span className="portfolio-card-views">👁 {p.views || 0} views</span>
                     <span className="portfolio-card-date">
-                      {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      {new Date(p.updatedAt || p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </span>
                   </div>
 
+                  <p className="form-hint">{p.isPublic ? "Public · Saving changes updates the live portfolio" : "Private · Sharing is disabled"}</p>
                   <div className="portfolio-card-actions">
-                    <a href={`/p/${p.shareSlug}`} target="_blank" rel="noopener noreferrer" className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>View</a>
+                    <Link to={`/preview/${p._id}`} className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>Preview</Link>
                     <Link to={`/builder/${p._id}`} className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>Edit</Link>
-                    <button className="btn" onClick={() => handleDelete(p._id)} disabled={deletingId === p._id} style={{ flex: "0 0 36px", background: "rgba(239,68,68,0.1)", color: "#EF4444", padding: "6px 0", borderRadius: 6 }}>
+                    <button className="btn" aria-label={`Delete ${p.name}`} onClick={() => handleDelete(p._id)} disabled={deletingId === p._id} style={{ flex: "0 0 36px", background: "rgba(239,68,68,0.1)", color: "#EF4444", padding: "6px 0", borderRadius: 6 }}>
                       {deletingId === p._id ? "..." : "🗑"}
                     </button>
                   </div>

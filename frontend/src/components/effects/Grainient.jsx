@@ -136,22 +136,69 @@ const Grainient = ({
     const container = containerRef.current;
     if (!container) return;
 
-    const renderer = new Renderer({
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Static gradients remain visible if graphics or motion are unavailable.
+    if (motion.matches) return;
+    let renderer, gl, canvas, geometry, program, ro, io;
+    let raf = 0;
+    let failed = false;
+    let disposed = false;
+    let isVisible = true;
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+    const dispose = () => {
+      if (disposed) return;
+      disposed = true;
+      stop();
+      ro?.disconnect(); io?.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      motion.removeEventListener('change', onMotion);
+      canvas?.removeEventListener('webglcontextlost', onContextLost);
+      ctxMap.delete(container);
+      canvas?.remove();
+      try {
+        if (gl && !gl.isContextLost()) {
+          if (program) gl.deleteProgram(program.program);
+          if (geometry) Object.values(geometry.attributes).forEach(a => gl.deleteBuffer(a.buffer));
+          gl.getExtension('WEBGL_lose_context')?.loseContext();
+        }
+      } catch { /* Disposal must never interrupt navigation. */ }
+    };
+    const fail = () => { failed = true; dispose(); };
+    const onContextLost = event => { event.preventDefault(); fail(); };
+    let render;
+    const loop = t => {
+      raf = 0;
+      if (failed || document.hidden || motion.matches || !isVisible) return;
+      try {
+        program.uniforms.iTime.value = (t - t0) * 0.001;
+        render();
+        raf = requestAnimationFrame(loop);
+      } catch { fail(); }
+    };
+    const start = () => {
+      if (!failed && !document.hidden && !motion.matches && isVisible && !raf) raf = requestAnimationFrame(loop);
+    };
+    const onVisibility = () => { document.hidden ? stop() : start(); };
+    const onMotion = () => { motion.matches ? stop() : start(); };
+    const t0 = performance.now();
+    try {
+    renderer = new Renderer({
       webgl: 2,
       alpha: true,
       antialias: false,
       dpr: Math.min(window.devicePixelRatio || 1, 2)
     });
 
-    const gl = renderer.gl;
-    const canvas = gl.canvas;
+    gl = renderer.gl;
+    if (!gl) throw new Error("Graphics unavailable");
+    canvas = gl.canvas;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.style.display = 'block';
     container.appendChild(canvas);
 
-    const geometry = new Triangle(gl);
-    const program = new Program(gl, {
+    geometry = new Triangle(gl);
+    program = new Program(gl, {
       vertex,
       fragment,
       uniforms: {
@@ -181,64 +228,32 @@ const Grainient = ({
       }
     });
 
-    const mesh = new Mesh(gl, { geometry, program });
-    ctxMap.set(container, { renderer, program, mesh });
 
-    const setSize = () => {
-      const rect = container.getBoundingClientRect();
-      const w = Math.max(1, Math.floor(rect.width));
-      const h = Math.max(1, Math.floor(rect.height));
-      renderer.setSize(w, h);
-      const res = program.uniforms.iResolution.value;
-      res[0] = gl.drawingBufferWidth;
-      res[1] = gl.drawingBufferHeight;
-      renderer.render({ scene: mesh });
-    };
-
-    const ro = new ResizeObserver(setSize);
-    ro.observe(container);
-    setSize();
-
-    let raf = 0;
-    let isVisible = true;
-    let isPageVisible = !document.hidden;
-    const t0 = performance.now();
-
-    const loop = t => {
-      program.uniforms.iTime.value = (t - t0) * 0.001;
-      renderer.render({ scene: mesh });
-      raf = requestAnimationFrame(loop);
-    };
-
-    const tryStart = () => {
-      if (isVisible && isPageVisible && raf === 0) raf = requestAnimationFrame(loop);
-    };
-    const tryStop = () => {
-      if (raf !== 0) { cancelAnimationFrame(raf); raf = 0; }
-    };
-
-    const io = new IntersectionObserver(
-      ([entry]) => { isVisible = entry.isIntersecting; isVisible ? tryStart() : tryStop(); },
-      { threshold: 0 }
-    );
-    io.observe(container);
-
-    const onVisibility = () => {
-      isPageVisible = !document.hidden;
-      isPageVisible ? tryStart() : tryStop();
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-
-    tryStart();
-
-    return () => {
-      tryStop();
-      ro.disconnect();
-      io.disconnect();
-      document.removeEventListener('visibilitychange', onVisibility);
-      ctxMap.delete(container);
-      try { container.removeChild(canvas); } catch { /* ignore */ }
-    };
+      const mesh = new Mesh(gl, { geometry, program });
+      ctxMap.set(container, { renderer, program, mesh });
+      render = () => renderer.render({ scene: mesh });
+      const setSize = () => {
+        if (failed) return;
+        try {
+          const rect = container.getBoundingClientRect();
+          renderer.setSize(Math.max(1, Math.floor(rect.width)), Math.max(1, Math.floor(rect.height)));
+          program.uniforms.iResolution.value.set([gl.drawingBufferWidth, gl.drawingBufferHeight]);
+          render();
+        } catch { fail(); }
+      };
+      canvas.addEventListener('webglcontextlost', onContextLost);
+      ro = new ResizeObserver(setSize);
+      ro.observe(container);
+      io = new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        isVisible ? start() : stop();
+      });
+      io.observe(container);
+      document.addEventListener('visibilitychange', onVisibility);
+      motion.addEventListener('change', onMotion);
+      setSize(); start();
+    } catch { fail(); }
+    return dispose;
   }, []); // renderer created once
 
   // Effect 2: sync props to uniforms — zero GPU cost, no teardown
@@ -279,7 +294,7 @@ const Grainient = ({
   ]);
 
 
-  return <div ref={containerRef} className={`grainient-container ${className}`.trim()} />;
+  return <div aria-hidden="true" style={{ background: `radial-gradient(ellipse at 20% 20%, ${color2}, transparent 65%), linear-gradient(135deg, #1c1029, #29204d 55%, #3d244a)` }} ref={containerRef} className={`grainient-container ${className}`.trim()} />;
 };
 
 export default Grainient;
