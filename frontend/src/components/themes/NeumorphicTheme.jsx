@@ -193,7 +193,7 @@ const NeumorphicTheme = ({ data }) => {
         <div id="contact" style={{ ...out({ textAlign: "center", padding: 56 }) }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: ACCENT, marginBottom: 16 }}>Get In Touch</div>
           <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)", fontWeight: 800, letterSpacing: "-0.03em", color: TEXT, marginBottom: 12 }}>Let's work together</h2>
-          <p style={{ fontSize: 15, color: MUTED, marginBottom: 36, fontWeight: 300 }}>Open to new opportunities and collaborations</p>
+          <p style={{ fontSize: 15, color: MUTED, marginBottom: 36, fontWeight: 300 }}>Get in touch to start a conversation</p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             {contact?.email && <a href={`mailto:${contact.email}`} className="neu-btn" style={{ padding: "14px 32px", borderRadius: 16, background: ACCENT, color: "#fff", fontSize: 14, fontWeight: 700, textDecoration: "none", boxShadow: `8px 8px 20px ${ACCENT}40, -4px -4px 12px #fff`, transition: "all 0.25s" }}>✉ {contact.email}</a>}
             {contact?.phone && <a href={`tel:${contact.phone}`} className="neu-btn" style={{ ...out({ padding: "14px 32px", borderRadius: 16, color: MUTED, fontSize: 14, fontWeight: 600, textDecoration: "none", transition: "all 0.25s" }) }}>📞 {contact.phone}</a>}

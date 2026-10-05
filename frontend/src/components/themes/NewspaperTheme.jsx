@@ -185,7 +185,7 @@ const NewspaperTheme = ({ data }) => {
           <div style={{ fontSize: 9, color: GRAY, textTransform: "uppercase", letterSpacing: "0.15em", fontFamily: "'Inter', sans-serif", marginBottom: 4 }}>Classified Advertisements</div>
           <h3 style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", fontFamily: "'Inter', sans-serif", marginBottom: 8 }}>Contact and Correspondence</h3>
           <p style={{ fontSize: 12, fontStyle: "italic", color: GRAY, marginBottom: 16, fontFamily: "'Georgia', serif" }}>
-            Currently open to new opportunities, collaborations, and commissions. Inquiries welcome.
+            Contact links and inquiries.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
             {contact?.email && (

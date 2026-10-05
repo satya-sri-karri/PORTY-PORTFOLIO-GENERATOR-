@@ -85,22 +85,11 @@ const KineticTheme = ({ data }) => {
               <span style={{ width: 20, height: 3, background: YELLOW }} />
               SKILLS
             </div>
-            <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: 36, color: "#fff" }}>Technical <span style={{ color: YELLOW }}>Proficiency</span></h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {skills.map((s, i) => {
-                const pct = Math.max(40, Math.min(100, 60 + (i * 7) % 40));
-                return (
-                  <div key={i}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{s}</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: YELLOW }}>{pct}%</span>
-                    </div>
-                    <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: YELLOW, borderRadius: 3, transition: "width 1s ease-out", animation: "progressPulse 1.5s ease-out" }} />
-                    </div>
-                  </div>
-                );
-              })}
+            <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)", fontWeight: 800, lineHeight: 1.1, marginBottom: 36, color: "#fff" }}>Technical <span style={{ color: YELLOW }}>Skills</span></h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+              {skills.map((s, i) => (
+                <span key={i} style={{ padding: "10px 16px", border: `1px solid ${YELLOW}40`, borderRadius: 6, color: YELLOW, fontWeight: 600 }}>{typeof s === "string" ? s : s.name || ""}</span>
+              ))}
             </div>
           </div>
         </div>

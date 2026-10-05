@@ -235,7 +235,7 @@ const OrganicTheme = ({ data }) => {
 
       <div id="contact" style={s.contact}>
         <h2 style={s.contactH2}>Let's <span style={{ color: SAGE }}>grow</span> together.</h2>
-        <p style={{ fontSize: 15, color: DUSTY, marginBottom: 36, lineHeight: 1.7, fontFamily: "'Inter', sans-serif" }}>Open to collaborations rooted in purpose.</p>
+        <p style={{ fontSize: 15, color: DUSTY, marginBottom: 36, lineHeight: 1.7, fontFamily: "'Inter', sans-serif" }}>Let’s start a conversation.</p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
           {contact?.email && <a href={`mailto:${contact.email}`} style={s.primaryBtn}>{contact.email}</a>}
           {socialLinks?.linkedin && <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" style={s.ghostBtn}>LinkedIn</a>}

@@ -24,44 +24,48 @@ const HackerMatrixTheme = ({ data }) => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    const chars = "??????????????????????????????????????????????0123456789ABCDEF";
+    let ctx;
+    try { ctx = canvas?.getContext("2d"); } catch { return; }
+    if (!ctx) return;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const fontSize = 14;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
-    let animId;
-
+    let drops = [], frame = 0, failed = false;
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drops = Array(Math.ceil(canvas.width / fontSize)).fill(1);
+    };
     const draw = () => {
-      ctx.fillStyle = "rgba(0,0,0,0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = GREEN;
-      ctx.font = `${fontSize}px monospace`;
+      ctx.fillStyle = BG;
+      ctx.globalAlpha = 0.08; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = 0.65; ctx.fillStyle = GREEN; ctx.font = `${fontSize}px monospace`;
       for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        const x = i * fontSize;
         const y = drops[i] * fontSize;
-        const alpha = Math.random() * 0.5 + 0.5;
-        ctx.fillStyle = `rgba(0,255,65,${alpha})`;
-        ctx.fillText(char, x, y);
+        ctx.fillText("0123456789ABCDEF"[Math.floor(Math.random() * 16)], i * fontSize, y);
         if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
-      animId = requestAnimationFrame(draw);
+      ctx.globalAlpha = 1;
     };
-    draw();
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    const loop = () => {
+      frame = 0;
+      if (document.hidden || motion.matches || data.staticPreview || failed) return;
+      try { draw(); frame = requestAnimationFrame(loop); } catch { failed = true; }
     };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", handleResize);
+    const sync = () => {
+      cancelAnimationFrame(frame); frame = 0;
+      if (failed) return;
+      if (motion.matches || data.staticPreview) {
+        try { resize(); for (let i = 0; i < 12; i++) draw(); } catch { failed = true; }
+      } else loop();
     };
-  }, []);
+    const onResize = () => { resize(); sync(); };
+    resize(); sync();
+    window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", sync);
+    motion.addEventListener("change", sync);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("resize", onResize); document.removeEventListener("visibilitychange", sync); motion.removeEventListener("change", sync); };
+  }, [BG, GREEN, data.staticPreview]);
 
   useEffect(() => {
     const s = document.createElement("style");

@@ -61,7 +61,7 @@ const BrutalistTheme = ({ data }) => {
       <div style={{ padding: "60px 32px", borderBottom: BORDER, display: "grid", gridTemplateColumns: avatarUrl ? "1fr auto" : "1fr", gap: 40, alignItems: "end" }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "0.25em", textTransform: "uppercase", color: "#AAA", marginBottom: 16, borderLeft: `6px solid ${RED}`, paddingLeft: 14 }}>
-            AVAILABLE FOR WORK
+            MY PORTFOLIO
           </div>
           <h1 style={{ fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 900, lineHeight: 0.82, letterSpacing: "-0.06em", textTransform: "uppercase", marginBottom: 28, wordBreak: "break-word" }}>
             {name.split(" ").map((word, i) => (

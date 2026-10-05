@@ -48,7 +48,6 @@ const ExecutiveTheme = ({ data }) => {
     skillBar: { display: "flex", alignItems: "center", gap: 16 },
     skillName: { fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.7)", minWidth: 140 },
     barTrack: { flex: 1, height: 3, background: "rgba(255,255,255,0.06)", borderRadius: 2 },
-    barFill: (pct) => ({ height: "100%", width: `${pct}%`, background: GOLD, borderRadius: 2 }),
     skillPct: { fontSize: 11, color: GOLD, fontFamily: "monospace", fontWeight: 600, minWidth: 36, textAlign: "right" },
     projectGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 },
     projectCard: { background: CARD_BG, border: `1px solid ${GOLD}15`, borderRadius: 8, padding: 24, position: "relative", overflow: "hidden", transition: "border-color 0.2s" },
@@ -115,18 +114,9 @@ const ExecutiveTheme = ({ data }) => {
           </div>
           <h2 style={s.h2}>Core Expertise</h2>
           <div style={s.skillsRow}>
-            {skills.map((sk, i) => {
-              const pct = Math.max(55, Math.min(100, 65 + (i * 5) % 35));
-              return (
-                <div key={i} style={s.skillBar}>
-                  <span style={s.skillName}>{sk}</span>
-                  <div style={s.barTrack}>
-                    <div style={s.barFill(pct)} />
-                  </div>
-                  <span style={s.skillPct}>{pct}%</span>
-                </div>
-              );
-            })}
+            {skills.map((sk, i) => (
+                <span key={i} style={{ padding: "10px 16px", border: `1px solid ${GOLD}40`, borderRadius: 4, color: GOLD, fontWeight: 500 }}>{typeof sk === "string" ? sk : sk.name || ""}</span>
+              ))}
           </div>
         </div>
       )}
@@ -253,7 +243,7 @@ const ExecutiveTheme = ({ data }) => {
 
       <div id="contact" style={s.contact}>
         <h2 style={s.contactH2}>Let's discuss <span style={{ color: GOLD, fontWeight: 600 }}>partnerships.</span></h2>
-        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 36, fontWeight: 300 }}>Open to executive roles and strategic collaborations.</p>
+        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginBottom: 36, fontWeight: 300 }}>Contact me to discuss your ideas.</p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
           {contact?.email && <a href={`mailto:${contact.email}`} style={s.primaryBtn}>{contact.email}</a>}
           {socialLinks?.linkedin && <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" style={{ ...s.primaryBtn, borderColor: "rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)" }}>LinkedIn</a>}

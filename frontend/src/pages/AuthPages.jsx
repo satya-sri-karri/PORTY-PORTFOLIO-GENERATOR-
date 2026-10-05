@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { sendOTP, verifyOTP, loginUser } from "../utils/api";
 import Grainient from "../components/effects/Grainient";
@@ -14,6 +14,7 @@ const inputGlassStyle = {
 export const RegisterPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -41,7 +42,8 @@ export const RegisterPage = () => {
     try {
       const res = await verifyOTP(email.trim(), otp.trim(), name.trim() || undefined, password);
       login(res.token, res.user);
-      navigate("/dashboard");
+      const from = location.state?.from;
+      navigate(from?.pathname ? `${from.pathname}${from.search || ""}` : "/dashboard", { replace: true });
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   };
@@ -118,6 +120,7 @@ export const RegisterPage = () => {
 export const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -130,7 +133,8 @@ export const LoginPage = () => {
     try {
       const res = await loginUser(email.trim(), password);
       login(res.token, res.user);
-      navigate("/dashboard");
+      const from = location.state?.from;
+      navigate(from?.pathname ? `${from.pathname}${from.search || ""}` : "/dashboard", { replace: true });
     } catch (err) { setError(err.message); }
     finally { setLoading(false); }
   };

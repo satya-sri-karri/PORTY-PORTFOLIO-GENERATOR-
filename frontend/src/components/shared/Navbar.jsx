@@ -32,7 +32,7 @@ const Navbar = () => {
               Dashboard
             </Link>
             <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
-              + New Portfolio
+              <span className="navbar-new-long">+ New Portfolio</span><span className="navbar-new-short">+ New</span>
             </Link>
             <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
               Sign out

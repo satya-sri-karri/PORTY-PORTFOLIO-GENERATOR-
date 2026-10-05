@@ -38,7 +38,6 @@ const DashboardPortfolioTheme = ({ data }) => {
   const section = { display: "flex", alignItems: "center", gap: 8, marginBottom: 20 };
   const tagPill = { fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: ACCENT, background: "rgba(88,166,255,0.1)", padding: "3px 10px", borderRadius: 4 };
 
-  const maxSkill = Math.max(...(skills?.map(s => s.proficiency || 80) || [80]));
 
   return (
     <div style={{ minHeight: "100vh", background: BG, fontFamily: "'Space Grotesk', 'Inter', sans-serif", color: TEXT, paddingBottom: 60 }}>
@@ -82,19 +81,10 @@ const DashboardPortfolioTheme = ({ data }) => {
         {skills?.length > 0 && (
           <div style={{ marginBottom: 48, animation: "dash-fadeIn 0.5s ease" }}>
             <div style={section}><span style={tagPill}>SKILLS</span><span style={{ fontSize: 12, color: MUTED }}>— {skills.length} technologies</span></div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {skills.map((s, i) => {
-                const pct = Math.round(((s.proficiency || 80) / maxSkill) * 100);
-                return (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: 13, minWidth: 140, color: TEXT }}>{typeof s === "string" ? s : s.name || s}</span>
-                    <div style={{ flex: 1, height: 8, background: CARD, borderRadius: 4, border: "1px solid " + BORDER, overflow: "hidden" }}>
-                      <div style={{ width: `${pct}%`, height: "100%", background: `linear-gradient(90deg,${ACCENT},${PURPLE})`, borderRadius: 4, transition: "width 0.5s" }} />
-                    </div>
-                    <span style={{ fontSize: 11, color: MUTED, minWidth: 30, textAlign: "right" }}>{pct}%</span>
-                  </div>
-                );
-              })}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {skills.map((s, i) => (
+                <span key={i} style={{ padding: "10px 16px", background: CARD, border: "1px solid " + BORDER, borderRadius: 6, color: TEXT }}>{typeof s === "string" ? s : s.name || ""}</span>
+              ))}
             </div>
           </div>
         )}
@@ -105,7 +95,6 @@ const DashboardPortfolioTheme = ({ data }) => {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 12 }}>
               {projects.map((p, i) => {
                 const statusColors = [GREEN, ORANGE, ACCENT, PURPLE];
-                const statusLabels = ["Active", "Beta", "Stable", "Archived"];
                 return (
                   <div key={i} style={{ background: CARD, border: "1px solid " + BORDER, borderRadius: 10, padding: 20, borderTop: "3px solid " + statusColors[i % 4] }}>
                     {p.image && (
@@ -113,7 +102,7 @@ const DashboardPortfolioTheme = ({ data }) => {
                     )}
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: statusColors[i % 4] }} />
-                      <span style={{ fontSize: 10, color: MUTED, fontFamily: "monospace" }}>{statusLabels[i % 4]}</span>
+                      <span style={{ fontSize: 10, color: MUTED, fontFamily: "monospace" }}>Project {i + 1}</span>
                     </div>
                     <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0, marginBottom: 8 }}>{p.title}</h3>
                     <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.6, marginBottom: 12 }}>{p.description}</p>
@@ -203,7 +192,7 @@ const DashboardPortfolioTheme = ({ data }) => {
 
         <div style={{ borderTop: "1px solid " + BORDER, paddingTop: 40, textAlign: "center", animation: "dash-fadeIn 0.5s ease" }}>
           <h2 style={{ fontSize: "clamp(1.8rem,4vw,2.5rem)", fontWeight: 800, marginBottom: 8 }}>README.md</h2>
-          <p style={{ fontSize: 14, color: MUTED, marginBottom: 28 }}>Open for opportunities and collaborations.</p>
+          <p style={{ fontSize: 14, color: MUTED, marginBottom: 28 }}>Contact me through the links below.</p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             {contact?.email && <a href={`mailto:${contact.email}`} style={{ padding: "10px 22px", background: GREEN, color: "#fff", borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>{contact.email}</a>}
             {contact?.phone && <a href={`tel:${contact.phone}`} style={{ padding: "10px 22px", border: "1px solid " + BORDER, color: MUTED, borderRadius: 8, fontSize: 14, textDecoration: "none" }}>{contact.phone}</a>}

@@ -249,7 +249,7 @@ const RetroWaveTheme = ({ data }) => {
             <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 900, lineHeight: 1.0, marginBottom: 16, background: `linear-gradient(135deg, ${PINK}, ${CYAN})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Let's connect.
             </h2>
-            <p style={{ fontSize: 15, color: "rgba(224,208,255,0.4)", marginBottom: 36 }}>Open to new networks and collaborations.</p>
+            <p style={{ fontSize: 15, color: "rgba(224,208,255,0.4)", marginBottom: 36 }}>Connect with me through the links below.</p>
             <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
               {contact?.email && <a href={`mailto:${contact.email}`} className="retro-btn" style={{ padding: "14px 32px", border: `1px solid ${PINK}`, borderRadius: 8, color: PINK, fontSize: 14, fontWeight: 700, textDecoration: "none", background: `${PINK}06`, boxShadow: `0 0 20px ${PINK}20`, transition: "all 0.3s" }}>✉ {contact.email}</a>}
               {socials.filter(s => s.label !== "Email").slice(0, 2).map(s => <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="retro-btn" style={{ padding: "14px 28px", border: `1px solid ${CYAN}30`, borderRadius: 8, color: CYAN, fontSize: 13, fontWeight: 600, textDecoration: "none", background: `${CYAN}06`, transition: "all 0.3s" }}>{s.label}</a>)}

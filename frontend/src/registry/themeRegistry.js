@@ -1,39 +1,44 @@
+import { lazy } from "react";
 /**
  * Theme Registry
  * Maps theme ID → { component, config, preview }
  * Every theme consumes the same `data` prop — pluggable architecture
  */
 
-import AuroraTheme           from "../components/themes/AuroraTheme";
-import MinimalistTheme       from "../components/themes/MinimalistTheme";
-import EditorialTheme        from "../components/themes/EditorialTheme";
-import NeonTerminalTheme     from "../components/themes/NeonTerminalTheme";
-import BrutalistTheme        from "../components/themes/BrutalistTheme";
-import NeumorphicTheme       from "../components/themes/NeumorphicTheme";
-import KineticTheme          from "../components/themes/KineticTheme";
-import ExecutiveTheme        from "../components/themes/ExecutiveTheme";
-import RetroWaveTheme        from "../components/themes/RetroWaveTheme";
-import OrganicTheme          from "../components/themes/OrganicTheme";
-import BentoTheme            from "../components/themes/BentoTheme";
-import DarkLuxeTheme         from "../components/themes/DarkLuxeTheme";
-import AppleVisionTheme      from "../components/themes/AppleVisionTheme";
-import BlueprintTheme        from "../components/themes/BlueprintTheme";
-import Cyberpunk2077Theme    from "../components/themes/Cyberpunk2077Theme";
-import AIAssistantTheme      from "../components/themes/AIAssistantTheme";
-import Interactive3DTheme    from "../components/themes/Interactive3DTheme";
-import TimelineJourneyTheme  from "../components/themes/TimelineJourneyTheme";
-import DashboardPortfolioTheme from "../components/themes/DashboardPortfolioTheme";
-import SpaceExplorerTheme    from "../components/themes/SpaceExplorerTheme";
-import InfiniteCanvasTheme   from "../components/themes/InfiniteCanvasTheme";
-import StorybookTheme        from "../components/themes/StorybookTheme";
-import SpotifyWrappedTheme   from "../components/themes/SpotifyWrappedTheme";
-import NetflixPortfolioTheme from "../components/themes/NetflixPortfolioTheme";
-import GoogleMapsPortfolioTheme from "../components/themes/GoogleMapsPortfolioTheme";
-import ComicBookTheme        from "../components/themes/ComicBookTheme";
-import TerminalOSTheme       from "../components/themes/TerminalOSTheme";
-import NewspaperTheme        from "../components/themes/NewspaperTheme";
-import MuseumTheme           from "../components/themes/MuseumTheme";
-import HackerMatrixTheme     from "../components/themes/HackerMatrixTheme";
+const AuroraTheme = lazy(() => import("../components/themes/AuroraTheme"));
+const MinimalistTheme = lazy(() => import("../components/themes/MinimalistTheme"));
+const EditorialTheme = lazy(() => import("../components/themes/EditorialTheme"));
+const NeonTerminalTheme = lazy(() => import("../components/themes/NeonTerminalTheme"));
+const BrutalistTheme = lazy(() => import("../components/themes/BrutalistTheme"));
+const NeumorphicTheme = lazy(() => import("../components/themes/NeumorphicTheme"));
+const KineticTheme = lazy(() => import("../components/themes/KineticTheme"));
+const ExecutiveTheme = lazy(() => import("../components/themes/ExecutiveTheme"));
+const RetroWaveTheme = lazy(() => import("../components/themes/RetroWaveTheme"));
+const OrganicTheme = lazy(() => import("../components/themes/OrganicTheme"));
+const BentoTheme = lazy(() => import("../components/themes/BentoTheme"));
+const DarkLuxeTheme = lazy(() => import("../components/themes/DarkLuxeTheme"));
+const AppleVisionTheme = lazy(() => import("../components/themes/AppleVisionTheme"));
+const BlueprintTheme = lazy(() => import("../components/themes/BlueprintTheme"));
+const Cyberpunk2077Theme = lazy(() => import("../components/themes/Cyberpunk2077Theme"));
+const AIAssistantTheme = lazy(() => import("../components/themes/AIAssistantTheme"));
+const Interactive3DTheme = lazy(() => import("../components/themes/Interactive3DTheme"));
+const TimelineJourneyTheme = lazy(() => import("../components/themes/TimelineJourneyTheme"));
+const DashboardPortfolioTheme = lazy(() => import("../components/themes/DashboardPortfolioTheme"));
+const SpaceExplorerTheme = lazy(() => import("../components/themes/SpaceExplorerTheme"));
+const InfiniteCanvasTheme = lazy(() => import("../components/themes/InfiniteCanvasTheme"));
+const StorybookTheme = lazy(() => import("../components/themes/StorybookTheme"));
+const SpotifyWrappedTheme = lazy(() => import("../components/themes/SpotifyWrappedTheme"));
+const NetflixPortfolioTheme = lazy(() => import("../components/themes/NetflixPortfolioTheme"));
+const GoogleMapsPortfolioTheme = lazy(() => import("../components/themes/GoogleMapsPortfolioTheme"));
+const ComicBookTheme = lazy(() => import("../components/themes/ComicBookTheme"));
+const TerminalOSTheme = lazy(() => import("../components/themes/TerminalOSTheme"));
+const NewspaperTheme = lazy(() => import("../components/themes/NewspaperTheme"));
+const MuseumTheme = lazy(() => import("../components/themes/MuseumTheme"));
+const HackerMatrixTheme = lazy(() => import("../components/themes/HackerMatrixTheme"));
+
+const ScrapbookTheme = lazy(() => import("../components/themes/ScrapbookTheme"));
+const Y2KAestheticTheme = lazy(() => import("../components/themes/Y2KAestheticTheme"));
+const ProductShowcaseTheme = lazy(() => import("../components/themes/ProductShowcaseTheme"));
 
 const THEME_REGISTRY = {
   aurora: {
@@ -52,14 +57,14 @@ const THEME_REGISTRY = {
   minimalist: {
     id: "minimalist",
     name: "Minimalist",
-    persona: "Senior developer / PM",
-    description: "Extreme whitespace, Swiss typography, pure clarity",
-    colors: { bg: "#FAFAFA", accent: "#111111", text: "#111111" },
-    tags: ["Clean", "Professional", "Focused"],
+    persona: "Swiss Design / precise typography",
+    description: "Swiss typographic grids, confident hierarchy, purposeful rules and responsive project layouts",
+    colors: { bg: "#F7F6F2", accent: "#B33B28", text: "#20211F" },
+    tags: ["Swiss Design", "Clean", "Professional", "Focused"],
     component: MinimalistTheme,
     preview: {
-      bg: "#FAFAFA",
-      accent: "#111111",
+      bg: "#F7F6F2",
+      accent: "#B33B28",
     },
   },
   editorial: {
@@ -182,10 +187,10 @@ const THEME_REGISTRY = {
   "dark-luxe": {
     id: "dark-luxe",
     name: "Dark Luxe",
-    persona: "Freelancer / agency",
-    description: "Deep black, gold accents, cinematic, premium feel",
-    colors: { bg: "#080808", accent: "#C9A84C", text: "#FFFFFF" },
-    tags: ["Luxury", "Cinematic", "Agency"],
+    persona: "Luxury typography / editorial",
+    description: "Warm dark surfaces, luxurious serif typography, substantial project imagery and complete credentials",
+    colors: { bg: "#141612", accent: "#DBC39A", text: "#F4EFDF" },
+    tags: ["Luxury Typography", "Editorial", "Elegant", "Dark"],
     component: DarkLuxeTheme,
     preview: {
       bg: "#080808",
@@ -426,6 +431,37 @@ const THEME_REGISTRY = {
       accent: "#00FF41",
     },
   },
+  scrapbook: {
+    id: "scrapbook",
+    name: "Scrapbook",
+    persona: "Personal storytelling / creative",
+    description: "Textured paper, photo mounts, handwritten details and unfolding project stories",
+    colors: { bg: "#EEE7DA", accent: "#7A3D2C", text: "#302B27" },
+    tags: ["Personal", "Creative", "Paper", "Warm"],
+    component: ScrapbookTheme,
+    preview: { bg: "#EEE7DA", accent: "#7A3D2C" },
+  },
+  "y2k-aesthetic": {
+    id: "y2k-aesthetic",
+    name: "Y2K Aesthetic",
+    persona: "Digital creative / playful",
+    description: "Chrome lettering, translucent browser windows, soft iridescence and tactile controls",
+    colors: { bg: "#E9EDF8", accent: "#464396", text: "#22283E" },
+    tags: ["Y2K", "Chrome", "Playful", "Digital"],
+    component: Y2KAestheticTheme,
+    preview: { bg: "linear-gradient(135deg, #E9EDF8, #DDD9EE)", accent: "#464396" },
+  },
+  "product-showcase": {
+    id: "product-showcase",
+    name: "Product Showcase",
+    persona: "Product designer / builder",
+    description: "Actual screenshots in device frames and clear case studies using your real project evidence",
+    colors: { bg: "#F4F5F0", accent: "#315E46", text: "#202A27" },
+    tags: ["Product", "Case Study", "Professional", "Clean"],
+    component: ProductShowcaseTheme,
+    preview: { bg: "#F4F5F0", accent: "#315E46" },
+  },
+
 };
 
 export const THEME_GROUPS = {
@@ -436,16 +472,16 @@ export const THEME_GROUPS = {
     "interactive-3d", "timeline-journey", "dashboard-portfolio", "space-explorer",
     "infinite-canvas", "storybook", "spotify-wrapped", "netflix-portfolio",
     "google-maps-portfolio", "comic-book", "terminal-os", "newspaper",
-    "museum", "hacker-matrix"
+    "museum", "hacker-matrix", "scrapbook", "y2k-aesthetic", "product-showcase"
   ],
-  "Minimal": ["minimalist", "organic"],
-  "Bold": ["brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book"],
-  "Creative": ["aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook"],
-  "Professional": ["executive", "neumorphic", "bento", "apple-vision", "blueprint", "dashboard-portfolio"],
+  "Minimal": ["minimalist", "organic", "product-showcase"],
+  "Bold": ["brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book", "y2k-aesthetic"],
+  "Creative": ["aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook", "scrapbook", "y2k-aesthetic"],
+  "Professional": ["executive", "neumorphic", "bento", "apple-vision", "blueprint", "dashboard-portfolio", "product-showcase"],
   "Developer": ["neon-terminal", "terminal-os", "hacker-matrix", "ai-assistant", "timeline-journey"],
   "Social": ["spotify-wrapped", "netflix-portfolio", "google-maps-portfolio", "newspaper", "museum"],
 };
 
-export const getTheme = (id) => THEME_REGISTRY[id] || THEME_REGISTRY["minimalist"];
+export const getTheme = (id) => Object.prototype.hasOwnProperty.call(THEME_REGISTRY, id) ? THEME_REGISTRY[id] : THEME_REGISTRY["minimalist"];
 export const getAllThemes = () => Object.values(THEME_REGISTRY);
 export default THEME_REGISTRY;

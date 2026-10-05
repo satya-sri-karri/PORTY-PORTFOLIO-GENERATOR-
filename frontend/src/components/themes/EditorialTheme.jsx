@@ -226,7 +226,7 @@ const EditorialTheme = ({ data }) => {
 
       <div style={s.contactSection}>
         <h2 style={s.contactH2}>Let's tell <span style={s.redAccent}>your story.</span></h2>
-        <p style={{ fontSize: 15, color: "#666", marginBottom: 36, lineHeight: 1.7, fontFamily: "'Inter', sans-serif", fontWeight: 300 }}>Open to new work and collaborations.</p>
+        <p style={{ fontSize: 15, color: "#666", marginBottom: 36, lineHeight: 1.7, fontFamily: "'Inter', sans-serif", fontWeight: 300 }}>Get in touch through the links below.</p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
           {contact?.email && <a href={`mailto:${contact.email}`} style={s.primaryBtn}>{contact.email}</a>}
           {socialLinks?.linkedin && <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" style={s.outlineBtn}>LinkedIn</a>}

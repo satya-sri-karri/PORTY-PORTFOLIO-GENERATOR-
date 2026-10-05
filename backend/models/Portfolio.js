@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const ProjectSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   description: { type: String, trim: true, default: "" },
+  problem: { type: String, trim: true, default: "" },
+  contribution: { type: String, trim: true, default: "" },
+  process: { type: String, trim: true, default: "" },
+  outcome: { type: String, trim: true, default: "" },
+  featured: { type: Boolean, default: false },
   link: { type: String, trim: true, default: "" },
   github: { type: String, trim: true, default: "" },
   techStack: [{ type: String, trim: true }],
@@ -85,7 +90,13 @@ const PortfolioSchema = new mongoose.Schema({
   shareSlug: { type: String, unique: true, sparse: true },
   views: { type: Number, default: 0 },
   thumbnail: { type: String, default: "" },
+  // A locally generated request ID makes retrying a lost create response safe.
+  clientRequestId: { type: String, default: undefined, select: false },
 }, { timestamps: true });
+
+PortfolioSchema.index({ userId: 1, clientRequestId: 1 }, {
+  unique: true, partialFilterExpression: { clientRequestId: { $type: "string" } },
+});
 
 // Auto-generate shareSlug
 PortfolioSchema.pre("save", function (next) {

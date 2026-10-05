@@ -133,7 +133,7 @@ const AuroraTheme = ({ data }) => {
           )}
           <div style={s.statusPill}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22C55E", display: "inline-block", boxShadow: "0 0 8px #22C55E" }} />
-            Open to opportunities
+            My portfolio
           </div>
           <h1 style={s.h1}>{name}</h1>
           {title && <p style={s.heroTitle}>{title}</p>}
@@ -313,7 +313,7 @@ const AuroraTheme = ({ data }) => {
       <section id="contact" style={s.contactSection}>
         <div style={s.container}>
           <h2 style={s.contactTitle}>Let's build something <span style={s.gradientText}>together</span></h2>
-          <p style={s.contactSub}>Open to new opportunities and collaborations</p>
+          <p style={s.contactSub}>Get in touch to start a conversation</p>
           <div style={s.contactBtns}>
             {contact?.email && (
               <a href={`mailto:${contact.email}`} className="aurora-glow-btn" style={s.primaryBtn}>✉ {contact.email}</a>

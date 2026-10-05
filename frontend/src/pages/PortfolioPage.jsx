@@ -1,3 +1,4 @@
+import ThemeRenderer from "../components/shared/ThemeRenderer";
 /**
  * PortfolioPage — Public view
  * Fetches portfolio by slug, applies the chosen theme component
@@ -6,7 +7,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicPortfolio } from "../utils/api";
-import { getTheme } from "../registry/themeRegistry";
 
 const SkeletonPortfolio = () => (
   <div style={{ padding: "60px 24px", maxWidth: 900, margin: "0 auto" }}>
@@ -27,19 +27,26 @@ const SkeletonPortfolio = () => (
 const ShareBar = ({ slug }) => {
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/p/${slug}`;
-  const copy = () => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const [error, setError] = useState("");
+  const copy = async () => {
+    setCopied(false); setError("");
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch { setError("Could not copy the link. Copy the address from your browser instead."); }
   };
-  const share = () => {
-    if (navigator.share) navigator.share({ url });
-    else copy();
+  const share = async () => {
+    setError("");
+    if (!navigator.share) return copy();
+    try { await navigator.share({ url }); }
+    catch (e) { if (e.name !== "AbortError") setError("Sharing failed. Try Copy link instead."); }
   };
   return (
     <>
+      {error && <div className="toast" role="alert" style={{ pointerEvents: "none" }}>{error}</div>}
       {copied && (
-        <div className="toast">
+        <div className="toast" role="status" style={{ pointerEvents: "none" }}>
           <span>✓</span> Link copied to clipboard
         </div>
       )}
@@ -47,10 +54,10 @@ const ShareBar = ({ slug }) => {
         <button className="btn btn-primary btn-sm" onClick={share} style={{ boxShadow: "var(--shadow-accent)" }}>
           📤 Share
         </button>
-        <button className="btn btn-secondary btn-sm" onClick={copy} title="Copy link">
+        <button className="btn btn-secondary btn-sm" onClick={copy} title="Copy link" aria-label="Copy link">
           {copied ? "✓" : "🔗"}
         </button>
-        <Link to="/" className="btn btn-secondary btn-sm" title="Build your own" style={{ textDecoration: "none" }}>
+        <Link to="/" className="btn btn-secondary btn-sm" title="Build your own" aria-label="Build your own portfolio" style={{ textDecoration: "none" }}>
           ✨
         </Link>
       </div>
@@ -65,10 +72,13 @@ const PortfolioPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
+    setLoading(true); setError("");
     getPublicPortfolio(slug)
-      .then(res => setData(res.data))
-      .catch(err => setError(err.message || "Portfolio not found."))
-      .finally(() => setLoading(false));
+      .then(res => { if (active) setData(res.data); })
+      .catch(err => { if (active) setError(err.message || "Portfolio not found."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [slug]);
 
   if (loading) {
@@ -86,13 +96,10 @@ const PortfolioPage = () => {
     );
   }
 
-  // Resolve theme component from registry
-  const themeConfig = getTheme(data.theme);
-  const ThemeComponent = themeConfig.component;
 
   return (
     <>
-      <ThemeComponent data={data} />
+      <ThemeRenderer data={data} />
       <ShareBar slug={slug} />
     </>
   );

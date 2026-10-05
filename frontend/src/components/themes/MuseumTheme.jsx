@@ -195,7 +195,7 @@ const MuseumTheme = ({ data }) => {
 
         <div style={{ padding: "44px 0", textAlign: "center" }}>
           <h3 style={{ fontSize: 9, letterSpacing: "0.25em", textTransform: "uppercase", color: GOLD, fontFamily: "'Inter', sans-serif", marginBottom: 10, fontWeight: 600 }}>Contact the Curator</h3>
-          <p style={{ fontSize: 13, color: MUTED, fontStyle: "italic", marginBottom: 28 }}>Open to collaborations and commissions.</p>
+          <p style={{ fontSize: 13, color: MUTED, fontStyle: "italic", marginBottom: 28 }}>Find my contact links below.</p>
           <div style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
             {contact?.email && (
               <a href={`mailto:${contact.email}`} style={{ padding: "12px 30px", border: `1px solid ${GOLD}`, color: GOLD, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none", fontFamily: "'Inter', sans-serif", fontWeight: 600, transition: "0.3s" }}>Send Correspondence</a>

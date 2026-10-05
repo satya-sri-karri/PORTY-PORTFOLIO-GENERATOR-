@@ -61,7 +61,7 @@ const GoogleMapsPortfolioTheme = ({ data }) => {
           )}
           <div>
             <h1 style={{ fontSize: 28, fontWeight: 700, color: "#FFF", margin: "0 0 4px 0" }}>{name}</h1>
-            {title && <div style={{ fontSize: 14, color: MUTED, marginBottom: 8 }}>{title} · <span style={{ color: GREEN }}>Open to opportunities</span></div>}
+            {title && <div style={{ fontSize: 14, color: MUTED, marginBottom: 8 }}>{title}</div>}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               {socials.map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, fontSize: 12, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
@@ -83,27 +83,12 @@ const GoogleMapsPortfolioTheme = ({ data }) => {
           <div style={{ padding: "32px 0" }}>
             <div style={sectionPin()}>
               <Pin color={GREEN} />
-              <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#FFF" }}>Popular Times — Skills</h2>
+              <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#FFF" }}>Skills</h2>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {skills.map((s, i) => {
-                const pct = 100 - (i / skills.length) * 40;
-                return (
-                  <div key={i}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: 13 }}>
-                      <span style={{ fontWeight: 500 }}>{s}</span>
-                      <span style={{ color: MUTED, fontSize: 11 }}>{Math.round(pct)}% proficient</span>
-                    </div>
-                    <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, overflow: "hidden" }}>
-                      <div style={{
-                        height: "100%", width: `${pct}%`,
-                        background: `linear-gradient(90deg, ${GREEN}, ${BLUE})`,
-                        borderRadius: 4,
-                      }} />
-                    </div>
-                  </div>
-                );
-              })}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+              {skills.map((s, i) => (
+                <span key={i} style={{ padding: "10px 16px", background: CARD_BG, border: `1px solid ${BLUE}40`, borderRadius: 8, color: TEXT }}>{typeof s === "string" ? s : s.name || ""}</span>
+              ))}
             </div>
           </div>
         )}
@@ -122,7 +107,6 @@ const GoogleMapsPortfolioTheme = ({ data }) => {
                     {p.image && <img src={p.image} alt={p.title} style={{ width: "100%", height: "auto", maxHeight: 200, borderRadius: 8, marginBottom: 12, objectFit: "cover" }} />}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
                       <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#FFF" }}>{p.title}</h3>
-                      <span style={{ fontSize: 11, color: MUTED }}>{i + 1}.0 km</span>
                     </div>
                     <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,0.55)", marginBottom: 12 }}>{p.description}</p>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", fontSize: 12 }}>
@@ -132,7 +116,7 @@ const GoogleMapsPortfolioTheme = ({ data }) => {
                         </span>
                       )}
                       <div style={{ display: "flex", gap: 12, marginLeft: "auto" }}>
-                        {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: "none", fontSize: 12, fontWeight: 600 }}>Directions ↗</a>}
+                        {p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ color: BLUE, textDecoration: "none", fontSize: 12, fontWeight: 600 }}>View project ↗</a>}
                         {p.github && <a href={p.github} target="_blank" rel="noopener noreferrer" style={{ color: MUTED, textDecoration: "none", fontSize: 12 }}>Source</a>}
                       </div>
                     </div>
@@ -234,7 +218,7 @@ const GoogleMapsPortfolioTheme = ({ data }) => {
             <h2 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#FFF" }}>Info Desk — Contact</h2>
           </div>
           <div style={{ background: CARD_BG, borderRadius: 12, padding: 24, border: "1px solid rgba(255,255,255,0.06)", textAlign: "center" }}>
-            <p style={{ margin: "0 0 20px", fontSize: 13, color: MUTED }}>Currently open to new opportunities and collaborations.</p>
+            <p style={{ margin: "0 0 20px", fontSize: 13, color: MUTED }}>Contact me through the links below.</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
               {contact?.email && (
                 <a href={`mailto:${contact.email}`} style={{ padding: "12px 24px", background: BLUE, color: "#FFF", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>

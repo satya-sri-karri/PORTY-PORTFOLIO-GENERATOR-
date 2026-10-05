@@ -49,15 +49,16 @@ const NeonTerminalTheme = ({ data }) => {
   }, []);
 
   useEffect(() => {
-    setTyped("");
     const text = `> ${name}`;
+    if (data.staticPreview || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setTyped(text); return; }
+    setTyped("");
     let i = 0;
     const timer = setInterval(() => {
       if (i < text.length) { setTyped(text.slice(0, i + 1)); i++; }
       else { clearInterval(timer); }
     }, 50);
     return () => clearInterval(timer);
-  }, [name]);
+  }, [name, data.staticPreview]);
 
   const asciiArt = `
   ██████  ██████  ██████  ██████  ██████
