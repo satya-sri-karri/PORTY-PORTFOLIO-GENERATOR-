@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./PortfolioParts";
 import { profileLinks, orderedProjects } from "../../../utils/portfolioContent";
 import "./extended.css";
+import { TerminalConsole, CanvasPlayground, PixelExplorer, SceneNavigator } from "./ThemeExperiences";
 
 function sectionList(data) {
   return [["Introduction", "pf-intro", true], ["Projects", "pf-work", data.projects.length], ["Experience", "pf-experience", data.experience.length], ["Credentials", "pf-credentials", data.certifications.length || data.achievements.length], ["Profiles", "pf-profiles", data.codingProfiles.length], ["Contact", "pf-contact", profileLinks(data).length]].filter(([, , exists]) => exists);
@@ -37,7 +38,7 @@ function StorySlides({ data }) {
   const stories = [{ title: "My perspective", text: data.about || data.title || data.name }, ...orderedProjects(data.projects).map(p => ({ title: p.title || "Project", text: p.description || "Explore this project in the full collection below.", href: "#pf-work" })), ...data.experience.map(e => ({ title: e.role || e.company, text: [e.company, e.duration].filter(Boolean).join(" · "), href: "#pf-experience" }))];
   const [index, setIndex] = useState(0); const start = useRef(null); const safeIndex = Math.min(index, stories.length - 1); const story = stories[safeIndex];
   const move = delta => setIndex(previous => (Math.min(previous, stories.length - 1) + delta + stories.length) % stories.length);
-  return <div className="ex-slides" onPointerDown={e => { if (e.pointerType !== "mouse" && !e.target.closest("button, a")) start.current = e.clientX; }} onPointerUp={e => { if (start.current !== null) { const delta = e.clientX - start.current; if (Math.abs(delta) > 50) move(delta < 0 ? 1 : -1); start.current = null; } }} onPointerCancel={() => { start.current = null; }}><p className="pf-eyebrow">Story {safeIndex + 1} of {stories.length}</p><h2>{story.title}</h2><p className="pf-bio">{story.text}</p>{story.href && <a className="pf-text-link" href={story.href}>Explore the full story ↗</a>}<div className="ex-controls"><button type="button" onClick={() => move(-1)} disabled={stories.length < 2}>Previous story</button><button type="button" onClick={() => move(1)} disabled={stories.length < 2}>Next story</button></div></div>;
+  return <div className="ex-slides" onPointerDown={e => { if (e.pointerType !== "mouse" && !e.target.closest("button, a")) start.current = e.clientX; }} onPointerUp={e => { if (start.current !== null) { const delta = e.clientX - start.current; if (Math.abs(delta) > 50) move(delta < 0 ? 1 : -1); start.current = null; } }} onPointerCancel={() => { start.current = null; }}><p className="pf-eyebrow">Story {safeIndex + 1} of {stories.length}</p><div className="ex-slide-content" key={safeIndex}><h2>{story.title}</h2><p className="pf-bio">{story.text}</p>{story.href && <a className="pf-text-link" href={story.href}>Explore the full story ↗</a>}</div><div className="ex-controls"><button type="button" onClick={() => move(-1)} disabled={stories.length < 2}>Previous story</button><button type="button" onClick={() => move(1)} disabled={stories.length < 2}>Next story</button></div></div>;
 }
 function IllustratedNavigation({ data, pixel = false }) {
   return <div className={`ex-scene ${pixel ? "ex-pixel-world" : "ex-desk"}`}><svg viewBox="0 0 600 330" role="group" aria-label={pixel ? "Illustrated portfolio world with section links" : "Illustrated creator’s desk with section links"}>
@@ -86,7 +87,11 @@ export default function ExtendedPortfolio({ data, config }) {
         <div className="ex-portrait"><Portrait data={data} /></div>
       </section>
       {mode === "assistant" && <PortfolioGuide data={data} />}
-      {mode === "slides" && <StorySlides data={data} />}
+      {(mode === "slides" || mode === "chapters") && <StorySlides data={data} />}
+      {mode === "files" && <TerminalConsole data={data} />}
+      {mode === "canvas" && !reading && <CanvasPlayground data={data} />}
+      {mode === "pixel" && <PixelExplorer data={data} />}
+      {mode === "cinema" && <SceneNavigator data={data} />}
       {(mode === "desk" || mode === "pixel") && <IllustratedNavigation data={data} pixel={mode === "pixel"} />}
       {mode === "dashboard" && <ContentCounts data={data} />}
       {mode === "journey" && <Journey data={data} />}

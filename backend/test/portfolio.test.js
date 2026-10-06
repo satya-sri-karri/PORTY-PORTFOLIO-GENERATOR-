@@ -48,6 +48,10 @@ const request = async (path = '', method = 'GET', body, user = owner) => {
 };
 const create = (extra = {}) => request('', 'POST', { name: 'Anya', about: 'I build useful tools.', clientRequestId: requestId, isPublic: false, ...extra });
 
+test('Layout compatibility can be checked without an account or database write', async () => {
+  const response=await request('/capabilities','GET',undefined,null);assert.equal(response.status,200);assert.equal(response.body.data.layoutStudio,true);assert.deepEqual(response.body.data.motionModes,['none','subtle','expressive']);assert.equal(records.size,0);
+});
+
 test('retrying create returns the same record and stable link', async () => {
   const first = await create(); const retry = await create();
   assert.equal(first.status, 201); assert.equal(retry.status, 200);
@@ -120,6 +124,19 @@ test('Owners can save new presentation fields but cannot overwrite measured coun
   const {body}=await create(); const id=body.data.id;
   await request(`/${id}`, 'PUT',{availability:'Seeking an internship',motto:'Build carefully',interests:['Drawing'],resumeUrl:'https://example.com/resume.pdf',motion:'subtle',sectionOrder:['contact','projects'],sectionVisibility:{experience:false},audience:'Recruiters',showcaseOptIn:true,analytics:{project:999},deletedAt:new Date()});
   assert.equal(records.get(id).audience,'Recruiters'); assert.equal(records.get(id).sectionVisibility.experience,false); assert.equal(records.get(id).analytics,undefined); assert.equal(records.get(id).deletedAt,undefined);
+});
+
+test('Layout experiments round trip on owner save and public retrieval while keeping the same portfolio link', async () => {
+  const {body}=await create({isPublic:true});const id=body.data.id;
+  const layoutSettings={hero:'centered',projects:'rail',spacing:'airy',typography:'bold',image:'rounded',hover:'tilt'};
+  await request(`/${id}`,'PUT',{layoutSettings,motion:'expressive'});
+  const response=await request(`/share/${body.data.shareSlug}`,'GET',undefined,null);
+  assert.deepEqual(response.body.data.layoutSettings,layoutSettings);assert.equal(response.body.data.motion,'expressive');assert.equal(response.body.data.shareSlug,body.data.shareSlug);
+});
+test('The presentation schema supports Still mode and rejects unsupported layout values', async () => {
+  const document=new Portfolio({userId:'507f1f77bcf86cd799439011',name:'Anya',about:'I make things.',motion:'none',layoutSettings:{projects:'rail'}});
+  await document.validate();document.layoutSettings.projects='injected';
+  await assert.rejects(()=>document.validate(),/layoutSettings.projects/);
 });
 
 test('Public responses omit owner metadata and hidden contact content while owner previews retain the original fields', async () => {

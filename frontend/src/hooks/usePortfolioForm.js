@@ -1,5 +1,5 @@
 import { useState, useCallback, useReducer } from "react";
-export const blank = { name:"",title:"",about:"",avatarUrl:"",location:"",skills:[],projects:[],experience:[],certifications:[],achievements:[],codingProfiles:[],contact:{email:"",phone:""},socialLinks:{github:"",linkedin:"",twitter:"",website:""},theme:"minimalist",themeColors:{accent:"",bg:"",text:""},isPublic:false, availability:"",motto:"",interests:[],resumeUrl:"",showLocation:true,motion:"subtle",sectionOrder:["projects","experience","credentials","profiles","contact"],sectionVisibility:{},audience:"",showcaseOptIn:false };
+export const blank = { name:"",title:"",about:"",avatarUrl:"",location:"",skills:[],projects:[],experience:[],certifications:[],achievements:[],codingProfiles:[],contact:{email:"",phone:""},socialLinks:{github:"",linkedin:"",twitter:"",website:""},theme:"minimalist",themeColors:{accent:"",bg:"",text:""},isPublic:false, availability:"",motto:"",interests:[],resumeUrl:"",showLocation:true,motion:"expressive",layoutSettings:{},sectionOrder:["projects","experience","credentials","profiles","contact"],sectionVisibility:{},audience:"",showcaseOptIn:false };
 export const usePortfolioForm = (initial = blank) => {
   const [history, dispatch] = useReducer((state, action) => {
     if (action.type === "load") return { form: action.value, past: [], future: [] };

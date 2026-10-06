@@ -13,6 +13,8 @@ This branch is an upgrade candidate. Source implementation and fixture validatio
 - Try `/try` without an account: enter identity and a project, explore actual desktop/phone theme previews, and continue the private draft after sign-in.
 - Import PDF with selectable text, Word `.docx`, or TXT on the device. Review and correct extracted suggestions; explicitly choose which fields replace existing content. Scanned documents require text recognition outside Porty or manual entry.
 - Build with live previews, recoverable device drafts, undo/redo, project/section ordering, featured work, visibility controls, optional personal details and motion preferences.
+- Experiment in the layout studio: five starting presets, introduction/project layouts, spacing, typography, image frames and lift/tilt interactions. Preview and Cancel before applying. Larger previews can play and accept interaction; thumbnails stay still.
+- New drafts default to Expressive motion; Subtle adds gentle movement, and Still disables animation. Visitors can pause motion. Interactive themes include a draggable Canvas board, Pixel explorer, Terminal commands and Cinema scene navigation; all keep direct access to the supplied projects.
 - Review factual AI suggestions before applying them. AI calls use Groq through the OpenAI-compatible client; they remain optional and fail without replacing the user's text.
 - Save privately or choose Public and save. Subsequent saves update that same record and stable link, including changes to a public portfolio.
 - Share the link, QR, actual portfolio cover or edited announcement. Visitors can browse a quick profile and a supplied resume link.

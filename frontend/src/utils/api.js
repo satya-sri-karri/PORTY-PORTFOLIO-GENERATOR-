@@ -23,6 +23,7 @@ export const getPortfolioById = (id, t) => req("GET", `/portfolio/${id}`, null, 
 export const updatePortfolio = (id, b, t) => req("PUT", `/portfolio/${id}`, b, t);
 export const deletePortfolio = (id, t) => req("DELETE", `/portfolio/${id}`, null, t);
 export const getPublicPortfolio = slug => req("GET", `/portfolio/share/${slug}`);
+export const getPortfolioCapabilities = signal => req("GET", "/portfolio/capabilities", null, null, signal);
 export const generateBio = (b, t, signal) => req("POST", "/ai/bio", b, t, signal);
 export const suggestSkills = (b, t, signal) => req("POST", "/ai/skills", b, t, signal);
 export const generateProjectDesc = (b, t, signal) => req("POST", "/ai/project", b, t, signal);

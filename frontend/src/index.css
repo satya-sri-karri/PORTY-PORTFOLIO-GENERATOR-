@@ -1462,3 +1462,9 @@ button.tag-remove { background: transparent; border: none; color: inherit; curso
 @media (max-width:767px) { .trial-grid { grid-template-columns:minmax(0,1fr); } .completion-dialog { padding:18px; } .section-control { gap:4px; } }
 
 .trial-grid > section { min-width:0; }
+
+/* Sharing remains legible over both pale and dark portfolio themes. */
+.share-bar { padding:8px; border-radius:14px; background:#111827; border:1px solid #48556b; box-shadow:0 8px 28px #0003; }
+.share-bar .btn-secondary { background:#253148; border-color:#6b7890; color:#fff; }
+.share-bar .btn-primary { background:#6253ce; border-color:#8c80ef; color:#fff; }
+.share-bar .btn { min-height:40px; }

@@ -47,4 +47,10 @@ The full collection adds optional fields, anonymous Journey events and Feedback 
 
 See `UPGRADE_STATUS.md` for backend deployment dependencies and the remaining real-service/device/pilot gates.
 
-The completed collection is saved on the separate local branch `upgrade/porty-complete-checklist`. It has not been pushed or deployed. Switching back to `upgrade/porty-batches-1-3` or the third-batch backup returns to the previously reviewed source. Final local verification results are recorded in `LOCAL_REVIEW.md`; they do not promote either service or modify the live database.
+At the initial local completion checkpoint, the collection was saved on `upgrade/porty-complete-checklist` before publishing the review branch. Switching back to `upgrade/porty-batches-1-3` or the third-batch backup returns to the earlier reviewed source. Verification results are recorded in `LOCAL_REVIEW.md`; local checks do not promote either service or modify the live database. The subsequent review deployment is recorded below.
+
+## Motion and layout review checkpoint — 6 October 2026
+
+The completion candidate was subsequently pushed at `7ef26760643d10db710ea170356a2c75f2d8f57e`, with a successful Vercel review deployment and draft PR #2. Before adding the motion/layout studio, it was preserved locally on `backup/pre-motion-studio-2026-10-06`; the same source is retained in GitHub under that branch. The earlier local-only completion SHA remains on `backup/completion-local-2026-10-05` with an identical file tree.
+
+The motion upgrade continues `upgrade/porty-complete-checklist` for review; production `main` remains unchanged. Its `layoutSettings` and `none` motion value require the updated backend. Reverting to the preceding frontend keeps optional database settings stored but does not render them. Deploy frontend and backend together when promoting; source rollback does not undo data changes or remove the previously described Trash TTL index.

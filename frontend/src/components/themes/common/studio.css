@@ -1,0 +1,67 @@
+/* Opt-in composition choices sit above each theme's native layout. */
+.portfolio-v4 .pf-reading-progress { position:fixed; inset:0 0 auto; height:3px; background:var(--pf-accent); transform:scaleX(var(--pf-progress,0)); transform-origin:left; z-index:45; pointer-events:none; }
+.portfolio-v4 .pf-motion-toggle { position:fixed; bottom:18px; left:18px; z-index:40; border:1px solid var(--pf-line); border-radius:30px; padding:10px 15px; min-height:44px; background:var(--pf-bg); color:var(--pf-text); font-size:11px; box-shadow:0 4px 16px #0002; cursor:pointer; }
+.portfolio-v4 .pf-motion-toggle:disabled { cursor:default; }
+.portfolio-v4 .pf-gallery-controls { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding-top:28px; }
+.portfolio-v4 .pf-gallery-controls p { flex:1 1 240px; font-size:13px; color:var(--pf-muted); }
+.portfolio-v4 .pf-gallery-controls button { min-height:44px; padding:10px 16px; border:1px solid var(--pf-line); background:var(--pf-surface); cursor:pointer; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero { display:block; text-align:center; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero :is(.pf-bio,.pf-portrait) { margin-left:auto; margin-right:auto; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero :is(.pf-skills,.pf-actions) { justify-content:center; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero :is(.ex-portrait,.scrapbook-portrait,.kinetic-portrait) { margin:36px auto 0; max-width:320px; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero :is(.editorial-cover,.kinetic-introduction,.product-intro,.product-identity) { display:block; }
+.portfolio-v4.pf-studio-hero-centered #pf-main .pf-hero .pf-portrait { width:min(100%,320px); margin-top:30px; }
+.portfolio-v4.pf-studio-hero-split #pf-main .pf-hero { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); gap:48px; text-align:left; align-items:center; }
+.portfolio-v4.pf-studio-hero-split #pf-main .pf-hero:not(:has(.pf-portrait)) { grid-template-columns:1fr; }
+.portfolio-v4.pf-studio-hero-split #pf-main .pf-hero > * { min-width:0; }
+.portfolio-v4.pf-studio-hero-split #pf-main .pf-hero > .ex-decoration { position:absolute; }
+.portfolio-v4.pf-studio-spacing-compact #pf-main .pf-hero { padding-block:58px; }
+.portfolio-v4.pf-studio-spacing-compact #pf-main .pf-section { padding-block:42px; }
+.portfolio-v4.pf-studio-spacing-airy #pf-main .pf-hero { padding-block:120px; }
+.portfolio-v4.pf-studio-spacing-airy #pf-main .pf-section { padding-block:96px; }
+.portfolio-v4.pf-studio-typography-editorial #pf-main :is(h1,h2,h3) { font-family:Georgia,'Times New Roman',serif; font-weight:400; letter-spacing:-.035em; }
+.portfolio-v4.pf-studio-typography-bold #pf-main :is(h1,h2,h3) { font-family:'Inter',Arial,sans-serif; font-weight:850; letter-spacing:-.055em; }
+.portfolio-v4.pf-studio-typography-mono #pf-main :is(h1,h2,h3,.pf-role) { font-family:'JetBrains Mono',monospace; letter-spacing:-.04em; }
+.portfolio-v4.pf-studio-image-wide #pf-main .pf-project-media { aspect-ratio:21/10; border-radius:4px; }
+.portfolio-v4.pf-studio-image-square #pf-main .pf-project-media { aspect-ratio:1; border-radius:4px; }
+.portfolio-v4.pf-studio-image-rounded #pf-main .pf-project-media { aspect-ratio:4/3; border-radius:28px; }
+.portfolio-v4.pf-studio-projects-cards #pf-main #pf-work .pf-project-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; overflow:visible; max-width:none; }
+.portfolio-v4.pf-studio-projects-cards #pf-main #pf-work .pf-project { display:block; grid-column:auto; margin:0; min-width:0; padding:20px; border:1px solid var(--pf-line); background:var(--pf-surface); border-radius:16px; transform:none; }
+.portfolio-v4.pf-studio-projects-spotlight #pf-main #pf-work .pf-project-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:60px; overflow:visible; max-width:none; }
+.portfolio-v4.pf-studio-projects-spotlight #pf-main #pf-work .pf-project { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); align-items:start; gap:32px; grid-column:auto; margin:0; transform:none; }
+.portfolio-v4.pf-studio-projects-spotlight #pf-main #pf-work .pf-project:nth-child(even) > .pf-project-body { order:-1; }
+.portfolio-v4.pf-studio-projects-rail #pf-main #pf-work .pf-project-grid { display:flex; overflow-x:auto; gap:28px; max-width:100%; padding:14px 12px 28px; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; }
+.portfolio-v4.pf-studio-projects-rail #pf-main #pf-work .pf-project { flex:0 0 min(440px,88%); display:block; min-width:0; margin:0; transform:none; scroll-snap-align:start; }
+.portfolio-v4.pf-studio-projects-rail #pf-main #pf-work .pf-project:focus-within { scroll-margin-inline:12px; }
+.portfolio-v4 .pf-project-media { transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s; }
+.portfolio-v4 .pf-project-media::after { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at var(--pf-light-x,50%) var(--pf-light-y,50%),#fff3,transparent 60%); opacity:0; transition:opacity .35s; }
+@keyframes pf-studio-arrive { from { translate:0 var(--pf-reveal-distance,22px); } to { translate:0 0; } }
+@keyframes pf-studio-title { from { translate:0 25px; letter-spacing:-.085em; } to { translate:0 0; } }
+@media (prefers-reduced-motion:no-preference) {
+  .portfolio-v4:not(.pf-static):not(.pf-resting) .pf-studio-entered { animation:pf-studio-arrive .7s cubic-bezier(.16,1,.3,1) var(--pf-enter-delay,0ms) both; }
+  .portfolio-v4.pf-motion-subtle { --pf-reveal-distance:8px; }
+  .portfolio-v4.pf-motion-expressive:not(.pf-static):not(.pf-resting):not(.pf-kinetic) .pf-hero h1 { animation:pf-studio-title .9s cubic-bezier(.16,1,.3,1) both; }
+  .portfolio-v4.pf-motion-expressive:not(.pf-static):not(.pf-resting) .pf-tilting { transform:perspective(1100px) rotateX(var(--pf-tilt-x,0deg)) rotateY(var(--pf-tilt-y,0deg)); }
+  .portfolio-v4.pf-motion-expressive:not(.pf-static):not(.pf-resting) .pf-tilting::after { opacity:1; }
+  .portfolio-v4:not(.pf-static):not(.pf-resting) .pf-project:focus-within .pf-project-media { box-shadow:0 12px 30px color-mix(in srgb,var(--pf-accent) 20%,transparent); }
+  .portfolio-v4:not(.pf-static):not(.pf-resting) :is(.pf-button,.pf-skills span) { transition:translate .25s,box-shadow .25s; }
+  .portfolio-v4:not(.pf-static):not(.pf-resting) .pf-button:hover { translate:0 -3px; box-shadow:0 8px 24px color-mix(in srgb,var(--pf-accent) 25%,transparent); }
+}
+@media (hover:hover) and (prefers-reduced-motion:no-preference) {
+  .portfolio-v4:not(.pf-static):not(.pf-resting) .pf-project:hover .pf-project-media { box-shadow:0 14px 38px color-mix(in srgb,var(--pf-accent) 20%,transparent); }
+  .portfolio-v4.pf-studio-hover-lift:not(.pf-static):not(.pf-resting) .pf-project:hover .pf-project-media { translate:0 -6px; }
+  .portfolio-v4:not(.pf-static):not(.pf-resting) .pf-skills span:hover { translate:0 -3px; }
+}
+.portfolio-v4.pf-resting *, .portfolio-v4.pf-resting *::before, .portfolio-v4.pf-resting *::after { animation:none !important; transition:none !important; }
+.portfolio-v4[data-ambient="paused"] .ex-decoration *, .portfolio-v4[data-ambient="paused"] .ex-ticker-track { animation-play-state:paused !important; }
+@media (max-width:760px) {
+  .portfolio-v4.pf-studio-hero-split #pf-main .pf-hero { grid-template-columns:1fr; gap:30px; }
+  .portfolio-v4.pf-studio-spacing-airy #pf-main .pf-hero { padding-block:76px; }
+  .portfolio-v4.pf-studio-spacing-airy #pf-main .pf-section { padding-block:64px; }
+  .portfolio-v4.pf-studio-spacing-compact #pf-main .pf-hero { padding-block:42px; }
+  .portfolio-v4.pf-studio-spacing-compact #pf-main .pf-section { padding-block:34px; }
+  .portfolio-v4.pf-studio-projects-cards #pf-main #pf-work .pf-project-grid { grid-template-columns:1fr; }
+  .portfolio-v4.pf-studio-projects-spotlight #pf-main #pf-work .pf-project { display:block; }
+  .portfolio-v4.pf-studio-projects-spotlight #pf-main #pf-work .pf-project:nth-child(even) > .pf-project-body { order:initial; }
+  .portfolio-v4.pf-studio-projects-rail #pf-main #pf-work .pf-project { flex-basis:88%; }
+}

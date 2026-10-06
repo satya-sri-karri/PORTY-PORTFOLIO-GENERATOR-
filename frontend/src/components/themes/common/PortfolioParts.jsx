@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { orderedProjects, profileLinks, projectStory, readableOn } from "../../../utils/portfolioContent";
 import "./portfolio.css";
+import usePortfolioMotion from "./usePortfolioMotion";
+import "./studio.css";
 
 export function PortfolioRoot({ data, theme, colors, children }) {
   const palette = Object.fromEntries(Object.entries(colors).map(([key, fallback]) => [key, data.themeColors[key] || fallback]));
-  return <div className={`portfolio-v4 pf-${theme} ${data.staticPreview ? "pf-static" : ""}`} style={{ "--pf-bg": palette.bg, "--pf-text": palette.text, "--pf-accent": palette.accent, "--pf-on-accent": readableOn(palette.accent) }}>
-    <a className="pf-skip" href="#pf-main">Skip to content</a>{children}
+  const motion = usePortfolioMotion(data);
+  const layout = Object.entries(data.layoutSettings).map(([key,value]) => `pf-studio-${key}-${value}`).join(" ");
+  return <div ref={motion.root} data-motion={data.motion} data-ambient={motion.ambient ? "running" : "paused"} className={`portfolio-v4 pf-${theme} ${layout} pf-motion-${data.motion} ${!motion.active ? "pf-resting" : ""} ${data.staticPreview ? "pf-static" : ""}`} style={{ "--pf-bg": palette.bg, "--pf-text": palette.text, "--pf-accent": palette.accent, "--pf-on-accent": readableOn(palette.accent) }}>
+    <a className="pf-skip" href="#pf-main">Skip to content</a><div className="pf-reading-progress" aria-hidden="true" />{!data.staticPreview && data.motion !== "none" && <button type="button" className="pf-motion-toggle" aria-pressed={motion.paused} disabled={motion.reduced} onClick={() => motion.setPaused(v => !v)}>{motion.reduced ? "Reduced motion" : motion.paused ? "Resume motion" : "Pause motion"}</button>}{children}
   </div>;
 }
 export function PortfolioNav({ data, brand }) {
@@ -78,7 +82,7 @@ export function PortfolioFooter({ data }) {
 export function PortfolioSections({ data, projects }) {
   const order = data.sectionOrder || ["projects", "experience", "credentials", "profiles", "contact"];
   return <>{order.map(key => {
-    if (key === "projects") return <React.Fragment key={key}>{projects || <StandardProjects data={data} />}</React.Fragment>;
+    if (key === "projects") return <React.Fragment key={key}>{data.projects.length > 1 && data.layoutSettings.projects === "rail" && <div className="pf-gallery-controls" role="group" aria-label="Horizontal gallery"><p>Swipe, scroll or use the arrows to explore every project.</p>{[[-1,"Previous projects"],[1,"Next projects"]].map(([direction,label]) => <button type="button" key={label} onClick={e => { const gallery=e.currentTarget.closest('.portfolio-v4').querySelector('#pf-work .pf-project-grid'); gallery?.scrollBy({left:direction * gallery.clientWidth * .8,behavior: data.motion === "none" || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "auto" : "smooth"}); }}>{label}</button>)}</div>}{projects || <StandardProjects data={data} />}</React.Fragment>;
     if (key === "contact") return <ContactSection key={key} data={data} footer={false} />;
     return <BackgroundSections key={key} data={{ ...data, experience: key === "experience" ? data.experience : [], certifications: key === "credentials" ? data.certifications : [], achievements: key === "credentials" ? data.achievements : [], codingProfiles: key === "profiles" ? data.codingProfiles : [] }} />;
   })}<PortfolioFooter data={data} /></>;

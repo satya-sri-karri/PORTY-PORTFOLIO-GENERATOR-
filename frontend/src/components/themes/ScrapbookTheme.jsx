@@ -13,7 +13,7 @@ export default function ScrapbookTheme({ data }) {
         <div className="scrapbook-portrait"><Portrait data={data} /><span className="scrapbook-stamp" aria-hidden="true">made<br />with care</span></div>
       </section>
       <PortfolioSections data={data} projects={projects.length > 0 && <section id="pf-work" className="pf-section"><SectionHeading title="The things I’ve made" note="Collected work" number="01" />
-        <div className={`scrapbook-project-grid ${projects.length === 1 ? "scrapbook-solo" : ""}`}>{projects.map((project, i) => <article className="scrapbook-project" key={project._id || i}>
+        <div className={`pf-project-grid scrapbook-project-grid ${projects.length === 1 ? "scrapbook-solo" : ""}`}>{projects.map((project, i) => <article className="pf-project scrapbook-project" key={project._id || i}>
           <div className="scrapbook-photo"><ProjectMedia project={project} index={i} /><p className="scrapbook-caption">{project.featured ? "Featured project" : `No. ${String(i + 1).padStart(2, "0")}`}</p></div>
           <div className="pf-project-body"><h3>{project.title || "Untitled project"}</h3>{project.description && <p className="pf-description">{project.description}</p>}<TechStack project={project} /><ProjectStory project={project} /><ProjectLinks project={project} /></div>
         </article>)}</div>

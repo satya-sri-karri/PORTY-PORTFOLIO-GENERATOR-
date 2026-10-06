@@ -1,6 +1,6 @@
 # Upgrade implementation and release status
 
-5 October 2026. The original `PORTY_Master_Improvement_Checklist.md` is preserved unchanged. This document reports implementation separately from live release validation.
+Updated 6 October 2026. The original `PORTY_Master_Improvement_Checklist.md` is preserved unchanged. This document reports implementation separately from live release validation.
 
 The earlier three design batches are retained; the remaining 18 original themes and eight new themes bring the catalog to **41**. All original theme identifiers remain valid. Neo-brutalism remains a Brutalist palette; Creator's Desk remains `interactive-3d`, and Signature Studio remains `kinetic`.
 
@@ -25,6 +25,14 @@ The earlier three design batches are retained; the remaining 18 original themes 
 The public preview originally uses the existing Render backend and database. New routes and optional fields require this branch's backend. Updating only the frontend does not add password recovery, Trash, analytics, showcase, metadata or storage of presentation/story fields to that older backend.
 
 Before promoting either service, create a separate backend/database for review, configure Mailjet and Groq there, and point review Vercel routing and `PORTY_BACKEND_URL` at it. Never replace production backend configuration just to exercise fixture scenarios. The master checklist's final release gates remain open until these checks are performed.
+
+## Motion and layout upgrade — 6 October 2026
+
+All 41 themes now accept independent layout experiments. The theme preview modal provides five starting presets, Surprise me, Reset layout, introduction/project composition, typography, spacing, image framing and lift/tilt choices. Apply Theme commits the experiment to the editor; Cancel discards it. Guest trials also offer these controls.
+
+Larger previews play motion and have Play/Pause and optional interaction. New drafts use Expressive motion; Subtle gives gentle movement and Still disables it. Visitors can Pause/Resume. Reading progress, finite entrances, pointer tilt/light, focus highlights and offscreen/hidden atmosphere controls are shared across the catalog. New experiences include a draggable/keyboard Canvas board, Pixel movement/jump/project paths, Terminal commands, Storybook page turns and Cinema navigation. Space, Surrealism and Cyberpunk have controlled ambient effects. Pixel's luminous night palette has a Daylight world alternative.
+
+The read-only `/portfolio/capabilities` endpoint advertises support for saved layouts. Before writing a custom layout or non-default motion setting, the editor checks that support. An older backend refuses the unsupported save with clear feedback and retains the editor/device draft; it does not claim that the experiment was published. Guest experimentation, animated previews and native composition remain available. Real backend persistence and physical-device release gates remain open.
 
 ## Verification record
 

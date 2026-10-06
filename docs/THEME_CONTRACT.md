@@ -1,6 +1,6 @@
 # Portfolio rendering contract
 
-This contract is implemented for fifteen designs: Minimalist (`minimalist`, Swiss Design), Dark Luxe (`dark-luxe`, Luxury Typography), Scrapbook (`scrapbook`), Y2K Aesthetic (`y2k-aesthetic`), Product Showcase (`product-showcase`), Aurora (`aurora`), Editorial (`editorial`), Neon Terminal (`neon-terminal`), Brutalist (`brutalist`), Neumorphic (`neumorphic`), Kinetic (`kinetic`, Signature Studio), Executive (`executive`), Retro Wave (`retro-wave`), Organic (`organic`) and Bento Grid (`bento`). All registered themes receive normalized input, but the other designs still require individual content and interaction review.
+The shared rendering contract now covers all 41 designs. Fifteen use individual theme compositions; the remaining 26 use distinct scoped art directions with shared content and theme-specific experiences. Every design receives normalized input and the optional layout/motion controls.
 
 ## Data boundary
 
@@ -49,6 +49,14 @@ The remaining 18 existing and eight new designs are implemented. Physical-device
 
 `availability`, `motto`, `interests` and `resumeUrl` are optional supplied facts. `showLocation` controls location display. `sectionOrder` reorders projects, experience, credentials, profiles and contact; `sectionVisibility` hides sections without deleting owner data. Public API responses also remove hidden sections/contact/location and omit account ownership, recovery metadata and analytics. Owner previews retain the complete editable record.
 
-New drafts use Subtle motion. Legacy records without a motion field retain their previous Expressive behavior. Device reduced motion always takes priority. Rain is explicit opt-in and pauses offscreen/hidden. Cinematic/sketch/surreal/frame reveals are finite and never hide essential content. Illustrations use original SVG and direct links, with full content below.
+New drafts use Expressive motion. Existing saved Subtle choices remain valid and now allow gentle reveals rather than forcing a static document. Still (`none`) disables animation. Device reduced motion always takes priority. Visitors can Pause/Resume motion. Rain remains explicit opt-in; atmospheres pause offscreen/hidden. Finite reveals never hide essential content. Illustrations use original SVG and direct links, with full content below.
 
 Covers are captured from the actual theme document and saved with the portfolio. A failed capture clears an obsolete cover; the portfolio remains usable and the sharing kit explains missing cover availability. No invented skills or projects appear in capture output.
+
+## Layout and motion studio
+
+`layoutSettings` independently selects hero (`theme`, `centered`, `split`), projects (`theme`, `cards`, `spotlight`, `rail`), spacing (`theme`, `compact`, `airy`), typography (`theme`, `editorial`, `bold`, `mono`), image frames (`theme`, `wide`, `square`, `rounded`) and hover (`theme`, `lift`, `tilt`). Unsupported values fall back to `theme`; legacy portfolios keep the native composition. No setting changes content, saved project order, theme ID or share slug. Phone layouts stack; galleries remain intentionally horizontally scrollable with buttons and focusable real destinations. Bento's View all still exposes its complete collection.
+
+Theme original, Editorial story, Creative gallery, Playful deck and Developer index are reversible starting presets. Surprise me chooses a different curated preset. The theme modal keeps experiments local until Apply Theme; Cancel discards them. Larger previews play motion and offer Play/Pause plus optional interaction; catalog thumbnails and saved cover capture stay still. Interactive iframe Escape closes the parent modal and restores focus.
+
+Shared motion uses one frame per scroll/pointer event, finite section/card entrances, a reading-progress line, hover light/tilt, keyboard focus highlights and a visitor pause control. Mouse tilt has touch/keyboard alternatives; reading and native navigation never depend on pointer motion. Theme-specific additions include draggable/keyboard-movable Canvas cards, a playable Pixel explorer with actual visited project paths, Terminal OS commands, Storybook/Spotify page transitions, Cinema scene navigation, slowly drifting Space stars, Surrealism morphing art and a controlled Cyberpunk scan/glitch. Canvas arrangements are temporary visitor exploration; the builder's saved layout controls are separate.

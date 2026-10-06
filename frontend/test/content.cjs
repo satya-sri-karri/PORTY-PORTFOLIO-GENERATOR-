@@ -48,3 +48,12 @@ test('Visibility and motion normalize as presentation choices without mutating s
   const source={name:'Anya',about:'Biography',location:'Hyderabad',showLocation:false,availability:'Seeking internships',motto:'Build carefully',interests:['Drawing'],resumeUrl:'https://example.com/resume.pdf',motion:'subtle',projects:[{title:'Project'}],sectionVisibility:{projects:false,contact:false},contact:{email:'private@example.com'},sectionOrder:['contact','projects','projects','invalid']};
   const normalized=content.normalizePortfolio(source); assert.equal(normalized.motion,'subtle'); assert.equal(normalized.location,''); assert.equal(normalized.availability,'Seeking internships'); assert.equal(normalized.projects.length,0); assert.deepEqual(normalized.contact,{}); assert.equal(source.projects.length,1); assert.deepEqual(normalized.sectionOrder,['contact','projects','experience','credentials','profiles']);
 });
+
+test('Layout experiments accept only supported choices, retain content and distinguish gentle motion from still mode', () => {
+  const source={name:'Anya',projects:[{title:'Journal',link:'https://example.com/journal'}],motion:'none',layoutSettings:{hero:'centered',projects:'rail',spacing:'airy',typography:'editorial',image:'rounded',hover:'tilt'}};
+  const snapshot=structuredClone(source), normalized=content.normalizePortfolio(source);
+  assert.deepEqual(normalized.layoutSettings,source.layoutSettings); assert.deepEqual(source,snapshot);assert.equal(normalized.motion,'none');assert.equal(normalized.projects[0].link,source.projects[0].link);
+  assert.equal(content.normalizePortfolio({motion:'subtle'}).motion,'subtle');assert.equal(content.normalizePortfolio({}).motion,'expressive');
+  assert.equal(content.normalizePortfolio({layoutSettings:{hero:'bad class',projects:'bad'}}).layoutSettings.projects,'theme');
+  assert.notDeepEqual(content.normalizePortfolio({layoutSettings:null}).layoutSettings,source.layoutSettings);
+});

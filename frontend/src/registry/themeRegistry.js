@@ -490,7 +490,7 @@ const THEME_REGISTRY = {
 
   "surrealism": { id: "surrealism", name: "Surrealism", persona: "Dreamlike / visual creative", description: "Dreamlike original compositions with grounded text and complete project stories", colors: {"bg": "#EAE4F0", "accent": "#76538A", "text": "#33263F"}, tags: ["Surrealism", "Creative"], component: SurrealismTheme, preview: {"bg": "#EAE4F0", "accent": "#76538A"} },
 
-  "pixel-art": { id: "pixel-art", name: "Pixel Art", persona: "Game maker / playful creator", description: "Original illustrated pixel world with real destinations and direct navigation", colors: {"bg": "#EBF0DD", "accent": "#486B35", "text": "#293929"}, tags: ["Pixel Art", "Creative"], component: PixelArtTheme, preview: {"bg": "#EBF0DD", "accent": "#486B35"} },
+  "pixel-art": { id: "pixel-art", name: "Pixel Art", persona: "Game maker / playful creator", description: "A luminous pixel world with a playable explorer, jump controls and real project paths", colors: {"bg": "#11182A", "accent": "#7CF6BC", "text": "#E5FFF5"}, palettes: [{name:"Daylight world",bg:"#EBF0DD",accent:"#486B35",text:"#293929"}], tags: ["Pixel Art", "Creative", "Interactive"], component: PixelArtTheme, preview: {"bg": "#11182A", "accent": "#7CF6BC"} },
 
   "maximalism": { id: "maximalism", name: "Maximalism", persona: "Expressive / eclectic creator", description: "Layered type, patterns and vivid project frames with a deliberate reading order", colors: {"bg": "#F8EED8", "accent": "#913F64", "text": "#352735"}, tags: ["Maximalism", "Creative"], component: MaximalismTheme, preview: {"bg": "#F8EED8", "accent": "#913F64"} },
 

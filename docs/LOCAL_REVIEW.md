@@ -259,3 +259,18 @@ For real application validation, use a separate development database and this br
 The complete candidate is saved locally on `upgrade/porty-complete-checklist`. The immediately previous reviewed source is preserved at `894f1d273a964e0c3ffdc5ebfe6205a23490e818` on local branch `backup/design-batch-3-2026-10-05` and tag `porty-design-batch-3-2026-10-05`. This completion checkpoint is not pushed or deployed; the earlier remote preview and production source are unchanged.
 
 These are fixture and local browser results. Live MongoDB persistence/TTL behavior, real email and AI provider output, hosted metadata functions/social crawlers, physical Android performance and observation of 10–15 target users remain pending. See `UPGRADE_STATUS.md` for the release gates and pilot protocol.
+
+## Motion and layout studio verification — 6 October 2026
+
+- Production frontend build passed; initial JavaScript is 122.83 kB gzip. Themes remain lazy-loaded. No WebGL dependency was added.
+- 33 backend tests and 8 content tests passed, including the read-only layout capability endpoint, sanitized layout round trips and all three motion values.
+- All 23 reliability browser scenarios and all 11 completion workflow scenarios passed. The phone theme preview now remains visible while scrolling through controls; the third-batch palette regression also received a focused passing recheck.
+- The motion suite passed 11 scenarios and 328 layout cases (41 themes × four curated experiments × desktop/phone). It checks actual rendered font families, spacing, centred introduction, image aspect ratios, project composition, all supplied project destinations and horizontal overflow. The phone studio scenario verifies animated preview, pause, reversible Cancel/Apply, fixture save/reload and unchanged content.
+- Interaction checks cover Canvas mouse dragging, keyboard movement/reset/open and synthetic touch dragging; Pixel movement/jump/path counts; Terminal commands; Cinema destinations; interactive iframe Escape/focus restoration; Expressive tilt/progress; Subtle entrances; Still mode; visitor pause; dynamic reduced motion; offscreen and document-hidden atmosphere pause.
+- An older-service regression verifies that unsupported layout saving sends no portfolio write, reports the limitation and retains the recoverable draft. Positive save checks use this revision's API fixtures.
+- The native theme suite passed 820 content/layout cases and captured 164 screenshots earlier in this upgrade. Pixel's final luminous-night palette received another 20-case pass and four screenshots. Final phone studio and Pixel scene screenshots were visually reviewed.
+- Original master checklist SHA-256 remains `de53ae23a3447d6aa7d763d7a6c6e5b4fe649857228026d9225a90a13150cfe9`. Git whitespace checks passed.
+
+Run the new interaction suite with `PORTY_CHROME_PATH=/path/to/chromium npm run test:motion --prefix frontend`. `PORTY_MOTION_FILTER` optionally selects a scenario. Do not rebuild while any browser suite is serving the build directory.
+
+The previous review is preserved on local and GitHub branch `backup/pre-motion-studio-2026-10-06`. This update extends only `upgrade/porty-complete-checklist`. The review frontend still uses the original Render service; live custom-layout persistence requires a separately deployed upgraded review backend/database. Browser fixtures and synthetic touch do not verify live providers, MongoDB behavior or physical-device performance. See `MOTION_STUDIO_REVIEW.md` for the review flow.

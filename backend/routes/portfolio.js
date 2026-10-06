@@ -3,7 +3,7 @@ const router = express.Router();
 const Portfolio = require("../models/Portfolio");
 const auth = require("../middleware/auth");
 
-const editableFields = ["name", "title", "about", "avatarUrl", "location", "skills", "projects", "experience", "certifications", "achievements", "codingProfiles", "contact", "socialLinks", "theme", "themeColors", "isPublic", "thumbnail", "availability", "motto", "interests", "resumeUrl", "showLocation", "motion", "sectionOrder", "sectionVisibility", "audience", "showcaseOptIn"];
+const editableFields = ["name", "title", "about", "avatarUrl", "location", "skills", "projects", "experience", "certifications", "achievements", "codingProfiles", "contact", "socialLinks", "theme", "themeColors", "isPublic", "thumbnail", "availability", "motto", "interests", "resumeUrl", "showLocation", "motion", "layoutSettings", "sectionOrder", "sectionVisibility", "audience", "showcaseOptIn"];
 const editableData = body => Object.fromEntries(editableFields.filter(key => Object.prototype.hasOwnProperty.call(body, key)).map(key => [key, body[key]]));
 // Public responses never expose ownership, recovery state or hidden contact content.
 const publicData = portfolio => {
@@ -20,6 +20,9 @@ const publicData = portfolio => {
 const createdResponse = (portfolio, reused = false) => ({
   success: true, data: { id: portfolio._id, shareSlug: portfolio.shareSlug, reused },
 });
+
+// A read-only compatibility check lets review frontends avoid unsupported writes.
+router.get("/capabilities", (_req, res) => res.json({ success:true, data:{ layoutStudio:true, motionModes:["none","subtle","expressive"] } }));
 
 // Create
 router.post("/", auth, async (req, res) => {
@@ -70,7 +73,7 @@ router.get("/trash", auth, async (req, res) => {
   catch { res.status(500).json({ error: "Trash could not be loaded." }); }
 });
 router.get("/showcase", async (req, res) => {
-  try { res.json({ success: true, data: await Portfolio.find({ isPublic: true, showcaseOptIn: true, deletedAt: null }).select("name title theme themeColors motion shareSlug thumbnail").sort({ updatedAt: -1 }).limit(60) }); }
+  try { res.json({ success: true, data: await Portfolio.find({ isPublic: true, showcaseOptIn: true, deletedAt: null }).select("name title theme themeColors motion layoutSettings shareSlug thumbnail").sort({ updatedAt: -1 }).limit(60) }); }
   catch { res.status(500).json({ error: "Showcase could not be loaded." }); }
 });
 // No view increment for metadata or social crawlers.
