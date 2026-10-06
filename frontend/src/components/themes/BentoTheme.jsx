@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { useVisibleProjects, useProjectExplorer } from "./common/ProjectExplorer";
+import { orderedProjects } from "../../utils/portfolioContent";
 import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, ProjectMedia, ProjectLinks, ProjectStory, TechStack, SectionHeading, PortfolioSections } from "./common/PortfolioParts";
 import "./common/thirdBatch.css";
 
 function BentoProjects({ data }) {
   const [expanded, setExpanded] = useState(false);
-  const projects = useVisibleProjects(data);
-  const explorer = useProjectExplorer();
-  if (!data.projects.length) return null;
-  const displayed = expanded || explorer?.view === "index" || explorer?.query || explorer?.technology ? projects : projects.slice(0, 4);
+  const projects = orderedProjects(data.projects);
+  if (!projects.length) return null;
+  const displayed = expanded ? projects : projects.slice(0, 4);
   return <section id="pf-work" className="pf-section"><div className="bento-work-heading"><SectionHeading title="Projects" note="Built one idea at a time" number="01" />
-    {projects.length > 4 && !explorer?.query && !explorer?.technology && explorer?.view !== "index" && <button type="button" className="bento-expand" aria-expanded={expanded} aria-controls="bento-projects" onClick={() => setExpanded(previous => !previous)}>{expanded ? "Show first 4 projects" : `View all ${projects.length} projects`}</button>}
+    {projects.length > 4 && <button type="button" className="bento-expand" aria-expanded={expanded} aria-controls="bento-projects" onClick={() => setExpanded(previous => !previous)}>{expanded ? "Show first 4 projects" : `View all ${projects.length} projects`}</button>}
   </div><div id="bento-projects" className={`pf-project-grid bento-projects ${projects.length === 1 ? "pf-solo-project" : ""}`}>{displayed.map((project, index) => <article className={`pf-project ${index === 0 ? "pf-featured-project" : ""}`} key={project._id || index}>
     <ProjectMedia project={project} index={index} /><div className="pf-project-body"><p className="pf-eyebrow">{project.featured ? "Featured project" : `Project ${String(index + 1).padStart(2, "0")}`}</p><h3>{project.title || "Untitled project"}</h3>{project.description && <p className="pf-description">{project.description}</p>}<TechStack project={project} /><ProjectStory project={project} /><ProjectLinks project={project} /></div>
   </article>)}</div></section>;

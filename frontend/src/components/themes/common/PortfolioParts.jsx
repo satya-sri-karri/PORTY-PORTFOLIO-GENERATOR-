@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { profileLinks, projectStory, readableOn } from "../../../utils/portfolioContent";
+import { orderedProjects, profileLinks, projectStory, readableOn } from "../../../utils/portfolioContent";
 import "./portfolio.css";
 import usePortfolioMotion from "./usePortfolioMotion";
-import "./studio.css";
-import { ProjectExplorerProvider, ProjectCollectionControls, ProjectExploreButton, useVisibleProjects, SignatureArt, themeDirection } from "./ProjectExplorer";
-import "./discovery.css";
+import ThemeEffects from "./ThemeEffects";
+import { effectFor } from "./themeEffectCatalog";
+import "./individualEffects.css";
 
 export function PortfolioRoot({ data, theme, colors, children }) {
   const palette = Object.fromEntries(Object.entries(colors).map(([key, fallback]) => [key, data.themeColors[key] || fallback]));
-  const motion = usePortfolioMotion(data);
-  const layout = Object.entries(data.layoutSettings).map(([key,value]) => `pf-studio-${key}-${value}`).join(" ");
-  return <div ref={motion.root} data-direction={themeDirection(theme)} data-motion={data.motion} data-ambient={motion.ambient ? "running" : "paused"} className={`portfolio-v4 pf-${theme} ${layout} pf-motion-${data.motion} ${!motion.active ? "pf-resting" : ""} ${data.staticPreview ? "pf-static" : ""}`} style={{ "--pf-bg": palette.bg, "--pf-text": palette.text, "--pf-accent": palette.accent, "--pf-on-accent": readableOn(palette.accent) }}>
-    <a className="pf-skip" href="#pf-main">Skip to content</a><div className="pf-reading-progress" aria-hidden="true" />{!data.staticPreview && data.motion !== "none" && <button type="button" className="pf-motion-toggle" aria-pressed={motion.paused} disabled={motion.reduced} onClick={() => motion.setPaused(v => !v)}>{motion.reduced ? "Reduced motion" : motion.paused ? "Resume motion" : "Pause motion"}</button>}<ProjectExplorerProvider data={data}>{children}</ProjectExplorerProvider>
+  const effect = effectFor(data.theme);
+  const motion = usePortfolioMotion(data, effect);
+  return <div ref={motion.root} data-effect={effect.id} data-motion={data.motion} data-ambient={motion.ambient ? "running" : "paused"} className={`portfolio-v4 pf-${theme} pf-motion-${data.motion} ${!motion.active ? "pf-resting" : ""} ${data.staticPreview ? "pf-static" : ""}`} style={{ "--pf-bg": palette.bg, "--pf-text": palette.text, "--pf-accent": palette.accent, "--pf-on-accent": readableOn(palette.accent) }}>
+    <a className="pf-skip" href="#pf-main">Skip to content</a>{!data.staticPreview && data.motion !== "none" && <button type="button" className="pf-motion-toggle" aria-pressed={motion.paused} disabled={motion.reduced} onClick={() => motion.setPaused(v => !v)}>{motion.reduced ? "Reduced motion" : motion.paused ? "Resume motion" : "Pause motion"}</button>}{children}
   </div>;
 }
 export function PortfolioNav({ data, brand }) {
@@ -30,7 +30,7 @@ export function Skills({ data }) {
   return data.skills.length ? <div className="pf-skills" aria-label="Skills">{data.skills.map((skill, i) => <span key={i}>{skill}</span>)}</div> : null;
 }
 export function ProfileActions({ data }) {
-  return <><div className="pf-actions">{data.projects.length > 0 && <a className="pf-button" href="#pf-work">Explore my work <span aria-hidden="true">↗</span></a>}{profileLinks(data).length > 0 && <a className="pf-text-link" href="#pf-contact">Get in touch <span aria-hidden="true">↗</span></a>}</div><SignatureArt /></>;
+  return <><div className="pf-actions">{data.projects.length > 0 && <a className="pf-button" href="#pf-work">Explore my work <span aria-hidden="true">↗</span></a>}{profileLinks(data).length > 0 && <a className="pf-text-link" href="#pf-contact">Get in touch <span aria-hidden="true">↗</span></a>}</div><ThemeEffects data={data} /></>;
 }
 export function ProjectMedia({ project, index = 0, className = "" }) {
   const [failed, setFailed] = useState(false); useEffect(() => setFailed(false), [project.image]);
@@ -41,7 +41,7 @@ export function ProjectMedia({ project, index = 0, className = "" }) {
   </div>;
 }
 export function ProjectLinks({ project }) {
-  return <><div className="pf-project-links">{project.link && <a href={project.link} target="_blank" rel="noopener noreferrer">View project <span aria-hidden="true">↗</span></a>}{project.github && <a href={project.github} target="_blank" rel="noopener noreferrer">Source code <span aria-hidden="true">↗</span></a>}</div><ProjectExploreButton project={project} /></>;
+  return <div className="pf-project-links">{project.link && <a href={project.link} target="_blank" rel="noopener noreferrer">View project <span aria-hidden="true">↗</span></a>}{project.github && <a href={project.github} target="_blank" rel="noopener noreferrer">Source code <span aria-hidden="true">↗</span></a>}</div>;
 }
 export function TechStack({ project }) {
   return project.techStack.length ? <ul className="pf-tech" aria-label="Project technologies">{project.techStack.map((tech, i) => <li key={i}>{tech}</li>)}</ul> : null;
@@ -51,11 +51,11 @@ export function ProjectStory({ project, open = false }) {
   return story.length ? <details className="pf-story" open={open || undefined}><summary>Project story</summary><dl>{story.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details> : null;
 }
 export function SectionHeading({ title, note, number }) {
-  return <><div className="pf-section-heading"><p className="pf-eyebrow">{number && <span>{number} / </span>}{note || "Portfolio"}</p><h2>{title}</h2></div>{number === "01" && <ProjectCollectionControls />}</>;
+  return <div className="pf-section-heading"><p className="pf-eyebrow">{number && <span>{number} / </span>}{note || "Portfolio"}</p><h2>{title}</h2></div>;
 }
 export function StandardProjects({ data, storyOpen = false }) {
-  const projects = useVisibleProjects(data);
-  if (!data.projects.length) return null;
+  const projects = orderedProjects(data.projects);
+  if (!projects.length) return null;
   return <section id="pf-work" className="pf-section"><SectionHeading title="Projects" note="Ideas put into practice" number="01" />
     <div className={`pf-project-grid ${projects.length === 1 ? "pf-solo-project" : ""}`}>{projects.map((project, i) => <article className={`pf-project ${i === 0 ? "pf-featured-project" : ""}`} key={project._id || i}>
       <ProjectMedia project={project} index={i} /><div className="pf-project-body"><p className="pf-eyebrow">{project.featured ? "Featured project" : `Project ${String(i + 1).padStart(2, "0")}`}</p><h3>{project.title || "Untitled project"}</h3>{project.description && <p className="pf-description">{project.description}</p>}<TechStack project={project} /><ProjectStory project={project} open={storyOpen && i === 0} /><ProjectLinks project={project} /></div>
@@ -84,7 +84,7 @@ export function PortfolioFooter({ data }) {
 export function PortfolioSections({ data, projects }) {
   const order = data.sectionOrder || ["projects", "experience", "credentials", "profiles", "contact"];
   return <>{order.map(key => {
-    if (key === "projects") return <React.Fragment key={key}>{data.projects.length > 1 && data.layoutSettings.projects === "rail" && <div className="pf-gallery-controls" role="group" aria-label="Horizontal gallery"><p>Swipe, scroll or use the arrows to explore every project.</p>{[[-1,"Previous projects"],[1,"Next projects"]].map(([direction,label]) => <button type="button" key={label} onClick={e => { const gallery=e.currentTarget.closest('.portfolio-v4').querySelector('#pf-work .pf-project-grid'); gallery?.scrollBy({left:direction * gallery.clientWidth * .8,behavior: data.motion === "none" || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? "auto" : "smooth"}); }}>{label}</button>)}</div>}{projects || <StandardProjects data={data} />}</React.Fragment>;
+    if (key === "projects") return <React.Fragment key={key}>{projects || <StandardProjects data={data} />}</React.Fragment>;
     if (key === "contact") return <ContactSection key={key} data={data} footer={false} />;
     return <BackgroundSections key={key} data={{ ...data, experience: key === "experience" ? data.experience : [], certifications: key === "credentials" ? data.certifications : [], achievements: key === "credentials" ? data.achievements : [], codingProfiles: key === "profiles" ? data.codingProfiles : [] }} />;
   })}<PortfolioFooter data={data} /></>;

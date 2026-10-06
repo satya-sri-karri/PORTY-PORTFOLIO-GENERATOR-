@@ -1,7 +1,10 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 const ThumbnailGenerator = forwardRef(function ThumbnailGenerator({ data, onCapture }, api) {
-  const frame = useRef(null); const latest = useRef(data); latest.current = data; const sequence = useRef(0);
+  const frame = useRef(null); const latest = useRef(data); latest.current = data; const sequence = useRef(0); const timer = useRef(null);
   async function capture() {
+    // An explicit Save capture owns this request; a pending background capture
+    // must not supersede it while the image module is loading or rendering.
+    clearTimeout(timer.current);
     const request = ++sequence.current; const target = frame.current;
     if (!target?.contentWindow) return "";
     target.contentWindow.postMessage({ type: "porty:theme-data", data: { ...latest.current, __captureId: String(request) } }, window.location.origin);
@@ -16,7 +19,7 @@ const ThumbnailGenerator = forwardRef(function ThumbnailGenerator({ data, onCapt
     } catch { return ""; }
   }
   useImperativeHandle(api, () => ({ capture }));
-  useEffect(() => { onCapture(""); const timer = setTimeout(capture, 900); return () => { clearTimeout(timer); sequence.current++; }; }, [data]); // eslint-disable-line
+  useEffect(() => { onCapture(""); timer.current = setTimeout(capture, 900); return () => { clearTimeout(timer.current); sequence.current++; }; }, [data]); // eslint-disable-line
   return <iframe ref={frame} src="/theme-preview" title="Portfolio cover capture" tabIndex={-1} aria-hidden="true" onLoad={() => { frame.current.contentWindow.postMessage({ type: "porty:theme-data", data: latest.current }, window.location.origin); }} style={{ position:"fixed", left:-12000, top:0, width:1100, height:700, border:0, pointerEvents:"none" }} />;
 });
 export default ThumbnailGenerator;

@@ -26,19 +26,17 @@ The public preview originally uses the existing Render backend and database. New
 
 Before promoting either service, create a separate backend/database for review, configure Mailjet and Groq there, and point review Vercel routing and `PORTY_BACKEND_URL` at it. Never replace production backend configuration just to exercise fixture scenarios. The master checklist's final release gates remain open until these checks are performed.
 
-## Motion and layout upgrade — 6 October 2026
+## Individual theme effects correction — 6 October 2026
 
-All 41 themes now accept independent layout experiments. The theme preview modal provides five starting presets, Surprise me, Reset layout, introduction/project composition, typography, spacing, image framing and lift/tilt choices. Apply Theme commits the experiment to the editor; Cancel discards it. Guest trials also offer these controls.
+The user rejected the shared look of the later studio/reference update. The pre-studio native 41-theme compositions are restored; previous studio settings no longer override their typography, spacing, images or grids. Five generic layout presets, shared family artwork, collection toolbar/index and shared project dialog are removed. Native theme controls and earlier workflow upgrades remain. Pixel Art returns to its earlier green default, with night colors available as a palette.
 
-Larger previews play motion and have Play/Pause and optional interaction. New drafts use Expressive motion; Subtle gives gentle movement and Still disables it. Visitors can Pause/Resume. Reading progress, finite entrances, pointer tilt/light, focus highlights and offscreen/hidden atmosphere controls are shared across the catalog. New experiences include a draggable/keyboard Canvas board, Pixel movement/jump/project paths, Terminal commands, Storybook page turns and Cinema navigation. Space, Surrealism and Cyberpunk have controlled ambient effects. Pixel's luminous night palette has a Daylight world alternative.
+All 41 themes have their own effect direction, documented in `INDIVIDUAL_THEME_EFFECTS.md`. Expressive, Subtle and Still remain reversible choices. Shared runtime code handles lifecycle and input scheduling; the visuals are theme-specific. No universal project tilt, entrance animation or reading-progress overlay remains.
 
-The read-only `/portfolio/capabilities` endpoint advertises support for saved layouts. Before writing a custom layout or non-default motion setting, the editor checks that support. An older backend refuses the unsupported save with clear feedback and retains the editor/device draft; it does not claim that the experiment was published. Guest experimentation, animated previews and native composition remain available. Real backend persistence and physical-device release gates remain open.
+An older backend still cannot persist non-default motion preferences or the other previously added server capabilities. The save guard retains unsupported motion changes in the device draft and reports the limitation. Rendering the restored native layouts and expressive effects requires no new backend schema or data migration. No production backend/database change accompanies this frontend correction.
 
 ## Verification record
 
-The reference-inspired theme upgrade adds all-theme project search/filtering, gallery/index browsing and a focused project viewer, with separate palette-aware art directions. Guest trials accept multiple projects. These visitor features do not write portfolio records and need no new backend fields. The study and review flow are documented in `THEME_REFERENCE_UPGRADE.md`; saved custom-layout and other live-service gates above still apply.
-
-Commands and results are recorded in `LOCAL_REVIEW.md`. Screenshots are generated artifacts rather than committed marketing examples. Fixture identities and screenshots are labeled samples; no fictitious creator is added to the opt-in showcase.
+Commands and current results are recorded in `LOCAL_REVIEW.md`. Prior records remain historical and do not describe the current feature set. Screenshots are generated QA artifacts. Real-service, physical-device and pilot gates remain pending.
 
 ## Pilot protocol
 

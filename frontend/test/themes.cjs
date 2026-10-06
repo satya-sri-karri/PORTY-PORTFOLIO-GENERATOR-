@@ -145,7 +145,14 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
         await page.emulateMedia({ reducedMotion: 'reduce' });
         assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).animationName), 'none');
       }
-      if (theme === 'retro-wave') assert.equal(await page.locator('.retro-grid').evaluate(el => getComputedStyle(el).animationName), 'none');
+      if (theme === 'retro-wave') {
+        await page.waitForFunction(() => getComputedStyle(document.querySelector('.retro-grid')).animationName === 'fx-horizon');
+        await page.getByRole('button', { name: 'Pause motion', exact: true }).click();
+        assert.equal(await page.locator('.retro-grid').evaluate(el => getComputedStyle(el).animationName), 'none');
+        await page.getByRole('button', { name: 'Resume motion', exact: true }).click();
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.waitForFunction(() => getComputedStyle(document.querySelector('.retro-grid')).animationName === 'none');
+      }
       await page.goto('http://127.0.0.1:3110/theme-preview'); await page.getByText('Waiting for preview…').waitFor();
       await page.emulateMedia({ reducedMotion: 'no-preference' });
       await page.evaluate(({ data, theme }) => window.postMessage({ type: 'porty:theme-data', data: { ...data, theme }, staticPreview: true }, location.origin), { data: full, theme });
@@ -154,7 +161,7 @@ const full = { ...basic, avatarUrl: portrait, skills: ['React', 'JavaScript', 'I
       assert.equal(animated, 0, theme + ' animated inside static preview');
       await page.emulateMedia({ reducedMotion: 'reduce' });
     }
-    if (thirdBatch.length) console.log('PASS third-batch static previews, finite Kinetic entrance and dynamic reduced motion; Retro Wave has no grid loop');
+    if (thirdBatch.length) console.log('PASS third-batch static previews, finite Kinetic entrance and dynamic reduced motion; Retro Wave horizon pauses and honors reduced motion');
     if (selectedThemes.includes('aurora')) {
       await render(full, 'aurora', 1440);
       assert.equal(await page.locator('.aurora-orbit').first().evaluate(el => getComputedStyle(el).animationName), 'none');

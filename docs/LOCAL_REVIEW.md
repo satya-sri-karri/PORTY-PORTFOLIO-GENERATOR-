@@ -1,5 +1,19 @@
 # PORTY local review — batches 1, 2 and 3
 
+## Current correction: individual theme effects — 6 October 2026
+
+The pre-studio compositions from `7ef2676` are restored across all 41 themes. Shared family artwork, universal layout overrides, collection/index controls and the common project dialog are removed. Each theme now has its own scoped visual effects; native interaction controls remain. See `INDIVIDUAL_THEME_EFFECTS.md` for the 41 directions and review flow. Sections below this checkpoint describe historical revisions.
+
+- Production frontend build passed, with initial JavaScript at 124.75 kB gzip. Themes remain lazy-loaded; no dependency or backend change was added.
+- All 820 catalog cases passed across five widths, with 164 screenshots, followed by a passing 20-case/four-screenshot Aurora recheck after its final specificity adjustment.
+- All 11 motion/interaction scenarios and 164 native-layout cases passed. Checks cover all 41 distinct rendered effect/cover signatures, ignored legacy layout overrides, visitor pause, dynamic reduced motion, static capture, native controls and supplied destinations. A focused final desk check passed after keeping pointer perspective out of reading mode.
+- A separately built pre-studio checkout passed 82 desktop/phone composition comparisons: palette, typography, font sizing/weight, letter spacing, spacing, grids, image frames, borders and widths are retained.
+- All 8 content tests and all 11 completion workflows passed. The save-cover capture regression deliberately delays SVG decoding by 1.2 seconds and verifies an actual JPEG is saved: a pending background capture can no longer supersede the explicit Save capture.
+- All 23 reliability scenarios were verified across the initial 16 passing scenarios and a sequential final seven-scenario recheck. That final run includes theme palette save/reload, modal focus/Cancel/Apply, full-preview return, project ordering and all 41 lazy-loaded themes with minimal/populated/empty optional content. Overlapping browser runs produced timeouts; the affected scenarios passed sequentially without changing route assertions or navigation code.
+- All 41 desktop/phone hero views and desktop work collections were visually reviewed. Whitespace checks passed. The original master checklist SHA-256 remains `de53ae23a3447d6aa7d763d7a6c6e5b4fe649857228026d9225a90a13150cfe9`.
+
+The preceding review is preserved locally and on GitHub at `backup/pre-individual-effects-2026-10-06` (`d13091e37c43a5b7fbe618e9004f0e755193f84c`). This correction updates only the existing review branch and draft PR #2. Production, main, backend and database remain unchanged. The review frontend uses the original Render service; non-default motion persistence and the earlier additional server capabilities require the separately upgraded review backend. Live providers, database behavior and physical-device performance remain release gates. `/try` supports reviewing all 41 themes without signing in.
+
 These notes record the local checkpoints before publication. On 5 October 2026, the user authorized a GitHub backup and an upgrade-branch push. See `docs/ROLLBACK.md` for the original-version reference and publication plan; the historical local/uncommitted statements below describe those earlier checkpoints.
 
 These batches implement the reliability foundation, real theme previews, reviewable AI suggestions, and the first five theme designs from the master checklist. This is a review checkpoint, not completion of the full roadmap or a production release.

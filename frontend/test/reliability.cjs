@@ -34,7 +34,7 @@ let passed = 0;
     const page = await context.newPage(); const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     try { await fn(page, context); assert.deepEqual(errors, []); console.log('PASS ' + name); passed++; }
-    catch (error) { await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }); throw new Error(name + ': ' + error.message, { cause: error }); }
+    catch (error) { console.log('Failed fixture URL/state:', page.url(), await page.evaluate(() => document.readyState)); await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }); throw new Error(name + ': ' + error.message, { cause: error }); }
     finally { await context.close(); }
   };
   const fixtures = async (page, options = {}) => {

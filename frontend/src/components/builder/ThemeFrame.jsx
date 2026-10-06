@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { blank } from "../../hooks/usePortfolioForm";
-import "./LayoutStudio.css";
+import "./ThemeFrame.css";
 
 export function previewContent(data) {
   const hasContent = [data.name, data.title, data.about, data.avatarUrl, data.location].some(Boolean) || [data.skills, data.projects, data.experience, data.certifications, data.achievements, data.codingProfiles].some(a => a?.length) || Object.values(data.contact || {}).some(Boolean) || Object.values(data.socialLinks || {}).some(Boolean);

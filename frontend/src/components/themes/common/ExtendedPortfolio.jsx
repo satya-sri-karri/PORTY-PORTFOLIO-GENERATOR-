@@ -71,12 +71,6 @@ export default function ExtendedPortfolio({ data, config }) {
     document.addEventListener("visibilitychange", hidden);
     return () => { observer.disconnect(); document.removeEventListener("visibilitychange", hidden); };
   }, []);
-  useEffect(() => {
-    if(!["cinema","surreal","sketch","victorian"].includes(mode) || data.staticPreview || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add("ex-scene-entered"); observer.unobserve(entry.target); } }); }, {threshold:.1});
-    collection.current?.querySelectorAll(".pf-section").forEach(section => observer.observe(section));
-    return () => observer.disconnect();
-  }, [data.staticPreview, mode]);
   return <PortfolioRoot data={data} theme={`ex ex-${config.id}`} colors={config.colors}>
     <PortfolioNav data={data} brand={config.brand} />
     <main id="pf-main" className={`pf-container ex-layout ${reading ? "ex-reading" : ""}`}>

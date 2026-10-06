@@ -1,3 +1,5 @@
+> Historical review, superseded by the individual theme effects correction. The controls described below are no longer available. Use [Individual theme effects](INDIVIDUAL_THEME_EFFECTS.md) for the current review.
+
 # Motion and layout studio review
 
 6 October 2026. This update extends the completion review branch. Production remains separate.

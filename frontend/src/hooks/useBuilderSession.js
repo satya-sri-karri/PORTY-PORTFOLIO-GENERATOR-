@@ -126,13 +126,13 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
     if (!wasEdit && !requestId.current) requestId.current = window.crypto.randomUUID();
     persist();
     try {
-      if (Object.values(submitted.layoutSettings || {}).some(value => value && value !== "theme") || ["none","subtle"].includes(submitted.motion)) {
+      if (["none","subtle"].includes(submitted.motion)) {
         const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);
         let capabilities;
         try { capabilities=await getPortfolioCapabilities(controller.signal); }
-        catch(e) { if(![401,404].includes(e.status)) throw new Error("Could not check layout saving. Your experiment is still here. Please try again."); }
+        catch(e) { if(![401,404].includes(e.status)) throw new Error("Could not check motion preference saving. Your choice is still in the draft. Please try again."); }
         finally { clearTimeout(timer); }
-        if(!capabilities?.data?.layoutStudio) throw new Error("This preview cannot save custom layouts yet. Your experiment is still here. You can keep trying it; publishing this layout needs the service update.");
+        if(!capabilities?.data?.layoutStudio) throw new Error("This preview cannot save this motion preference yet. Your choice is still in the draft; saving it needs the service update.");
       }
       const response = wasEdit
         ? await updatePortfolio(record.current, submitted, token)

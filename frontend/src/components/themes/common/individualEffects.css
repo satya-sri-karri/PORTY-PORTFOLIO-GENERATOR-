@@ -1,0 +1,332 @@
+/* Effects add no grid, typography, spacing or image-frame overrides. */
+.portfolio-v4 .pf-hero { position:relative; isolation:isolate; }
+.portfolio-v4 .ex-identity { position:relative; isolation:isolate; }
+.portfolio-v4 .pf-effect-art { position:absolute; width:min(28%,240px); height:auto; right:0; bottom:12px; color:var(--pf-accent); opacity:.3; z-index:-1; pointer-events:none; overflow:visible; }
+.portfolio-v4 .pf-motion-toggle { position:fixed; bottom:12px; left:12px; z-index:40; min-height:44px; padding:10px 14px; border:1px solid var(--pf-line); background:var(--pf-bg); color:var(--pf-text); font:11px 'Inter',sans-serif; cursor:pointer; box-shadow:0 2px 9px #0001; }
+.portfolio-v4 .pf-motion-toggle:disabled { cursor:default; }
+/* The same lifecycle operates different visual mechanisms. Only decorative content loops. */
+@keyframes fx-measured { from { scale:0 1; } to { scale:1 1; } }
+@keyframes fx-gold { 0%,100% { opacity:.15; translate:-10% 0; } 50% { opacity:.6; translate:10% 0; } }
+@keyframes fx-paper { 0% { rotate:-2deg; translate:0 5px; } 70% { rotate:.5deg; } 100% { rotate:0deg; translate:0 0; } }
+@keyframes fx-reflection { from { translate:-130% 0; } to { translate:130% 0; } }
+@keyframes fx-chrome { from { rotate:10deg; } to { rotate:370deg; } }
+@keyframes fx-ink { from { scale:.2 1; } to { scale:1 1; } }
+@keyframes fx-phosphor { 0%,65% { translate:0 -20px; opacity:0; } 70% { opacity:.3; } 100% { translate:0 600px; opacity:0; } }
+@keyframes fx-offset { from { translate:-9px 9px; } to { translate:0 0; } }
+@keyframes fx-soft-light { 0%,100% { opacity:.12; } 50% { opacity:.32; } }
+@keyframes fx-ribbon { from { rotate:-12deg; scale:.96 1; } to { rotate:10deg; scale:1.07 .94; } }
+@keyframes fx-direction { from { translate:-18px 0; } to { translate:0 0; } }
+@keyframes fx-signature { from { scale:1 0; } to { scale:1 1; } }
+@keyframes fx-horizon { from { background-position:0 0; } to { background-position:0 48px; } }
+@keyframes fx-sunset { 0%,100% { opacity:.36; scale:1; } 50% { opacity:.52; scale:1.025; } }
+@keyframes fx-botanical { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-leaf { from { rotate:-2deg; } to { rotate:3deg; } }
+@keyframes fx-cell { from { clip-path:inset(0 100% 100% 0); } to { clip-path:inset(0); } }
+@keyframes fx-prism { from { rotate:-5deg; translate:0 0; } to { rotate:5deg; translate:0 -5px; } }
+@keyframes fx-draft { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-signal { 0%,75% { translate:-18px 18px; opacity:.2; } 85% { opacity:.8; } 100% { translate:18px -18px; opacity:.2; } }
+@keyframes fx-chromatic { 0%,100% { text-shadow:none; } 40% { text-shadow:2px 0 var(--pf-accent),-2px 0 var(--pf-muted); } 70% { text-shadow:-1px 1px var(--pf-accent); } }
+@keyframes fx-conversation { to { rotate:360deg; } }
+@keyframes fx-reply { from { translate:-6px 0; } to { translate:0 0; } }
+@keyframes fx-desk { from { rotate:x 3deg; } to { rotate:x 0deg; } }
+@keyframes fx-waypoint { 0%,100% { scale:1; } 50% { scale:1.3; } }
+@keyframes fx-circuit { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-orbit { to { rotate:360deg; } }
+@keyframes fx-stars { from { opacity:.3; } to { opacity:.85; } }
+@keyframes fx-pin { from { translate:0 -4px; } to { translate:0 0; } }
+@keyframes fx-page { from { rotate:y -9deg; translate:4px 0; } to { rotate:y 0deg; translate:0 0; } }
+@keyframes fx-book { from { scale:1 .96; } to { scale:1 1; } }
+@keyframes fx-record { to { rotate:360deg; } }
+@keyframes fx-equalizer { from { scale:1 .35; } to { scale:1 1; } }
+@keyframes fx-spotlight { from { rotate:-6deg; } to { rotate:6deg; } }
+@keyframes fx-route { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-map-pin { 0%,100% { translate:0 0; } 50% { translate:0 -4px; } }
+@keyframes fx-impact { from { scale:.75; } to { scale:1; } }
+@keyframes fx-boot { from { opacity:.15; scale:.7 1; } to { opacity:1; scale:1 1; } }
+@keyframes fx-press { from { clip-path:inset(0 100% 0 0); } to { clip-path:inset(0); } }
+@keyframes fx-gallery { from { opacity:.1; } to { opacity:.3; } }
+@keyframes fx-matrix-trace { from { scale:0 1; } to { scale:1 1; } }
+@keyframes fx-impossible { from { rotate:-4deg; translate:0 -5px; } to { rotate:4deg; translate:0 5px; } }
+@keyframes fx-liquid { 0%,100% { border-radius:50% 40% 55% 45%; rotate:-12deg; } 50% { border-radius:35% 65% 40% 60%; rotate:12deg; } }
+@keyframes fx-pixel-weather { from { translate:-16px 0; } to { translate:24px 0; } }
+@keyframes fx-pixel-jump { 50% { translate:0 -60px; } }
+@keyframes fx-collage { from { rotate:-8deg; } to { rotate:8deg; } }
+@keyframes fx-ticket { from { translate:0 -3px; } to { translate:0 3px; } }
+@keyframes fx-pencil { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-woven { from { rotate:-4deg; } to { rotate:4deg; } }
+@keyframes fx-fringe { from { transform:skewX(-3deg); } to { transform:skewX(3deg); } }
+@keyframes fx-engraving { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+@keyframes fx-enso { from { stroke-dashoffset:1; rotate:-4deg; } to { stroke-dashoffset:0; rotate:0deg; } }
+@keyframes fx-aperture { from { rotate:-20deg; scale:.8; } to { rotate:0deg; scale:1; } }
+
+/* 01 Minimalist: rules, not floating cards. */
+.pf-swiss .swiss-ruler, .pf-swiss .pf-section-heading { position:relative; }
+.pf-swiss .swiss-ruler::after, .pf-swiss .pf-section-heading::after { content:''; position:absolute; top:-1px; left:0; width:100%; height:1px; background:var(--pf-accent); transform-origin:left; }
+.pf-swiss .pf-effect-entered::after { animation:fx-measured .9s ease-out both; }
+.pf-swiss .pf-project h3 { text-decoration-thickness:1px; text-underline-offset:8px; }
+.pf-swiss .pf-project:focus-within h3, .pf-swiss .pf-project:hover h3 { text-decoration:underline; }
+/* 02 Dark Luxe: light travels over the frame, never over the biography. */
+.pf-luxe .pf-project-media::after, .pf-luxe .luxe-portrait::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,70%) var(--pf-light-y,20%),color-mix(in srgb,var(--pf-accent) 16%,transparent),transparent 65%); }
+.pf-luxe .luxe-portrait { position:relative; }
+.pf-luxe .luxe-hero-decoration { animation:fx-gold 12s ease-in-out infinite; }
+.pf-luxe .pf-project:focus-within .pf-project-media { outline:1px solid var(--pf-accent); outline-offset:4px; }
+/* 03 Scrapbook: paper has a pivot; its text remains still. */
+.pf-scrapbook .scrapbook-photo { transform-origin:50% 10px; }
+.pf-scrapbook .scrapbook-photo.pf-effect-entered { animation:fx-paper .9s cubic-bezier(.2,.7,.2,1) both; }
+.pf-scrapbook .scrapbook-photo { transition:rotate .35s,box-shadow .35s; }
+.pf-scrapbook .scrapbook-project:is(:hover,:focus-within) .scrapbook-photo { rotate:-1deg; box-shadow:5px 10px 0 color-mix(in srgb,var(--pf-text) 12%,transparent); }
+/* 04 Product Showcase: a screen reflection inside the existing frame. */
+.pf-product .product-device { position:relative; overflow:hidden; }
+.pf-product .product-device::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg,transparent 35%,color-mix(in srgb,var(--pf-bg) 27%,transparent) 50%,transparent 65%); animation:fx-reflection 2s ease-out 1; }
+.pf-product .product-device.pf-pointer-active::after { animation:none; background:radial-gradient(ellipse at var(--pf-light-x) var(--pf-light-y),#ffffff21,transparent 55%); }
+.pf-product .product-study:focus-within .product-device { box-shadow:0 0 0 2px var(--pf-accent); }
+/* 05 Y2K: chrome keeps its original text treatment. */
+.pf-y2k .y2k-star-one { animation:fx-chrome 24s linear infinite; }
+.pf-y2k .y2k-star-two { animation:fx-chrome 32s linear infinite reverse; }
+.pf-y2k .y2k-hero-content h1 { background-size:100% 200%; transition:background-position 1.2s; }
+.pf-y2k .y2k-window:is(:hover,:focus-within) h1 { background-position:0 100%; }
+/* 06 Editorial: ink follows the margin. */
+.pf-editorial .pf-section-heading { position:relative; }
+.pf-editorial .pf-section-heading::after { content:''; position:absolute; bottom:-8px; left:0; height:2px; width:84px; background:var(--pf-accent); transform-origin:left; }
+.pf-editorial .pf-section-heading.pf-effect-entered::after { animation:fx-ink .7s ease-out both; }
+.pf-editorial .editorial-project:is(:hover,:focus-within) h3 { text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:6px; }
+/* 07 Neon Terminal: a slow, single scan avoids flickering text. */
+.pf-terminal .terminal-window { position:relative; overflow:hidden; }
+.pf-terminal .terminal-window::after { content:''; position:absolute; left:0; right:0; top:0; height:2px; background:var(--pf-accent); pointer-events:none; animation:fx-phosphor 10s linear infinite; }
+.pf-terminal .pf-project:is(:hover,:focus-within) { border-color:var(--pf-accent); }
+/* 08 Brutalist: hard, physical pressure. */
+.pf-brutalist .brutalist-arrow.pf-effect-entered { animation:fx-offset .45s steps(3) both; }
+.pf-brutalist .pf-project, .pf-brutalist .pf-button { transition:box-shadow .15s,translate .15s; }
+.pf-brutalist .pf-project:is(:hover,:focus-within), .pf-brutalist .pf-button:active { box-shadow:2px 2px 0 var(--pf-text); translate:2px 2px; }
+/* 09 Neumorphic: inset pressing instead of lifting. */
+.pf-neumorphic .neumorphic-introduction { position:relative; overflow:hidden; }
+.pf-neumorphic .neumorphic-introduction::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,0%) var(--pf-light-y,0%),#ffffff66,transparent 65%); animation:fx-soft-light 11s ease-in-out infinite; }
+.pf-neumorphic .pf-button:active, .pf-neumorphic .pf-project:focus-within { box-shadow:inset 4px 4px 10px #0001,inset -4px -4px 10px #fff3; }
+/* 10 Aurora: native orbit ribbons. */
+.portfolio-v4.pf-aurora .aurora-orbit { animation:fx-ribbon 20s ease-in-out infinite alternate; }
+.portfolio-v4.pf-aurora .aurora-orbit-second { animation:fx-ribbon 26s ease-in-out -8s infinite alternate-reverse; }
+/* 11 Kinetic: directional rhythm, existing type entrance retained. */
+.pf-kinetic .kinetic-rule.pf-effect-entered span { animation:fx-direction .7s cubic-bezier(.16,1,.3,1) both; }
+.pf-kinetic .kinetic-rule span { transition:translate .5s; }
+.pf-kinetic .kinetic-title:hover .kinetic-rule span { translate:-20px 0; }
+/* 12 Executive: subtle career line. */
+.pf-executive .executive-overview, .pf-executive .pf-timeline-row { position:relative; }
+.pf-executive .pf-effect-entered::before { content:''; position:absolute; top:0; bottom:0; left:0; width:2px; background:var(--pf-accent); transform-origin:top; animation:fx-signature 1s ease-out both; }
+.pf-executive .pf-project:focus-within { outline:1px solid var(--pf-accent); outline-offset:6px; }
+/* 13 Retro Wave: travel toward the sunset. */
+.pf-retro .retro-sun { animation:fx-sunset 14s ease-in-out infinite; }
+.pf-retro .retro-grid { animation:fx-horizon 8s linear infinite; }
+.pf-retro .pf-project:is(:hover,:focus-within) .pf-project-media { box-shadow:0 0 20px color-mix(in srgb,var(--pf-accent) 18%,transparent); }
+/* 14 Organic: draw a branch, then let the leaves breathe. */
+.pf-organic .fx-stem { stroke-dasharray:1; }
+.pf-organic .pf-effect-entered .fx-stem { animation:fx-botanical 2.2s ease-out both; }
+.pf-organic .fx-leaf { fill:color-mix(in srgb,var(--pf-accent) 16%,transparent); transform-origin:100px 112px; animation:fx-leaf 9s ease-in-out infinite alternate; }
+/* 15 Bento: a corner trace belongs to each cell. */
+.pf-bento .bento-tile { position:relative; }
+.pf-bento .bento-tile::after { content:''; position:absolute; top:12px; right:12px; width:14px; height:14px; border-top:2px solid var(--pf-accent); border-right:2px solid var(--pf-accent); pointer-events:none; }
+.pf-bento .bento-tile.pf-effect-entered::after { animation:fx-cell .7s ease-out both; }
+.pf-bento .pf-project:is(:hover,:focus-within) { box-shadow:inset 0 0 0 1px var(--pf-accent); }
+/* 16 Apple Vision: refracted glass rather than paper or neon. */
+.ex-apple-vision .fx-prism { transform-origin:center; animation:fx-prism 13s ease-in-out infinite alternate; }
+.ex-apple-vision .pf-project-media::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,15%) var(--pf-light-y,5%),#ffffff27,transparent 60%); box-shadow:inset 1px 1px 0 #ffffff44; }
+.ex-apple-vision .pf-project:focus-within { outline:1px solid var(--pf-accent); outline-offset:4px; }
+/* 17 Blueprint: plotted construction. */
+.ex-blueprint .fx-draft > path:first-child { stroke-dasharray:1; }
+.ex-blueprint .pf-effect-entered .fx-draft > path:first-child { animation:fx-draft 2.4s linear both; }
+.ex-blueprint .pf-project:is(:hover,:focus-within) { outline:1px dashed var(--pf-accent); outline-offset:5px; }
+/* 18 Cyberpunk: angled signals and one short chromatic echo. */
+.ex-cyberpunk-2077 .fx-signal { animation:fx-signal 9s linear infinite; }
+.ex-cyberpunk-2077 .pf-project:is(:hover,:focus-within) h3 { animation:fx-chromatic .6s ease-out 1; }
+/* 19 Assistant: speech response, not a fake typing loop. */
+.ex-ai-assistant .fx-conversation { transform-origin:120px 100px; animation:fx-conversation 28s linear infinite; }
+.ex-ai-assistant .fx-orbit-dot { fill:currentColor; }
+.ex-ai-assistant .ex-answer { animation:fx-reply .35s ease-out 1; }
+/* 20 3D: only the illustrated object tilts. */
+.ex-interactive-3d .ex-desk svg { transition:transform .4s ease-out; animation:fx-desk 1.2s ease-out 1; }
+.ex-interactive-3d .ex-desk svg.pf-pointer-active { transform:perspective(1000px) rotateX(calc(8deg + var(--pf-angle-x))) rotateY(var(--pf-angle-y)); }
+.ex-interactive-3d .ex-desk svg a:is(:hover,:focus) rect { stroke:var(--pf-accent); stroke-width:4px; }
+/* 21 Journey: milestone tracing. */
+.ex-timeline-journey .fx-waypoint { transform-box:fill-box; transform-origin:center; animation:fx-waypoint 7s ease-in-out infinite; }
+.ex-timeline-journey .pf-timeline-row { position:relative; }
+.ex-timeline-journey .pf-timeline-row.pf-effect-entered::before { content:''; position:absolute; inset:0 auto 0 -3px; width:3px; background:var(--pf-accent); transform-origin:top; animation:fx-signature .8s ease-out; }
+/* 22 Dashboard: activity circuit and actual supplied counts. */
+.ex-dashboard-portfolio .fx-circuit > path { stroke-dasharray:1; }
+.ex-dashboard-portfolio .fx-circuit > path { animation:fx-circuit 2s ease-out both; }
+.ex-dashboard-portfolio .ex-counts > .pf-effect-entered { outline:1px solid var(--pf-accent); outline-offset:-1px; transition:outline-color .65s ease-out; }
+/* 23 Space: deterministic stars with different phases, orbital depth. */
+.ex-space-explorer .ex-decoration i { animation:fx-stars 6s ease-in-out infinite alternate; }
+.ex-space-explorer .ex-decoration i:nth-child(3n) { animation-delay:-4s; animation-duration:9s; }
+.ex-space-explorer .ex-decoration i:nth-child(3n+1) { animation-delay:-2s; }
+.ex-space-explorer .fx-orbit { transform-origin:126px 102px; animation:fx-orbit 50s linear infinite; }
+.ex-space-explorer .pf-effect-art { translate:0 var(--pf-depth,0px); opacity:.6; }
+/* 24 Canvas: pinned cards feel physical when moved. */
+.ex-infinite-canvas .fx-pins > g { animation:fx-pin .8s ease-out both; }
+.ex-infinite-canvas .fx-pins > g:nth-child(3) { animation-delay:.15s; }
+.ex-infinite-canvas .fx-pins > g:nth-child(4) { animation-delay:.3s; }
+.ex-infinite-canvas .ex-drag-card { transition:box-shadow .2s; }
+.ex-infinite-canvas .ex-drag-card:is(:active,:focus-visible) { box-shadow:10px 15px 0 var(--pf-line); }
+/* 25 Storybook: changing pages, not changing layouts. */
+.ex-storybook .fx-book { transform-origin:120px 175px; animation:fx-book 10s ease-in-out infinite alternate; }
+.ex-storybook .ex-slide-content { transform-origin:left center; animation:fx-page .65s ease-out both; }
+.ex-storybook .ex-slides { background-image:linear-gradient(90deg,#00000006,transparent 14%); }
+/* 26 Wrapped: decorative rhythm, no fictional listening statistics. */
+.ex-spotify-wrapped .fx-record { transform-origin:120px 95px; animation:fx-record 30s linear infinite; }
+.ex-spotify-wrapped .fx-equalizer rect { fill:currentColor; stroke:none; transform-box:fill-box; transform-origin:bottom; animation:fx-equalizer calc(1.8s + var(--fx-i)*.13s) ease-in-out calc(var(--fx-i)*-.2s) infinite alternate; }
+/* 27 Netflix: the original poster rail remains horizontal. */
+.ex-netflix-portfolio .fx-spotlight { transform-origin:120px 20px; animation:fx-spotlight 16s ease-in-out infinite alternate; }
+.ex-netflix-portfolio .pf-project-media img { transition:scale .5s; }
+.ex-netflix-portfolio .pf-project:is(:hover,:focus-within) .pf-project-media img { scale:1.035; }
+/* 28 Map: section discovery, with a drawn route. */
+.ex-google-maps-portfolio .pf-effect-entered .fx-route > path:first-child { animation:fx-route 3s ease-out both; }
+.ex-google-maps-portfolio .fx-map-pin { animation:fx-map-pin 6s ease-in-out infinite; }
+.ex-google-maps-portfolio .ex-map a:is(:hover,:focus) rect { stroke:var(--pf-accent); stroke-width:5px; }
+/* 29 Comic: speed lines and tactile panel impact. */
+.ex-comic-book .pf-effect-entered .fx-impact { transform-origin:120px 100px; animation:fx-impact .5s cubic-bezier(.2,.8,.2,1) both; }
+.ex-comic-book .pf-project { transition:box-shadow .18s; }
+.ex-comic-book .pf-project:is(:hover,:focus-within) { box-shadow:7px 7px 0 var(--pf-accent); }
+/* 30 Terminal OS: boot once; content is available immediately. */
+.ex-terminal-os .pf-effect-entered .fx-boot rect { animation:fx-boot .25s steps(2) calc(var(--fx-i)*.12s) both; }
+.ex-terminal-os .ex-query:focus-within { outline:1px solid var(--pf-accent); outline-offset:6px; }
+/* 31 Newspaper: crisp printing and headline ink. */
+.ex-newspaper .pf-section-heading { position:relative; }
+.ex-newspaper .pf-section-heading.pf-effect-entered::after { content:''; position:absolute; bottom:-10px; left:0; width:100%; height:1px; background:var(--pf-text); animation:fx-press .8s steps(12); }
+.ex-newspaper .pf-project:is(:hover,:focus-within) h3 { text-decoration:underline double; text-decoration-thickness:1px; text-underline-offset:7px; }
+/* 32 Museum: gallery light, never a rotating painting. */
+.ex-museum .pf-project-media::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,50%) var(--pf-light-y,0%),#ffffff44,transparent 75%); animation:fx-gallery 2s ease-out both; }
+.ex-museum .pf-project:focus-within .pf-project-media { outline-color:var(--pf-accent); }
+/* 33 Matrix: manual rain remains opt-in. */
+.ex-hacker-matrix .ex-matrix span:nth-child(3n) { opacity:.55; animation-duration:7s; }
+.ex-hacker-matrix .ex-matrix span:nth-child(3n+1) { opacity:.8; animation-duration:6s; }
+.ex-hacker-matrix .pf-project-links::before { content:''; height:1px; width:36px; background:var(--pf-accent); align-self:center; transform-origin:left; }
+.ex-hacker-matrix .pf-project:is(:hover,:focus-within) .pf-project-links::before { animation:fx-matrix-trace .5s steps(7); }
+/* 34 Surrealism: liquid geometry remains behind the words. */
+.ex-surrealism .ex-art { animation:fx-liquid 19s ease-in-out infinite; }
+.ex-surrealism .fx-impossible { transform-origin:center; animation:fx-impossible 14s ease-in-out infinite alternate; }
+/* 35 Pixel: stepped weather and finite, user-triggered jumping. */
+.ex-pixel-art .ex-pixel-cloud, .ex-pixel-art .fx-pixel-stars { animation:fx-pixel-weather 15s steps(12) infinite alternate; }
+.ex-pixel-art .ex-pixel-jump { animation:fx-pixel-jump .7s steps(8); }
+.ex-pixel-art .ex-pixel-paths a:is(:hover,:focus) { box-shadow:3px 3px 0 var(--pf-accent); }
+/* 36 Maximalism: an independently moving collage. */
+.ex-maximalism .fx-burst { transform-origin:120px 100px; animation:fx-collage 18s ease-in-out infinite alternate; }
+.ex-maximalism .fx-ticket { animation:fx-ticket 8s ease-in-out infinite alternate; }
+.ex-maximalism .fx-stamp { fill:color-mix(in srgb,var(--pf-accent) 14%,transparent); }
+.ex-maximalism .pf-project:is(:hover,:focus-within) { border-color:var(--pf-accent); }
+/* 37 Sketch: the pencil line follows its hand-drawn shape. */
+.ex-conceptual-sketch .fx-pencil > path:first-child { stroke-dasharray:1; }
+.ex-conceptual-sketch .pf-effect-entered .fx-pencil > path:first-child { animation:fx-pencil 2.5s ease-out both; }
+.ex-conceptual-sketch .pf-project:is(:hover,:focus-within) h3 { text-decoration:underline wavy; text-decoration-thickness:1px; text-underline-offset:7px; }
+/* 38 Bohemian: woven rays and a soft fringe. */
+.ex-bohemian .fx-woven { transform-origin:120px 89px; animation:fx-woven 17s ease-in-out infinite alternate; }
+.ex-bohemian .fx-fringe { transform-origin:120px 141px; animation:fx-fringe 11s ease-in-out infinite alternate; }
+/* 39 Victorian: symmetrical engraving, no bouncing ornaments. */
+.ex-victorian .fx-engraving > path:first-child { stroke-dasharray:1; }
+.ex-victorian .pf-effect-entered .fx-engraving > path:first-child { animation:fx-engraving 3s ease-in-out both; }
+.ex-victorian .pf-project:is(:hover,:focus-within) { border-color:var(--pf-accent); }
+/* 40 Wabi Sabi: an imperfect ink gesture. */
+.ex-wabi-sabi .fx-enso > path:first-child { stroke-dasharray:1; }
+.ex-wabi-sabi .pf-effect-entered .fx-enso > path:first-child { transform-origin:center; animation:fx-enso 2.8s ease-out both; }
+.ex-wabi-sabi .pf-project-media img { transition:filter 1s; }
+.ex-wabi-sabi .pf-project:is(:hover,:focus-within) .pf-project-media img { filter:sepia(.12); }
+/* 41 Cinema: an aperture and tiny image depth, within the letterbox. */
+.ex-scroll-cinema .pf-effect-entered .fx-aperture { transform-origin:120px 100px; animation:fx-aperture 1.6s cubic-bezier(.16,1,.3,1) both; }
+.ex-scroll-cinema .pf-project-media img { translate:0 var(--pf-depth,0px); scale:1.025; }
+.ex-scroll-cinema .pf-project-media.pf-effect-entered { animation:fx-gallery 1s ease-out; }
+
+/* A slower, quieter option uses the same personality. No continuous ambient movement. */
+.portfolio-v4.pf-motion-subtle .pf-effect-art *, .portfolio-v4.pf-motion-subtle .ex-decoration *, .portfolio-v4.pf-motion-subtle :is(.aurora-orbit,.retro-sun,.retro-grid,.luxe-hero-decoration,.y2k-star,.ex-art,.ex-pixel-cloud) { animation:none; }
+.portfolio-v4.pf-motion-subtle .pf-effect-art { opacity:.2; }
+/* Pause when decorative scenes leave the viewport; freeze remaining finite effects too. */
+.portfolio-v4[data-ambient="paused"] .pf-effect-art *, .portfolio-v4[data-ambient="paused"] .ex-decoration *, .portfolio-v4[data-ambient="paused"] :is(.aurora-orbit,.retro-sun,.retro-grid,.luxe-hero-decoration,.y2k-star,.ex-art,.ex-pixel-cloud), .portfolio-v4 [data-effect-visible="false"], .portfolio-v4 [data-effect-visible="false"] * { animation-play-state:paused !important; }
+.portfolio-v4 [data-effect-visible="false"]::before, .portfolio-v4 [data-effect-visible="false"]::after { animation-play-state:paused !important; }
+.portfolio-v4 .aurora-hero[data-animate="false"] .aurora-orbit { animation-play-state:paused !important; }
+.portfolio-v4.pf-resting *, .portfolio-v4.pf-resting *::before, .portfolio-v4.pf-resting *::after { animation:none !important; transition:none !important; }
+/* Restore static transforms when movement is disabled. */
+.portfolio-v4.pf-resting .pf-effect-art, .portfolio-v4.pf-resting .pf-project-media img { translate:0 0; }
+@media (max-width:760px) {
+  .portfolio-v4 .pf-effect-art { width:120px; opacity:.18; }
+  .portfolio-v4 .pf-motion-toggle { bottom:8px; left:8px; }
+  .pf-scrapbook .scrapbook-project:hover .scrapbook-photo { rotate:0deg; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .portfolio-v4 .pf-effect-art, .portfolio-v4 .pf-project-media img { translate:0 0; }
+}
+
+/* Native project covers also keep a distinct material when a creator has no screenshot.
+   These are explicitly labeled typographic covers, never fabricated project imagery. */
+.pf-swiss .pf-project-cover { background:linear-gradient(90deg,transparent 49.8%,var(--pf-line) 50%,transparent 50.2%),var(--pf-surface); }
+.pf-luxe .pf-project-cover { background:radial-gradient(ellipse at 75% 15%,color-mix(in srgb,var(--pf-accent) 13%,transparent),transparent 60%),var(--pf-bg); box-shadow:inset 0 0 0 16px var(--pf-bg),inset 0 0 0 17px var(--pf-line); }
+.pf-scrapbook .pf-project-cover { background:repeating-linear-gradient(94deg,transparent 0 5px,#00000002 6px 7px),var(--pf-bg); }
+.pf-scrapbook .pf-cover-glyph { font-family:Georgia,serif; font-style:italic; rotate:-6deg; }
+.pf-product .pf-project-cover { background:radial-gradient(ellipse at 50% 110%,color-mix(in srgb,var(--pf-accent) 12%,transparent),transparent 65%),var(--pf-bg); }
+.pf-y2k .pf-project-cover { background:conic-gradient(from 40deg at 80% 20%,var(--pf-bg),var(--pf-line),var(--pf-bg),color-mix(in srgb,var(--pf-accent) 16%,var(--pf-bg)),var(--pf-bg)); }
+.pf-editorial .pf-project-cover { background:linear-gradient(90deg,transparent 32%,var(--pf-line) 32.2%,transparent 32.4%,transparent 67%,var(--pf-line) 67.2%,transparent 67.4%),var(--pf-surface); }
+.pf-terminal .pf-project-cover { background:repeating-linear-gradient(0deg,transparent 0 3px,#00000016 4px 5px),var(--pf-bg); }
+.pf-terminal .pf-cover-glyph { text-shadow:0 0 16px color-mix(in srgb,var(--pf-accent) 25%,transparent); font-family:monospace; }
+.pf-brutalist .pf-project-cover { background:linear-gradient(125deg,var(--pf-surface) 72%,var(--pf-accent) 72% 76%,var(--pf-text) 76% 79%,var(--pf-surface) 79%); }
+.pf-neumorphic .pf-project-cover { background:var(--pf-bg); box-shadow:inset 7px 7px 20px #0001,inset -7px -7px 20px #fff4; }
+.pf-aurora .pf-project-cover { background:radial-gradient(ellipse at 10% 70%,color-mix(in srgb,var(--pf-accent) 17%,transparent),transparent 60%),radial-gradient(ellipse at 90% 10%,color-mix(in srgb,var(--pf-accent) 12%,transparent),transparent 55%),var(--pf-bg); }
+.pf-kinetic .pf-project-cover { background:linear-gradient(155deg,var(--pf-surface) 60%,color-mix(in srgb,var(--pf-accent) 9%,var(--pf-bg)) 60%); }
+.pf-kinetic .pf-cover-glyph { font-style:italic; text-shadow:4px 4px 0 var(--pf-line); }
+.pf-executive .pf-project-cover { background:linear-gradient(0deg,var(--pf-line) 1px,transparent 1px) 0 83%/100% 1px no-repeat,var(--pf-bg); }
+.pf-retro .pf-project-cover { background:repeating-linear-gradient(0deg,transparent 0 22px,color-mix(in srgb,var(--pf-accent) 12%,transparent) 23px 24px),radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--pf-accent) 18%,transparent),transparent 60%),var(--pf-bg); }
+.pf-organic .pf-project-cover { background:radial-gradient(ellipse at 15% 85%,color-mix(in srgb,var(--pf-accent) 14%,var(--pf-bg)) 0 30%,transparent 31%),radial-gradient(ellipse at 95% 10%,var(--pf-surface) 0 40%,transparent 41%),var(--pf-bg); }
+.pf-bento .pf-project-cover { background:radial-gradient(var(--pf-line) .8px,transparent 1px) 0 0/14px 14px,var(--pf-surface); }
+.ex-apple-vision .pf-project-cover { background:linear-gradient(130deg,var(--pf-surface),var(--pf-bg) 40%,color-mix(in srgb,var(--pf-accent) 9%,var(--pf-bg)) 60%,var(--pf-surface)); }
+.ex-blueprint .pf-project-cover { background:linear-gradient(var(--pf-line) 1px,transparent 1px),linear-gradient(90deg,var(--pf-line) 1px,transparent 1px); background-size:25px 25px; }
+.ex-blueprint .pf-cover-glyph { font-family:monospace; font-weight:400; }
+.ex-cyberpunk-2077 .pf-project-cover { background:linear-gradient(135deg,transparent 16%,var(--pf-line) 16% 17%,transparent 17% 85%,var(--pf-accent) 85% 87%,transparent 87%),var(--pf-bg); }
+.ex-ai-assistant .pf-project-cover { background:radial-gradient(circle at 20% 30%,var(--pf-line) 1.5px,transparent 2px),radial-gradient(circle at 82% 70%,var(--pf-line) 1.5px,transparent 2px),var(--pf-bg); }
+.ex-interactive-3d .pf-project-cover { background:linear-gradient(30deg,transparent 40%,var(--pf-line) 40% 41%,transparent 41%),linear-gradient(150deg,transparent 40%,var(--pf-line) 40% 41%,transparent 41%),var(--pf-surface); }
+.ex-timeline-journey .pf-project-cover { background:radial-gradient(circle at 20% 80%,var(--pf-accent) 3px,transparent 4px),radial-gradient(circle at 80% 20%,var(--pf-accent) 3px,transparent 4px),linear-gradient(135deg,transparent 49.8%,var(--pf-line) 50%,transparent 50.2%),var(--pf-surface); }
+.ex-dashboard-portfolio .pf-project-cover { background:linear-gradient(90deg,transparent 49.5%,var(--pf-line) 50%,transparent 50.5%),linear-gradient(0deg,transparent 49.5%,var(--pf-line) 50%,transparent 50.5%),var(--pf-bg); background-size:80px 60px; }
+.ex-space-explorer .pf-project-cover { background:radial-gradient(ellipse at 80% 25%,color-mix(in srgb,var(--pf-accent) 16%,transparent),transparent 50%),radial-gradient(var(--pf-line) 1px,transparent 1px) 4px 6px/43px 47px,var(--pf-bg); }
+.ex-infinite-canvas .pf-project-cover { background:radial-gradient(var(--pf-line) 1px,transparent 1px) 0 0/22px 22px,var(--pf-bg); }
+.ex-storybook .pf-project-cover { background:linear-gradient(90deg,#00000008,transparent 12% 88%,#00000006),var(--pf-bg); box-shadow:inset 0 -5px 0 var(--pf-line); }
+.ex-storybook .pf-cover-glyph { font-family:Georgia,serif; font-style:italic; }
+.ex-spotify-wrapped .pf-project-cover { background:repeating-radial-gradient(circle,var(--pf-surface) 0 7px,var(--pf-line) 8px 9px); border-radius:50%; }
+.ex-netflix-portfolio .pf-project-cover { background:linear-gradient(0deg,var(--pf-bg),transparent 50%),radial-gradient(ellipse at 50% 15%,color-mix(in srgb,var(--pf-accent) 18%,var(--pf-bg)),var(--pf-bg)); }
+.ex-google-maps-portfolio .pf-project-cover { background:linear-gradient(24deg,transparent 38%,var(--pf-line) 39% 40%,transparent 41% 70%,var(--pf-line) 71% 72%,transparent 73%),linear-gradient(110deg,transparent 59%,var(--pf-line) 60% 61%,transparent 62%),var(--pf-bg); }
+.ex-comic-book .pf-project-cover { background:radial-gradient(var(--pf-line) 1px,transparent 1px) 0 0/6px 6px,var(--pf-bg); }
+.ex-comic-book .pf-cover-glyph { font-style:italic; text-shadow:3px 3px 0 var(--pf-line); }
+.ex-terminal-os .pf-project-cover { background:linear-gradient(0deg,var(--pf-line) 1px,transparent 1px) 0 30px/100% 1px no-repeat,var(--pf-bg); box-shadow:inset 0 0 0 12px var(--pf-surface); }
+.ex-terminal-os .pf-cover-glyph { font-family:monospace; font-weight:400; }
+.ex-newspaper .pf-project-cover { background:repeating-linear-gradient(90deg,transparent 0 32%,var(--pf-line) 32.2% 32.4%),var(--pf-bg); }
+.ex-newspaper .pf-cover-glyph { font-family:Georgia,serif; font-weight:400; }
+.ex-museum .pf-project-cover { background:radial-gradient(ellipse at top,#ffffff0a,transparent),var(--pf-bg); box-shadow:inset 0 0 0 22px var(--pf-surface),inset 0 0 0 23px var(--pf-line); }
+.ex-museum .pf-cover-glyph { font-family:Georgia,serif; font-weight:400; }
+.ex-hacker-matrix .pf-project-cover { background:repeating-linear-gradient(90deg,transparent 0 23px,color-mix(in srgb,var(--pf-accent) 7%,transparent) 24px 25px),var(--pf-bg); }
+.ex-hacker-matrix .pf-cover-glyph { font-family:monospace; text-shadow:0 0 8px color-mix(in srgb,var(--pf-accent) 20%,transparent); }
+.ex-surrealism .pf-project-cover { background:radial-gradient(ellipse at 82% 35%,transparent 25%,var(--pf-line) 26% 27%,transparent 28%),radial-gradient(ellipse at 15% 85%,color-mix(in srgb,var(--pf-accent) 10%,transparent) 0 30%,transparent 31%),var(--pf-bg); }
+.ex-surrealism .pf-cover-glyph { font-family:Georgia,serif; font-style:italic; }
+.ex-pixel-art .pf-project-cover { background:repeating-conic-gradient(var(--pf-bg) 0 25%,var(--pf-surface) 0 50%) 0 0/24px 24px; }
+.ex-pixel-art .pf-cover-glyph { font-family:monospace; text-shadow:4px 4px 0 var(--pf-line); }
+.ex-maximalism .pf-project-cover { background:conic-gradient(from 45deg at 80% 20%,var(--pf-surface) 0 25%,var(--pf-line) 25% 50%,var(--pf-bg) 50% 75%,color-mix(in srgb,var(--pf-accent) 20%,var(--pf-bg)) 75%); }
+.ex-maximalism .pf-cover-glyph { font-style:italic; rotate:-8deg; }
+.ex-conceptual-sketch .pf-project-cover { background:repeating-linear-gradient(0deg,transparent 0 30px,var(--pf-line) 31px 32px),var(--pf-bg); }
+.ex-conceptual-sketch .pf-cover-glyph { font-family:Georgia,serif; font-style:italic; }
+.ex-bohemian .pf-project-cover { background:repeating-linear-gradient(45deg,transparent 0 18px,var(--pf-line) 19px 20px),repeating-linear-gradient(-45deg,transparent 0 18px,var(--pf-line) 19px 20px),var(--pf-bg); }
+.ex-victorian .pf-project-cover { background:repeating-radial-gradient(ellipse at 50% 150%,transparent 0 23px,var(--pf-line) 24px 25px),var(--pf-bg); }
+.ex-victorian .pf-cover-glyph { font-family:Georgia,serif; font-style:italic; }
+.ex-wabi-sabi .pf-project-cover { background:radial-gradient(ellipse at 73% 21%,color-mix(in srgb,var(--pf-accent) 7%,transparent) 0 18%,transparent 55%),var(--pf-bg); }
+.ex-wabi-sabi .pf-cover-glyph { font-family:Georgia,serif; font-weight:400; }
+.ex-scroll-cinema .pf-project-cover { background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--pf-accent) 14%,transparent),transparent 70%),var(--pf-bg); box-shadow:inset 0 14px 0 var(--pf-surface),inset 0 -14px 0 var(--pf-surface); }
+/* Each drawing sits in its theme's own negative space. */
+.ex-blueprint .pf-effect-art { top:0; bottom:auto; right:10px; width:36%; opacity:.2; }
+.ex-ai-assistant .pf-effect-art { top:12px; bottom:auto; right:0; width:100px; }
+.ex-space-explorer .pf-effect-art { width:40%; opacity:.45; }
+.ex-storybook .pf-effect-art { right:12px; width:22%; opacity:.18; }
+.ex-spotify-wrapped .pf-effect-art { width:36%; opacity:.4; }
+.ex-google-maps-portfolio .pf-effect-art { top:0; bottom:auto; width:32%; opacity:.23; }
+.ex-terminal-os .pf-effect-art { width:48%; bottom:0; opacity:.32; }
+.ex-victorian .pf-effect-art { right:calc(50% - 70px); width:140px; bottom:-15px; opacity:.2; }
+.ex-wabi-sabi .pf-effect-art { top:8px; bottom:auto; width:38%; opacity:.12; }
+.ex-scroll-cinema .pf-effect-art { width:38%; opacity:.16; }
+@media (max-width:760px) {
+  .ex-ai-assistant .pf-effect-art { width:70px; opacity:.15; }
+  .ex-space-explorer .pf-effect-art, .ex-spotify-wrapped .pf-effect-art { opacity:.18; }
+  .ex-victorian .pf-effect-art { width:100px; right:0; bottom:0; }
+}
+
+.portfolio-v4.pf-resting .scrapbook-photo { rotate:0deg; }
+.pf-resting.pf-brutalist .pf-project, .pf-resting.pf-brutalist .pf-button { translate:0 0; }
+.portfolio-v4.pf-resting .pf-project-media img { scale:1; }

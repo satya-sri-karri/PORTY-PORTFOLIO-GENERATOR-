@@ -1,3 +1,5 @@
+> Historical reference study. The shared artwork, generic composition overrides and collection/viewer controls from this implementation were rejected and removed. Current behavior is documented in [Individual theme effects](INDIVIDUAL_THEME_EFFECTS.md).
+
 # Theme reference study and upgrade
 
 6 October 2026. This review builds on the animated layout studio. The previous source is preserved locally and on GitHub at `backup/pre-reference-themes-2026-10-06` (`229e6e4137d6bf0e850fdd914b60d564f29a6d73`).

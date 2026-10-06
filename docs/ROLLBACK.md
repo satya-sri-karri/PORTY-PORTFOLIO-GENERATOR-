@@ -58,3 +58,9 @@ The motion upgrade continues `upgrade/porty-complete-checklist` for review; prod
 ## Reference-inspired theme review — 6 October 2026
 
 The reviewed motion/layout studio at `229e6e4137d6bf0e850fdd914b60d564f29a6d73` is preserved locally and on GitHub at `backup/pre-reference-themes-2026-10-06`. The next update adds temporary project browsing, focused project stories and original theme artwork on the same review branch. These additions need no schema migration. Original production and all earlier backups remain separate.
+
+## Individual effects correction — 6 October 2026
+
+Before this correction, rejected review commit `d13091e37c43a5b7fbe618e9004f0e755193f84c` was preserved locally and on GitHub at `backup/pre-individual-effects-2026-10-06`. The correction restores the native compositions from `7ef26760643d10db710ea170356a2c75f2d8f57e`, retaining earlier workflow changes and theme-native exploratory controls. It replaces the shared overlays with individually scoped effects.
+
+The schema still accepts old layout settings; the renderer ignores them. No migration or deletion of account content is needed. Review deployment remains on `upgrade/porty-complete-checklist`; original production `main` and Render remain untouched. A source checkpoint is not a database backup.
