@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/thirdBatch.css";
 
 export default function ExecutiveTheme({ data }) {
@@ -8,6 +8,6 @@ export default function ExecutiveTheme({ data }) {
     <main id="pf-main" className="pf-container"><section className="pf-hero executive-hero">
       <div className="executive-identity"><p className="pf-eyebrow">Professional profile</p><h1>{data.name}</h1><ProfileMeta data={data} /><ProfileActions data={data} /></div>
       <div className="executive-overview"><Portrait data={data} />{data.about && <div className="executive-summary"><p className="pf-eyebrow">In my own words</p><p className="pf-bio">{data.about}</p></div>}<Skills data={data} /></div>
-    </section><StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} /></main>
+    </section><PortfolioSections data={data} /></main>
   </PortfolioRoot>;
 }

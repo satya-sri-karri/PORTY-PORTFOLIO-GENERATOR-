@@ -29,3 +29,7 @@ Thumbs.db
 
 # Generated browser verification output
 frontend/test/artifacts/
+
+# PDF worker copied from the locked dependency by prebuild/prestart
+frontend/public/porty-pdf-worker.mjs
+frontend/public/porty-pdf-worker.LICENSE.txt

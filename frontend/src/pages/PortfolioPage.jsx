@@ -1,3 +1,7 @@
+import ShareKit from "../components/shared/ShareKit";
+import { normalizePortfolio, profileLinks, orderedProjects } from "../utils/portfolioContent";
+import { recordPortfolioClick } from "../utils/api";
+import { trackStep } from "../utils/journey";
 import ThemeRenderer from "../components/shared/ThemeRenderer";
 /**
  * PortfolioPage — Public view
@@ -24,7 +28,8 @@ const SkeletonPortfolio = () => (
   </div>
 );
 
-const ShareBar = ({ slug }) => {
+const ShareBar = ({ slug, data }) => {
+  const [kit, setKit] = useState(false);
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/p/${slug}`;
   const [error, setError] = useState("");
@@ -32,14 +37,14 @@ const ShareBar = ({ slug }) => {
     setCopied(false); setError("");
     try {
       await navigator.clipboard.writeText(url);
-      setCopied(true);
+      setCopied(true); trackStep("share");
       setTimeout(() => setCopied(false), 2500);
     } catch { setError("Could not copy the link. Copy the address from your browser instead."); }
   };
   const share = async () => {
     setError("");
     if (!navigator.share) return copy();
-    try { await navigator.share({ url }); }
+    try { await navigator.share({ url }); trackStep("share"); }
     catch (e) { if (e.name !== "AbortError") setError("Sharing failed. Try Copy link instead."); }
   };
   return (
@@ -50,7 +55,9 @@ const ShareBar = ({ slug }) => {
           <span>✓</span> Link copied to clipboard
         </div>
       )}
+      {kit && <ShareKit data={data} slug={slug} onClose={() => setKit(false)} />}
       <div className="share-bar">
+        <button className="btn btn-secondary btn-sm" onClick={() => setKit(true)}>Sharing kit</button>
         <button className="btn btn-primary btn-sm" onClick={share} style={{ boxShadow: "var(--shadow-accent)" }}>
           📤 Share
         </button>
@@ -81,6 +88,14 @@ const PortfolioPage = () => {
     return () => { active = false; };
   }, [slug]);
 
+  useEffect(() => {
+    if (!data) return;
+    const previous = document.title; document.title = [data.name, data.title, "Porty"].filter(Boolean).join(" · ");
+    const meta = document.querySelector('meta[name="description"]'); const original = meta?.content;
+    if(meta) meta.content = (data.about || "").slice(0,160);
+    return () => { document.title = previous; if(meta) meta.content = original; };
+  }, [data]);
+
   if (loading) {
     return <SkeletonPortfolio />;
   }
@@ -97,10 +112,13 @@ const PortfolioPage = () => {
   }
 
 
+  const profile = normalizePortfolio(data);
+  const click = event => { const a = event.target.closest("a[href]"); if (!a) return; const href = a.getAttribute("href"); const type = href === profile.resumeUrl ? "resume" : /^(mailto:|tel:)/.test(href) || a.closest(".pf-contact-links") ? "contact" : a.closest(".pf-project-links") ? "project" : null; if(type) recordPortfolioClick(slug,type).catch(() => {}); };
   return (
     <>
-      <ThemeRenderer data={data} />
-      <ShareBar slug={slug} />
+      <div onClickCapture={click}><ThemeRenderer data={data} /></div>
+      <details className="visitor-profile"><summary>Quick profile</summary><h2>{profile.name}</h2>{profile.title && <p>{profile.title}</p>}{profile.about && <p>{profile.about}</p>}<ul>{orderedProjects(profile.projects).slice(0,3).map((p,i) => <li key={i}>{p.title}{p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" onClick={() => recordPortfolioClick(slug,"project").catch(() => {})}> View project ↗</a>}</li>)}</ul><div className="pf-contact-links" onClickCapture={click}>{profileLinks(profile).map(link => <a key={link.label} href={link.href} target={/^https?:/.test(link.href) ? "_blank" : undefined} rel="noopener noreferrer">{link.label}</a>)}</div><Link to="/try" state={{style:{theme:data.theme,themeColors:data.themeColors,motion:data.motion}}}>Use this style with my own content</Link></details>
+      <ShareBar slug={slug} data={data} />
     </>
   );
 };

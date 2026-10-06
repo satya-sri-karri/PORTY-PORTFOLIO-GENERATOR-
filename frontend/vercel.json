@@ -1,9 +1,22 @@
 {
+  "functions": {
+    "api/portfolio-page.js": {
+      "includeFiles": "build/index.html",
+      "maxDuration": 15
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://portfolioai-backend-q5a5.onrender.com/api/:path*"
+      "source": "/p/:slug",
+      "destination": "/api/portfolio-page?slug=:slug"
     },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/api/:path((?!portfolio-page|portfolio-cover).*)",
+      "destination": "https://portfolioai-backend-q5a5.onrender.com/api/:path"
+    },
+    {
+      "source": "/((?!api/|static/).*)",
+      "destination": "/"
+    }
   ]
 }

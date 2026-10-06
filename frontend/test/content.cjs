@@ -43,3 +43,8 @@ test('saved-content comparison ignores key order while preserving project order 
   assert.notEqual(storage.contentSnapshot(first), storage.contentSnapshot({ ...same, projects: [...first.projects].reverse() }));
   assert.notEqual(storage.contentSnapshot(first), storage.contentSnapshot({ ...same, name: 'Changed' }));
 });
+
+test('Visibility and motion normalize as presentation choices without mutating stored content', () => {
+  const source={name:'Anya',about:'Biography',location:'Hyderabad',showLocation:false,availability:'Seeking internships',motto:'Build carefully',interests:['Drawing'],resumeUrl:'https://example.com/resume.pdf',motion:'subtle',projects:[{title:'Project'}],sectionVisibility:{projects:false,contact:false},contact:{email:'private@example.com'},sectionOrder:['contact','projects','projects','invalid']};
+  const normalized=content.normalizePortfolio(source); assert.equal(normalized.motion,'subtle'); assert.equal(normalized.location,''); assert.equal(normalized.availability,'Seeking internships'); assert.equal(normalized.projects.length,0); assert.deepEqual(normalized.contact,{}); assert.equal(source.projects.length,1); assert.deepEqual(normalized.sectionOrder,['contact','projects','experience','credentials','profiles']);
+});

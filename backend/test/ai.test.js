@@ -1,3 +1,6 @@
+const User = require("../models/User");
+const findUser = User.findById;
+User.findById = () => ({ select: async () => ({ tokenVersion: 0 }) });
 const { test, before, after, beforeEach } = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
@@ -42,7 +45,7 @@ test('skills are validated, deduplicated and exclude existing skills', async () 
   response = '[{"skill":"AWS"}]'; assert.equal((await request('/skills', { title: 'Developer' })).status, 503);
 });
 test('three recommendations are restricted to distinct existing themes across the full catalog', async () => {
-  assert.equal(catalog.length, 33);
+  assert.equal(catalog.length, 41);
   response = JSON.stringify({ recommendations: ['minimalist', 'museum', 'terminal-os'].map(theme => ({ theme, reason: 'Fits the profile.' })) });
   const valid = await request('/theme-recommend', { title: 'Designer' }); assert.equal(valid.status, 200); assert.equal(valid.body.recommendations.length, 3);
   assert.match(messages[1].content, /hacker-matrix/);
@@ -66,3 +69,5 @@ test('project story fields ground a rewrite even when the short description is e
   assert.equal(res.status, 200); assert.match(messages[1].content, /Class notes were scattered/); assert.match(messages[1].content, /two classmates/);
   assert.match(messages[1].content, /"outcome":""/); assert.match(messages[0].content, /Never invent/);
 });
+
+after(() => { User.findById = findUser; });

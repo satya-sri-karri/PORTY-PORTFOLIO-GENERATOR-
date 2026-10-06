@@ -9,12 +9,12 @@ export function PortfolioRoot({ data, theme, colors, children }) {
   </div>;
 }
 export function PortfolioNav({ data, brand }) {
-  const sections = [["Projects", data.projects.length, "work"], ["Experience", data.experience.length, "experience"], ["Credentials", data.certifications.length || data.achievements.length, "credentials"], ["Profiles", data.codingProfiles.length, "profiles"], ["Contact", profileLinks(data).length, "contact"]].filter(([, show]) => show);
+  const sections = [["Projects", data.projects.length, "work"], ["Experience", data.experience.length, "experience"], ["Credentials", data.certifications.length || data.achievements.length, "credentials"], ["Profiles", data.codingProfiles.length, "profiles"], ["Contact", profileLinks(data).length, "contact"]].filter(([, show]) => show).sort((a, b) => (data.sectionOrder || []).indexOf(a[2] === "work" ? "projects" : a[2]) - (data.sectionOrder || []).indexOf(b[2] === "work" ? "projects" : b[2]));
   return <header className="pf-nav"><a className="pf-brand" href="#pf-main"><span className="pf-brand-mark" aria-hidden="true">{brand || "↗"}</span><span>{data.name || "Portfolio"}</span></a><nav aria-label="Portfolio sections">{sections.map(([label, , id]) => <a key={id} href={`#pf-${id}`}>{label}</a>)}</nav></header>;
 }
 export function ProfileMeta({ data }) {
-  if (!data.title && !data.location) return null;
-  return <div className="pf-profile-meta">{data.title && <p className="pf-role">{data.title}</p>}{data.location && <p className="pf-location">{data.location}</p>}</div>;
+  if (!data.title && !data.location && !data.availability && !data.motto && !data.interests?.length) return null;
+  return <div className="pf-profile-meta">{data.title && <p className="pf-role">{data.title}</p>}{data.location && <p className="pf-location">{data.location}</p>}{data.availability && <p className="pf-location">{data.availability}</p>}{data.motto && <p className="pf-motto">{data.motto}</p>}{data.interests?.length > 0 && <p className="pf-location">Interests: {data.interests.join(" · ")}</p>}</div>;
 }
 export function Portrait({ data, className = "" }) {
   const [failed, setFailed] = useState(false); useEffect(() => setFailed(false), [data.avatarUrl]);
@@ -66,8 +66,20 @@ export function BackgroundSections({ data }) {
     {data.codingProfiles.length > 0 && <section id="pf-profiles" className="pf-section"><SectionHeading title="Coding profiles" note="More of my work" number="04" /><div className="pf-credential-grid">{data.codingProfiles.map((profile, i) => <article className="pf-credential" key={profile._id || i}><h3>{profile.platform || "Coding profile"}</h3>{profile.username && <p className="pf-mono">{profile.username}</p>}<p>{[profile.rating && `Rating: ${profile.rating}`, profile.solved && `Problems solved: ${profile.solved}`].filter(Boolean).join(" · ")}</p>{profile.url && <a className="pf-text-link" href={profile.url} target="_blank" rel="noopener noreferrer">Visit profile ↗</a>}</article>)}</div></section>}
   </>;
 }
-export function ContactSection({ data }) {
+export function ContactSection({ data, footer = true }) {
   const links = profileLinks(data);
   return <>{links.length > 0 && <section id="pf-contact" className="pf-section pf-contact"><p className="pf-eyebrow">Keep in touch</p><h2>Let’s connect.</h2><div className="pf-contact-links">{links.map(link => <a key={link.label} href={link.href} target={/^https?:/.test(link.href) ? "_blank" : undefined} rel={/^https?:/.test(link.href) ? "noopener noreferrer" : undefined}><span>{link.label}</span><span>{link.label === "Email" ? data.contact.email : link.label === "Phone" ? data.contact.phone : "↗"}</span></a>)}</div></section>}
-    <footer className="pf-footer"><span>{data.name}</span><a href="#pf-main">Back to top ↑</a></footer></>;
+    {footer && <PortfolioFooter data={data} />}</>;
+}
+
+export function PortfolioFooter({ data }) {
+  return <footer className="pf-footer"><span>{data.name}</span><a href="#pf-main">Back to top ↑</a></footer>;
+}
+export function PortfolioSections({ data, projects }) {
+  const order = data.sectionOrder || ["projects", "experience", "credentials", "profiles", "contact"];
+  return <>{order.map(key => {
+    if (key === "projects") return <React.Fragment key={key}>{projects || <StandardProjects data={data} />}</React.Fragment>;
+    if (key === "contact") return <ContactSection key={key} data={data} footer={false} />;
+    return <BackgroundSections key={key} data={{ ...data, experience: key === "experience" ? data.experience : [], certifications: key === "credentials" ? data.certifications : [], achievements: key === "credentials" ? data.achievements : [], codingProfiles: key === "profiles" ? data.codingProfiles : [] }} />;
+  })}<PortfolioFooter data={data} /></>;
 }

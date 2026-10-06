@@ -25,7 +25,7 @@ export const removeStored = (storage, key) => {
 export const draftKey = (userId, recordId) => `porty:draft:v1:${userId}:${recordId || "new"}`;
 
 export const contentSnapshot = data => {
-  const { _id, id, userId, shareSlug, views, createdAt, updatedAt, __v, thumbnail, ...content } = data;
+  const { _id, id, userId, shareSlug, views, createdAt, updatedAt, __v, thumbnail, analytics, deletedAt, ...content } = data;
   // Object key order can change when fields are normalized after saving.
   // Compare values deterministically while retaining meaningful array order.
   const canonical = value => Array.isArray(value) ? value.map(canonical)

@@ -12,5 +12,5 @@ class ThemeBoundary extends React.Component {
 export default function ThemeRenderer({ data, staticPreview = false }) {
   const content = useMemo(() => normalizePortfolio(data), [data]);
   const Component = getTheme(content.theme).component;
-  return <ThemeBoundary key={content.theme}><Suspense fallback={<div className="theme-load-message" role="status">Loading theme…</div>}><Component data={staticPreview ? { ...content, staticPreview: true } : content} /></Suspense></ThemeBoundary>;
+  return <ThemeBoundary key={content.theme}><Suspense fallback={<div className="theme-load-message" role="status">Loading theme…</div>}><Component data={staticPreview || content.motion === "subtle" ? { ...content, staticPreview: true } : content} /></Suspense></ThemeBoundary>;
 }

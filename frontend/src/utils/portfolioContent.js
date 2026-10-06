@@ -24,10 +24,13 @@ const normalizeRows = (value, fields, links = []) => rows(value).map(row => ({
 export function normalizePortfolio(input = {}) {
   const data = object(input);
   const contact = object(data.contact), socials = object(data.socialLinks), colors = object(data.themeColors);
-  return {
+  const normalized = {
     ...data,
-    ...Object.fromEntries(["name", "title", "about", "location"].map(field => [field, text(data[field])])),
+    ...Object.fromEntries(["name", "title", "about", "location", "availability", "motto"].map(field => [field, text(data[field])])),
     avatarUrl: imageURL(data.avatarUrl),
+    interests: strings(data.interests), resumeUrl: externalURL(data.resumeUrl),
+    motion: data.motion === "subtle" ? "subtle" : "expressive",
+    sectionOrder: [...new Set([...strings(data.sectionOrder), "projects", "experience", "credentials", "profiles", "contact"])].filter(key => ["projects", "experience", "credentials", "profiles", "contact"].includes(key)),
     skills: strings(data.skills),
     projects: rows(data.projects).map(project => ({ ...project,
       ...Object.fromEntries(["title", "description", "problem", "contribution", "process", "outcome"].map(field => [field, text(project[field])])),
@@ -41,9 +44,19 @@ export function normalizePortfolio(input = {}) {
     socialLinks: Object.fromEntries(["github", "linkedin", "twitter", "website"].map(field => [field, externalURL(socials[field])])),
     themeColors: Object.fromEntries(["accent", "bg", "text"].map(field => [field, /^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(text(colors[field])) ? colors[field] : ""])),
   };
+  const visibility = object(data.sectionVisibility);
+  if (visibility.about === false) normalized.about = "";
+  if (visibility.skills === false) normalized.skills = [];
+  if (visibility.projects === false) normalized.projects = [];
+  if (visibility.experience === false) normalized.experience = [];
+  if (visibility.credentials === false) { normalized.certifications = []; normalized.achievements = []; }
+  if (visibility.profiles === false) normalized.codingProfiles = [];
+  if (visibility.contact === false) { normalized.contact = {}; normalized.socialLinks = {}; normalized.resumeUrl = ""; }
+  if (data.showLocation === false) normalized.location = "";
+  return normalized;
 }
 export function profileLinks(data) {
-  return [["GitHub", data.socialLinks.github], ["LinkedIn", data.socialLinks.linkedin], ["Twitter", data.socialLinks.twitter], ["Website", data.socialLinks.website], ["Email", data.contact.email && `mailto:${data.contact.email}`], ["Phone", data.contact.phone && `tel:${data.contact.phone}`]].filter(([, href]) => href).map(([label, href]) => ({ label, href }));
+  return [["Resume", data.resumeUrl], ["GitHub", data.socialLinks.github], ["LinkedIn", data.socialLinks.linkedin], ["Twitter", data.socialLinks.twitter], ["Website", data.socialLinks.website], ["Email", data.contact.email && `mailto:${data.contact.email}`], ["Phone", data.contact.phone && `tel:${data.contact.phone}`]].filter(([, href]) => href).map(([label, href]) => ({ label, href }));
 }
 export function projectStory(project) {
   return [["The problem", project.problem], ["My contribution", project.contribution], ["The process", project.process], ["The outcome", project.outcome]].filter(([, value]) => value?.trim());

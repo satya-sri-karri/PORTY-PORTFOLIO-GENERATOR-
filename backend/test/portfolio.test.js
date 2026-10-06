@@ -1,3 +1,6 @@
+const User = require("../models/User");
+const findUser = User.findById;
+User.findById = () => ({ select: async () => ({ tokenVersion: 0 }) });
 const { test, before, after, beforeEach } = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
@@ -8,7 +11,7 @@ const records = new Map();
 let counter = 0, base, server;
 const owner = 'owner-one';
 const requestId = '11111111-1111-4111-8111-111111111111';
-const matches = (record, query) => Object.entries(query).every(([k, v]) => record[k] === v);
+const matches = (record, query) => Object.entries(query).every(([k, v]) => v === null ? record[k] == null : v && typeof v === "object" ? ("$ne" in v ? record[k] != v.$ne : "$gte" in v ? record[k] != null && new Date(record[k]) >= v.$gte : false) : record[k] === v);
 
 before(async () => {
   process.env.JWT_SECRET = 'local-test-secret';
@@ -23,7 +26,7 @@ before(async () => {
   Portfolio.findOne = async query => [...records.values()].find(r => matches(r, query)) || null;
   Portfolio.findOneAndUpdate = async (query, update) => {
     const record = await Portfolio.findOne(query);
-    if (record) Object.assign(record, update.$set);
+    if (record) { Object.assign(record, update.$set); for (const [key,value] of Object.entries(update.$inc || {})) { if(key.startsWith("analytics.")) { record.analytics ||= {}; record.analytics[key.split(".")[1]] = (record.analytics[key.split(".")[1]] || 0) + value; } else record[key] = (record[key] || 0) + value; } }
     return record;
   };
   Portfolio.findOneAndDelete = async query => {
@@ -90,3 +93,40 @@ test('simultaneous create requests return one record through the unique-index fa
   assert.equal(new Set(responses.map(r => r.body.data.id)).size, 1);
   assert.ok(responses.every(r => r.status === 200 || r.status === 201));
 });
+
+test('Trash hides a public link, restores its stable link, and permanent deletion requires Trash ownership', async () => {
+  const {body}=await create({isPublic:true}); const id=body.data.id;
+  assert.equal((await request(`/${id}/permanent`, 'DELETE')).status,404);
+  assert.equal((await request(`/${id}`, 'DELETE')).status,200);assert.equal(records.get(id).isPublic,false);
+  assert.equal((await request(`/share/${body.data.shareSlug}`, 'GET', undefined, null)).status,404);
+  assert.equal((await request(`/${id}/restore`, 'POST', {}, 'other')).status,404);
+  assert.equal((await request(`/${id}/restore`, 'POST', {})).status,200);
+  assert.equal(records.get(id).shareSlug,body.data.shareSlug);
+  assert.equal((await request(`/share/${body.data.shareSlug}`, 'GET', undefined, null)).status,200);
+  await request(`/${id}`, 'DELETE');
+  assert.equal((await request(`/${id}/permanent`, 'DELETE')).status,200); assert.equal(records.size,0);
+});
+test('Only supported click events increment a public portfolio; private and trashed records reject events', async () => {
+  const {body}=await create({isPublic:true}); const slug=body.data.shareSlug;
+  assert.equal((await request(`/events/${slug}`, 'POST',{type:'project'},null)).status,200);
+  assert.equal(records.get(body.data.id).analytics.project,1);
+  assert.equal((await request(`/events/${slug}`, 'POST',{type:'userId'},null)).status,400);
+  await request(`/${body.data.id}`, 'PUT',{isPublic:false});
+  assert.equal((await request(`/events/${slug}`, 'POST',{type:'contact'},null)).status,404);
+  await request(`/${body.data.id}`, 'DELETE');
+  assert.equal((await request(`/events/${slug}`, 'POST',{type:'resume'},null)).status,404);
+});
+test('Owners can save new presentation fields but cannot overwrite measured counts or Trash dates', async () => {
+  const {body}=await create(); const id=body.data.id;
+  await request(`/${id}`, 'PUT',{availability:'Seeking an internship',motto:'Build carefully',interests:['Drawing'],resumeUrl:'https://example.com/resume.pdf',motion:'subtle',sectionOrder:['contact','projects'],sectionVisibility:{experience:false},audience:'Recruiters',showcaseOptIn:true,analytics:{project:999},deletedAt:new Date()});
+  assert.equal(records.get(id).audience,'Recruiters'); assert.equal(records.get(id).sectionVisibility.experience,false); assert.equal(records.get(id).analytics,undefined); assert.equal(records.get(id).deletedAt,undefined);
+});
+
+test('Public responses omit owner metadata and hidden contact content while owner previews retain the original fields', async () => {
+  const {body}=await create({isPublic:true,contact:{email:'private@example.com'},socialLinks:{github:'https://github.com/private'},resumeUrl:'https://example.com/private.pdf',location:'Private location',showLocation:false,sectionVisibility:{contact:false},analytics:{project:5}});
+  const publicResponse=await request(`/share/${body.data.shareSlug}`, 'GET',undefined,null);
+  assert.equal(publicResponse.status,200); assert.deepEqual(publicResponse.body.data.contact,{}); assert.equal(publicResponse.body.data.resumeUrl,''); assert.equal(publicResponse.body.data.location,''); assert.equal(publicResponse.body.data.userId,undefined); assert.equal(publicResponse.body.data.clientRequestId,undefined); assert.equal(publicResponse.body.data.analytics,undefined);
+  const ownerResponse=await request(`/${body.data.id}`); assert.equal(ownerResponse.body.data.contact.email,'private@example.com');
+});
+
+after(() => { User.findById = findUser; });

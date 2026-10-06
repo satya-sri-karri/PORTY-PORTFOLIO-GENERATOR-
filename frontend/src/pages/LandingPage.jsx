@@ -89,13 +89,15 @@ const LandingPage = () => {
 
           <p className="fade-up d-2 text-on-gradient-secondary" style={{ fontSize: 19, maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.75, fontWeight: 400, textShadow }}>
             Your story. Your skills. Your portfolio.
-            Create multiple stunning, portfolios with modern templates, and real-time analytics to track your impact.
+            Turn your real projects into a portfolio that feels like you. Explore 41 themes, review your work, and share when you’re ready.
           </p>
 
           <div className="fade-up d-3" style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <Link to="/register" className="btn btn-glass-white btn-xl" style={{ textDecoration: "none" }}>
               Get started free →
             </Link>
+            <Link to="/try" className="btn btn-secondary btn-lg">Try it before signing up</Link>
+            <Link to="/showcase" className="btn btn-ghost">Community portfolios</Link>
             <Link to="/login" className="btn btn-glass-outline btn-lg" style={{ textDecoration: "none" }}>
               Sign in
             </Link>

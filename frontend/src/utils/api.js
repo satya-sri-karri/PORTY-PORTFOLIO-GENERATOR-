@@ -5,7 +5,7 @@ const req = async (method, url, body, token, signal) => {
   const res = await fetch(`${BASE}${url}`, { method, signal, headers: h, body: body ? JSON.stringify(body) : undefined });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const error = new Error(res.status === 401
+    const error = new Error(res.status === 401 && token
       ? "Your session has expired. Sign in again; your entered information is still here."
       : data.error || `Request failed (${res.status}). Please try again.`);
     error.status = res.status;
@@ -27,3 +27,15 @@ export const generateBio = (b, t, signal) => req("POST", "/ai/bio", b, t, signal
 export const suggestSkills = (b, t, signal) => req("POST", "/ai/skills", b, t, signal);
 export const generateProjectDesc = (b, t, signal) => req("POST", "/ai/project", b, t, signal);
 export const recommendTheme = (b, t, signal) => req("POST", "/ai/theme-recommend", b, t, signal);
+
+export const forgotPassword = email => req("POST", "/auth/forgot-password", { email });
+export const resetPassword = (email, otp, password) => req("POST", "/auth/reset-password", { email, otp, password });
+export const getTrash = token => req("GET", "/portfolio/trash", null, token);
+export const restorePortfolio = (id, token) => req("POST", `/portfolio/${id}/restore`, {}, token);
+export const permanentlyDeletePortfolio = (id, token) => req("DELETE", `/portfolio/${id}/permanent`, null, token);
+export const getShowcase = () => req("GET", "/portfolio/showcase");
+export const recordPortfolioClick = (slug, type) => req("POST", `/portfolio/events/${slug}`, { type });
+
+export const getAggregateActivity = token => req("GET", "/metrics/summary", null, token);
+export const sendFeedback = answers => req("POST", "/metrics/feedback", answers);
+export const sendJourneyEvent = (sessionId,step) => req("POST", "/metrics/event", {sessionId,step});

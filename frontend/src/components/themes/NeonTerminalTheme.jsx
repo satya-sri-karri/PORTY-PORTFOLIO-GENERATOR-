@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { profileLinks } from "../../utils/portfolioContent";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/secondBatch.css";
 
 export default function NeonTerminalTheme({ data }) {
@@ -14,7 +14,7 @@ export default function NeonTerminalTheme({ data }) {
           <div className="terminal-readme"><p className="pf-eyebrow"><span aria-hidden="true">$ </span>cat about.md</p><div className="terminal-identity"><div><h1>{data.name}</h1><ProfileMeta data={data} /></div><Portrait data={data} /></div>{data.about && <p className="pf-bio">{data.about}</p>}{data.skills.length > 0 && <div id="pf-skills" className="terminal-skills"><h2>Skills & tools</h2><Skills data={data} /></div>}<ProfileActions data={data} /></div>
         </div></section>
         {data.projects.length > 0 && <div className="terminal-view-controls" role="group" aria-label="Project presentation"><span className="pf-eyebrow">projects/</span><button type="button" aria-pressed={!compact} onClick={() => setCompact(false)}>Card view</button><button type="button" aria-pressed={compact} onClick={() => setCompact(true)}>Compact view</button></div>}
-        <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+        <PortfolioSections data={data} />
       </main>
     </div>
   </PortfolioRoot>;

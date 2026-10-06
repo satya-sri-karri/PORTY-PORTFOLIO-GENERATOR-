@@ -22,12 +22,13 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
   const allThemes = getAllThemes().sort((a, b) => a.name.localeCompare(b.name));
   const [group, setGroup] = useState("All"); const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null); const [colors, setColors] = useState(null); const [device, setDevice] = useState("desktop");
+  const [compare,setCompare] = useState("");
   const ai = useAISuggestion(); const dialog = useRef(null); const trigger = useRef(null);
   const filtered = allThemes.filter(t => (group === "All" || THEME_GROUPS[group].includes(t.id)) && [t.name, t.persona, t.description, ...(t.tags || [])].join(" ").toLowerCase().includes(query.trim().toLowerCase()));
   const close = () => setSelected(null);
   const open = theme => {
     trigger.current = document.activeElement;
-    setSelected(theme); setDevice(window.innerWidth < 768 ? "mobile" : "desktop");
+    setCompare(""); setSelected(theme); setDevice(window.innerWidth < 768 ? "mobile" : "desktop");
     setColors(Object.fromEntries(Object.entries(theme.colors).map(([key, fallback]) => [key, form.theme === theme.id && form.themeColors?.[key] || fallback])));
   };
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
     const keydown = event => {
       if (event.key === "Escape") { event.preventDefault(); close(); }
       if (event.key !== "Tab") return;
-      const focusable = Array.from(dialog.current.querySelectorAll('button:not(:disabled), input, a[href]'));
+      const focusable = Array.from(dialog.current.querySelectorAll('button:not(:disabled), input, select, summary, a[href]'));
       const first = focusable[0], last = focusable[focusable.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
@@ -77,6 +78,7 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
         <div className="preview-info"><h2 id="theme-dialog-title">{selected.name}</h2><p className="preview-desc">{selected.description}</p>
           <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={device === "desktop"} onClick={() => setDevice("desktop")}>Desktop layout</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={device === "mobile"} onClick={() => setDevice("mobile")}>Mobile layout</button>{onFullPreview && <button type="button" className="btn btn-ghost btn-sm" onClick={() => onFullPreview(previewData)}>Open full preview</button>}</div>
           <ThemeFrame data={previewData} device={device} height={340} title={`${selected.name} theme preview`} />
+          <details><summary>Compare with another theme</summary><label htmlFor="theme-compare">Comparison theme</label><select id="theme-compare" className="form-input" value={compare} onChange={e=>setCompare(e.target.value)}><option value="">Choose a theme</option>{allThemes.filter(t=>t.id!==selected.id).map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select>{compare && <><p>{getTheme(compare).name} · Same content, default palette</p><ThemeFrame data={{...form,theme:compare,themeColors:getTheme(compare).colors}} device={device} height={340} title={`${getTheme(compare).name} comparison preview`} /></>}</details>
           <p className="form-hint">Preview settings are applied only when you choose Apply Theme. Open full preview to browse the portfolio.</p>
           <div className="review-actions">{[...(selected.palettes || []), ...PALETTES].map(palette => <button key={palette.name} type="button" className="btn btn-ghost btn-sm" onClick={() => setColors({ bg: palette.bg, text: palette.text, accent: palette.accent })}>{palette.name}</button>)}<button type="button" className="btn btn-secondary btn-sm" onClick={() => setColors({ ...selected.colors })}>Reset colours</button></div>
           <div className="color-fields">{[["accent", "Accent"], ["bg", "Background"], ["text", "Text"]].map(([key, label]) => <div className="color-field" key={key}><label className="color-field-label" htmlFor={`theme-color-${key}`}>{label}</label><input id={`theme-color-${key}`} type="color" value={colors[key]} onChange={e => setColors(prev => ({ ...prev, [key]: e.target.value }))} /></div>)}</div>

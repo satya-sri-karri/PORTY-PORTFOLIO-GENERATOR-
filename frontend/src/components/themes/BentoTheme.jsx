@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { orderedProjects } from "../../utils/portfolioContent";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, ProjectMedia, ProjectLinks, ProjectStory, TechStack, SectionHeading, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, ProjectMedia, ProjectLinks, ProjectStory, TechStack, SectionHeading, PortfolioSections } from "./common/PortfolioParts";
 import "./common/thirdBatch.css";
 
 function BentoProjects({ data }) {
@@ -23,6 +23,6 @@ export default function BentoTheme({ data }) {
       <div className="bento-portrait bento-tile"><Portrait data={data} /></div>
       {data.about && <div className="bento-about bento-tile"><p className="pf-eyebrow">The introduction</p><p className="pf-bio">{data.about}</p></div>}
       {data.skills.length > 0 && <div className="bento-skills bento-tile"><p className="pf-eyebrow">Skills & tools</p><Skills data={data} /></div>}
-    </section><BentoProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} /></main>
+    </section><PortfolioSections data={data} projects={<BentoProjects data={data} />} /></main>
   </PortfolioRoot>;
 }

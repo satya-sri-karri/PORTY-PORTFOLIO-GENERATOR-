@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/secondBatch.css";
 
 export default function BrutalistTheme({ data }) {
@@ -9,7 +9,7 @@ export default function BrutalistTheme({ data }) {
       <section className="pf-hero brutalist-hero"><div className="brutalist-heading"><p className="pf-eyebrow">Personal portfolio / Make an impression</p><h1>{data.name}</h1><span className="brutalist-arrow" aria-hidden="true">↙</span></div>
         <div className={`brutalist-intro ${data.avatarUrl ? "brutalist-with-portrait" : ""}`}><div className="brutalist-facts"><ProfileMeta data={data} /><Skills data={data} /></div><div className="brutalist-note">{data.about && <p className="pf-bio">{data.about}</p>}<ProfileActions data={data} /></div><Portrait data={data} /></div>
       </section>
-      <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+      <PortfolioSections data={data} />
     </main>
   </PortfolioRoot>;
 }

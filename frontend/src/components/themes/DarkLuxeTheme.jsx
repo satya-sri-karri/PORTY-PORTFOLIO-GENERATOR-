@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/firstBatch.css";
 
 export default function DarkLuxeTheme({ data }) {
@@ -11,7 +11,7 @@ export default function DarkLuxeTheme({ data }) {
         <Portrait data={data} className="luxe-portrait" />
         <div className="luxe-hero-decoration" aria-hidden="true">✳</div>
       </section>
-      <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+      <PortfolioSections data={data} />
     </main>
   </PortfolioRoot>;
 }

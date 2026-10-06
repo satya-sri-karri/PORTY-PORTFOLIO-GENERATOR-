@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/firstBatch.css";
 
 // Keep the saved identifier `minimalist`; this is its Swiss Design upgrade.
@@ -11,7 +11,7 @@ export default function MinimalistTheme({ data }) {
         <div className={`swiss-intro ${data.avatarUrl ? "swiss-with-portrait" : ""}`}><ProfileMeta data={data} /><div>{data.about && <p className="pf-bio">{data.about}</p>}<Skills data={data} /><ProfileActions data={data} /></div><Portrait data={data} /></div>
         <div className="swiss-ruler" aria-hidden="true"><span>FORM / FUNCTION</span><span>↓</span></div>
       </section>
-      <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+      <PortfolioSections data={data} />
     </main>
   </PortfolioRoot>;
 }

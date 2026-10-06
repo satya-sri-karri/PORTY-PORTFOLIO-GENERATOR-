@@ -227,3 +227,35 @@ The second design batch has its own backup branch and local tag; see `docs/ROLLB
 - The original master checklist remains byte-for-byte unchanged. Git whitespace checks passed.
 
 These checks use isolated API fixtures and fallback fonts. They do not verify live account authentication, production database writes, email, AI provider output, physical devices or the full release checklist. Eighteen registered designs and eight planned new designs remain for later batches.
+
+## Completion candidate — 41 themes and product workflows
+
+The remaining 18 original themes and eight new themes are implemented alongside guest onboarding, reviewed PDF/DOCX/TXT resume text import, undo/redo, section ordering/visibility, personal details, motion choices, theme comparison, image cropping, actual cover capture, publishing checks, sharing kit/QR, visitor profile, audience versions, Trash/restore, password recovery, atomic click/view metrics, opt-in showcase, anonymous funnel and feedback.
+
+`UPGRADE_STATUS.md` maps all 13 master areas to implementation, evidence and open release gates. The original checklist stays unchanged. Existing production is not promoted by local validation.
+
+Additional commands:
+
+```sh
+npm run test:completion --prefix frontend
+npm run test:metadata --prefix frontend
+```
+
+Do not run a rebuild while browser tests are using the build directory. Optional `PORTY_COMPLETION_FILTER` runs a named completion scenario. Parser/QR/theme chunks are loaded on demand; the main bundle is about 121 kB gzip.
+
+Backend fixtures exercise OTP delivery failure/cooldown, hashed registration/recovery codes, reset consumption/expiration, old-session invalidation, source metadata protection, hidden public contact data, Trash ownership/restore/permanent deletion, event validation and feedback validation. Browser API fixtures do not connect to a live database or send emails.
+
+For real application validation, use a separate development database and this branch's backend. The original Render rewrite is retained until a review backend URL is available. Do not treat that older service as a round-trip test of new fields or new routes.
+
+## Final local verification — completion checkpoint (5 October 2026)
+
+- Frontend production build passed; main JavaScript is 120.52 kB gzip. PDF/DOCX parsers, QR generation and themes remain lazy-loaded.
+- 30 backend tests, 7 content tests and 3 metadata function tests passed.
+- 23 reliability browser scenarios passed. The completion suite's 10 workflow scenarios passed, including real TXT/DOCX/PDF files, actual cover/QR generation, guest continuation, settings save, audience partial failures, Trash restore and crop review. An additional focused browser regression passed after the final validation adjustment: existing root-relative portrait/project image addresses save, while image data cannot be supplied as a resume destination. This gives 11 completion scenarios verified across the full run and the focused recheck.
+- All 41 themes passed 820 layout/content cases across 360, 390, 768, 1024 and 1440px, including supplied destinations, sparse/legacy content, long text, eight projects, broken images and custom colours. 164 screenshot artifacts were captured. Exploratory command, section, desk, pixel, slide and Matrix controls also passed browser checks.
+- The final PDF parser build uses the unmodified dependency worker copied during prebuild/prestart. A real selectable-text PDF passed in the browser after correcting the bundled worker import failure.
+- Original master checklist SHA-256 remains `de53ae23a3447d6aa7d763d7a6c6e5b4fe649857228026d9225a90a13150cfe9`. Git whitespace checks passed.
+
+The complete candidate is saved locally on `upgrade/porty-complete-checklist`. The immediately previous reviewed source is preserved at `894f1d273a964e0c3ffdc5ebfe6205a23490e818` on local branch `backup/design-batch-3-2026-10-05` and tag `porty-design-batch-3-2026-10-05`. This completion checkpoint is not pushed or deployed; the earlier remote preview and production source are unchanged.
+
+These are fixture and local browser results. Live MongoDB persistence/TTL behavior, real email and AI provider output, hosted metadata functions/social crawlers, physical Android performance and observation of 10–15 target users remain pending. See `UPGRADE_STATUS.md` for the release gates and pilot protocol.

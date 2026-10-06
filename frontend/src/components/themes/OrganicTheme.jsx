@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/thirdBatch.css";
 
 export default function OrganicTheme({ data }) {
@@ -8,6 +8,6 @@ export default function OrganicTheme({ data }) {
     <main id="pf-main" className="pf-container"><section className="pf-hero organic-hero">
       <div className="organic-introduction"><p className="pf-eyebrow">Personal portfolio / Naturally, me</p><h1>{data.name}</h1><ProfileMeta data={data} />{data.about && <p className="pf-bio">{data.about}</p>}<ProfileActions data={data} /></div>
       <div className="organic-portrait"><Portrait data={data} /></div><div className="organic-skills"><Skills data={data} /></div>
-    </section><StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} /></main>
+    </section><PortfolioSections data={data} /></main>
   </PortfolioRoot>;
 }

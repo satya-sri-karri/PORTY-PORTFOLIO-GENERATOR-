@@ -163,5 +163,45 @@
     "id": "product-showcase",
     "name": "Product Showcase",
     "persona": "Product designer / builder"
+  },
+  {
+    "id": "surrealism",
+    "name": "Surrealism",
+    "persona": "Dreamlike / visual creative"
+  },
+  {
+    "id": "pixel-art",
+    "name": "Pixel Art",
+    "persona": "Game maker / playful creator"
+  },
+  {
+    "id": "maximalism",
+    "name": "Maximalism",
+    "persona": "Expressive / eclectic creator"
+  },
+  {
+    "id": "conceptual-sketch",
+    "name": "Conceptual Sketch",
+    "persona": "Designer / process thinker"
+  },
+  {
+    "id": "bohemian",
+    "name": "Bohemian",
+    "persona": "Warm / handmade creator"
+  },
+  {
+    "id": "victorian",
+    "name": "Victorian",
+    "persona": "Ornamental / editorial creator"
+  },
+  {
+    "id": "wabi-sabi",
+    "name": "Wabi-sabi",
+    "persona": "Quiet / thoughtful creator"
+  },
+  {
+    "id": "scroll-cinema",
+    "name": "Scroll Cinema",
+    "persona": "Cinematic / narrative creator"
   }
 ]

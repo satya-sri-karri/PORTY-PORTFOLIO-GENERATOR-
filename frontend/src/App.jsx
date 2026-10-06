@@ -10,6 +10,9 @@ import DashboardPage from "./pages/DashboardPage";
 import BuilderPage from "./pages/BuilderPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import ThemePreviewPage from "./pages/ThemePreviewPage";
+import GuestTrialPage from "./pages/GuestTrialPage";
+import ShowcasePage from "./pages/ShowcasePage";
+import { RecoveryPage } from "./pages/RecoveryPage";
 import PreviewPage from "./pages/PreviewPage";
 
 const WithNav = ({ children }) => <><Navbar />{children}</>;
@@ -22,6 +25,9 @@ function App() {
           <Routes>
             <Route path="/theme-preview" element={<ThemePreviewPage />} />
             <Route path="/"         element={<WithNav><LandingPage /></WithNav>} />
+            <Route path="/try" element={<WithNav><GuestTrialPage /></WithNav>} />
+            <Route path="/showcase" element={<WithNav><ShowcasePage /></WithNav>} />
+            <Route path="/recover" element={<WithNav><RecoveryPage /></WithNav>} />
             <Route path="/register" element={<WithNav><RegisterPage /></WithNav>} />
             <Route path="/login"    element={<WithNav><LoginPage /></WithNav>} />
             <Route path="/dashboard" element={<ProtectedRoute><WithNav><DashboardPage /></WithNav></ProtectedRoute>} />

@@ -7,8 +7,7 @@ const sendOTP = async (email, otp) => {
   const from = process.env.EMAIL_FROM || process.env.SMTP_USER || "satyasrikarri457@gmail.com";
 
   if (!apiKey || !secretKey) {
-    console.log("⚠ Email not sent: MAILJET_API_KEY/MAILJET_SECRET_KEY not set. OTP for", email, ":", otp);
-    return;
+    throw new Error("Email delivery is not configured.");
   }
 
   const body = {
@@ -45,8 +44,7 @@ const sendOTP = async (email, otp) => {
     });
     clearTimeout(timer);
     if (!resp.ok) {
-      const detail = await resp.text();
-      throw new Error(`Mailjet API ${resp.status}: ${detail.slice(0, 300)}`);
+        throw new Error(`Email provider returned ${resp.status}`);
     }
     const data = await resp.json();
     const msg = data?.Messages?.[0];
@@ -54,8 +52,7 @@ const sendOTP = async (email, otp) => {
       throw new Error(`Mailjet: ${JSON.stringify(msg.Errors || msg)}`);
     }
   } catch (err) {
-    console.log("⚠ Email not sent. OTP for", email, ":", otp);
-    console.log("  Mailjet error:", err.message);
+    throw new Error("Email delivery failed.");
   }
 };
 

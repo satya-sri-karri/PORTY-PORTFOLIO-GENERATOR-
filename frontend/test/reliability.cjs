@@ -212,7 +212,7 @@ let passed = 0;
     });
     await test('failed uploads and AI recommendations display recoverable feedback', async page => {
       await fixtures(page); await page.goto(url + '/builder'); await fill(page);
-      await page.locator('input[type="file"]').first().setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from('not an image') });
+      await page.locator('input[type="file"][accept="image/*"]').first().setInputFiles({ name: 'broken.png', mimeType: 'image/png', buffer: Buffer.from('not an image') });
       await page.getByText('Could not read that image.', { exact: false }).waitFor();
       assert.equal(await page.getByPlaceholder('John Doe').inputValue(), 'Anya');
       await page.getByRole('button', { name: 'Theme & Publish', exact: true }).click();

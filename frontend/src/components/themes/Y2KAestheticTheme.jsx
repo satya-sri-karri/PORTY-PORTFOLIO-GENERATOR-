@@ -1,5 +1,5 @@
 import React from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/firstBatch.css";
 
 export default function Y2KAestheticTheme({ data }) {
@@ -10,7 +10,7 @@ export default function Y2KAestheticTheme({ data }) {
         <div className="y2k-hero-content"><p className="pf-eyebrow">Welcome to my corner of the internet</p><h1>{data.name}</h1><div className={`y2k-intro ${data.avatarUrl ? "y2k-with-portrait" : ""}`}><div><ProfileMeta data={data} />{data.about && <p className="pf-bio">{data.about}</p>}<Skills data={data} /><ProfileActions data={data} /></div><Portrait data={data} /></div></div>
         <span className="y2k-star y2k-star-one" aria-hidden="true">✦</span><span className="y2k-star y2k-star-two" aria-hidden="true">✧</span>
       </div></section>
-      <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+      <PortfolioSections data={data} />
     </main>
   </PortfolioRoot>;
 }

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortfolio, getPortfolioById, updatePortfolio } from "../utils/api";
+import { trackStep } from "../utils/journey";
 import { blank } from "./usePortfolioForm";
 import { contentSnapshot, draftKey, readJSON, removeStored, writeJSON } from "../utils/storage";
 
@@ -51,7 +52,7 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
     else if (id) getPortfolioById(id, token).then(res => initialize(res.data)).catch(e => {
       if (active) setLoadError(e.message);
     });
-    else initialize(blank);
+    else { trackStep("start"); initialize(blank); }
     return () => { active = false; };
     // Navigation state belongs to this route transition; form changes do not reload it.
   }, [key, id, token, load, retry]); // eslint-disable-line
@@ -79,10 +80,20 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
       if (!dirty) return;
       persist(); event.preventDefault(); event.returnValue = "";
     };
+    const leave = event => {
+      const link = event.target.closest?.("a[href]");
+      if (!dirty || !link || link.target === "_blank" || event.defaultPrevented || event.ctrlKey || event.metaKey) return;
+      const url = new URL(link.href, location.origin || window.location.origin);
+      if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+      persist();
+      if (!window.confirm("You have unsaved changes. Leave this editor? Your recoverable draft will stay on this device if browser storage is available.")) { event.preventDefault(); event.stopPropagation(); }
+    };
+    window.addEventListener("click", leave, true);
     window.addEventListener("beforeunload", guard);
     window.addEventListener("pagehide", flush);
     return () => {
       persist();
+      window.removeEventListener("click", leave, true);
       window.removeEventListener("beforeunload", guard);
       window.removeEventListener("pagehide", flush);
     };
@@ -90,7 +101,7 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
 
   const recover = () => {
     requestId.current = recoverable.clientRequestId || null;
-    load(recoverable.form); setRecoverable(null); setSuccess(null);
+    trackStep("recovery"); load(recoverable.form); setRecoverable(null); setSuccess(null);
   };
   const discard = () => {
     setStorageError(removeStored("localStorage", key) || ""); setRecoverable(null);
@@ -110,7 +121,7 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
       setError("Name and About are required. Go to Personal Info."); return false;
     }
     lock.current = true; setSaving(true); setError(""); setSuccess(null);
-    const submitted = { ...latest.current, ...(thumbnail ? { thumbnail } : {}) };
+    const submitted = { ...latest.current, thumbnail: thumbnail || "" };
     const wasEdit = Boolean(record.current);
     if (!wasEdit && !requestId.current) requestId.current = window.crypto.randomUUID();
     persist();
@@ -139,7 +150,7 @@ export default function useBuilderSession({ id, token, user, form, load, navigat
       if (!wasEdit) navigate(`/builder/${nextId}`, { replace: true, state: { resumeData: nextForm, savedContent: baseline.current } });
       return true;
     } catch (e) {
-      setError(e.message || "Save failed. Your information is still here; please try again.");
+      trackStep("error"); setError(e.message || "Save failed. Your information is still here; please try again.");
       persist(); return false;
     } finally { lock.current = false; setSaving(false); }
   };

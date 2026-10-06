@@ -7,6 +7,13 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, default: null },
   otp: { type: String, default: null },
   otpExpiry: { type: Date, default: null },
+  otpSentAt: { type: Date, default: null },
+  otpAttempts: { type: Number, default: 0 },
+  resetOtp: { type: String, default: null },
+  resetExpiry: { type: Date, default: null },
+  resetSentAt: { type: Date, default: null },
+  tokenVersion: { type: Number, default: 0, select: false },
+  resetAttempts: { type: Number, default: 0 },
   avatar: { type: String, default: "" },
 }, { timestamps: true });
 

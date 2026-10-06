@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, StandardProjects, BackgroundSections, ContactSection } from "./common/PortfolioParts";
+import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./common/PortfolioParts";
 import "./common/secondBatch.css";
 
 function useAtmosphere(staticPreview) {
@@ -31,7 +31,7 @@ export default function AuroraTheme({ data }) {
         <div className="aurora-introduction"><p className="pf-eyebrow">A little light, a little perspective</p><Portrait data={data} /><h1>{data.name}</h1><ProfileMeta data={data} />{data.about && <p className="pf-bio">{data.about}</p>}<Skills data={data} /><ProfileActions data={data} /></div>
         {motion.controls && <button type="button" className="aurora-motion" aria-pressed={motion.enabled} onClick={() => motion.setEnabled(previous => !previous)}>{motion.enabled ? "Pause atmosphere" : "Animate atmosphere"}</button>}
       </section>
-      <StandardProjects data={data} /><BackgroundSections data={data} /><ContactSection data={data} />
+      <PortfolioSections data={data} />
     </main>
   </PortfolioRoot>;
 }

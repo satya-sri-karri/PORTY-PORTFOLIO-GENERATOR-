@@ -40,6 +40,22 @@ const ScrapbookTheme = lazy(() => import("../components/themes/ScrapbookTheme"))
 const Y2KAestheticTheme = lazy(() => import("../components/themes/Y2KAestheticTheme"));
 const ProductShowcaseTheme = lazy(() => import("../components/themes/ProductShowcaseTheme"));
 
+const SurrealismTheme = lazy(() => import("../components/themes/SurrealismTheme"));
+
+const PixelArtTheme = lazy(() => import("../components/themes/PixelArtTheme"));
+
+const MaximalismTheme = lazy(() => import("../components/themes/MaximalismTheme"));
+
+const ConceptualSketchTheme = lazy(() => import("../components/themes/ConceptualSketchTheme"));
+
+const BohemianTheme = lazy(() => import("../components/themes/BohemianTheme"));
+
+const VictorianTheme = lazy(() => import("../components/themes/VictorianTheme"));
+
+const WabiSabiTheme = lazy(() => import("../components/themes/WabiSabiTheme"));
+
+const ScrollCinemaTheme = lazy(() => import("../components/themes/ScrollCinemaTheme"));
+
 const THEME_REGISTRY = {
   aurora: {
     id: "aurora",
@@ -211,234 +227,234 @@ const THEME_REGISTRY = {
     id: "apple-vision",
     name: "Apple Vision",
     persona: "Product Engineer / Apple Enthusiast",
-    description: "Frosted glass, floating cards, blur, huge rounded corners",
-    colors: { bg: "#0A0A0A", accent: "#E07A9E", text: "#FFFFFF" },
+    description: "Frosted surfaces, section navigation and readable depth",
+    colors: {"bg": "#EEF0F6", "accent": "#565BA9", "text": "#282A3F"},
     tags: ["Premium", "Glass", "Elegant"],
     component: AppleVisionTheme,
     preview: {
-      bg: "linear-gradient(135deg, #0A0A0A 0%, #1A1A2E 100%)",
-      accent: "#E07A9E",
+      bg: "#EEF0F6",
+      accent: "#565BA9",
     },
   },
   blueprint: {
     id: "blueprint",
     name: "Blueprint",
     persona: "Mechanical / Civil / Architecture",
-    description: "Engineering blueprints, grid overlays, wireframe lines",
-    colors: { bg: "#0A1628", accent: "#4FC3F7", text: "#E3F2FD" },
+    description: "Technical drawing sheets with real section destinations and active location",
+    colors: {"bg": "#10293C", "accent": "#9DD6F4", "text": "#E7F2F6"},
     tags: ["Technical", "Engineering", "Architecture"],
     component: BlueprintTheme,
     preview: {
-      bg: "#0A1628",
-      accent: "#4FC3F7",
+      bg: "#10293C",
+      accent: "#9DD6F4",
     },
   },
   "cyberpunk-2077": {
     id: "cyberpunk-2077",
     name: "Cyberpunk 2077",
     persona: "AI Engineer / ML Engineer / Robotics",
-    description: "Yellow + black, neon, HUD, scanlines, glitch effects",
-    colors: { bg: "#0A0A0A", accent: "#FFD700", text: "#FFFFFF" },
+    description: "Original Cybercore typography, readable project dossiers and static scanlines",
+    colors: {"bg": "#141511", "accent": "#E8D85C", "text": "#F5F3DF"},
     tags: ["Cyberpunk", "Neon", "Hacker"],
     component: Cyberpunk2077Theme,
     preview: {
-      bg: "linear-gradient(135deg, #0A0A0A 0%, #1A0A00 100%)",
-      accent: "#FFD700",
+      bg: "#141511",
+      accent: "#E8D85C",
     },
   },
   "ai-assistant": {
     id: "ai-assistant",
     name: "AI Assistant",
     persona: "Anyone (viral-friendly)",
-    description: "ChatGPT-style chat interface, conversational bubbles",
-    colors: { bg: "#131314", accent: "#10A37F", text: "#ECECF1" },
+    description: "Preset portfolio guide with factual replies, destinations and direct browsing",
+    colors: {"bg": "#F4F5F2", "accent": "#28705A", "text": "#22322D"},
     tags: ["Chat", "AI", "Conversational"],
     component: AIAssistantTheme,
     preview: {
-      bg: "#131314",
-      accent: "#10A37F",
+      bg: "#F4F5F2",
+      accent: "#28705A",
     },
   },
   "interactive-3d": {
     id: "interactive-3d",
     name: "Interactive 3D",
     persona: "3D artist / creative developer",
-    description: "Spline/Three.js inspired, floating cards, CSS 3D transforms",
-    colors: { bg: "#0A0A0F", accent: "#6C5CE7", text: "#DFE6E9" },
+    description: "Original illustrated desk with linked objects, optional CSS depth and a reading view",
+    colors: {"bg": "#F0EADF", "accent": "#674B95", "text": "#332B42"},
     tags: ["3D", "Interactive", "Creative"],
     component: Interactive3DTheme,
     preview: {
-      bg: "linear-gradient(135deg, #0A0A0F 0%, #1A0A2E 100%)",
-      accent: "#6C5CE7",
+      bg: "#F0EADF",
+      accent: "#674B95",
     },
   },
   "timeline-journey": {
     id: "timeline-journey",
     name: "Timeline Journey",
     persona: "Student / career changer",
-    description: "Vertical timeline with year markers, scrolly design",
-    colors: { bg: "#0F0F1A", accent: "#6366F1", text: "#E8E8F0" },
+    description: "Career milestones from actual experience and complete chronological content",
+    colors: {"bg": "#F5ECE3", "accent": "#8C4B31", "text": "#40352E"},
     tags: ["Timeline", "Student", "Story"],
     component: TimelineJourneyTheme,
     preview: {
-      bg: "linear-gradient(180deg, #0F0F1A 0%, #1A0F2E 100%)",
-      accent: "#6366F1",
+      bg: "#F5ECE3",
+      accent: "#8C4B31",
     },
   },
   "dashboard-portfolio": {
     id: "dashboard-portfolio",
     name: "Dashboard Portfolio",
     persona: "Developer / PM",
-    description: "GitHub/Linear/Notion style, widgets, stats, data",
-    colors: { bg: "#0D1117", accent: "#58A6FF", text: "#C9D1D9" },
+    description: "Actual content counts, modular project evidence and readable widgets",
+    colors: {"bg": "#121B28", "accent": "#97BDF0", "text": "#E7EFF9"},
     tags: ["Dashboard", "Widgets", "Data"],
     component: DashboardPortfolioTheme,
     preview: {
-      bg: "#0D1117",
-      accent: "#58A6FF",
+      bg: "#121B28",
+      accent: "#97BDF0",
     },
   },
   "space-explorer": {
     id: "space-explorer",
     name: "Space Explorer",
     persona: "Dreamer / storyteller",
-    description: "Stars, constellations, planets as skills, galaxies as projects",
-    colors: { bg: "#05050A", accent: "#7C3AED", text: "#E8E8FF" },
+    description: "Stable constellations, expansive typography and grounded project missions",
+    colors: {"bg": "#0D1428", "accent": "#A8BDF7", "text": "#EDF0FD"},
     tags: ["Space", "Visual", "Storytelling"],
     component: SpaceExplorerTheme,
     preview: {
-      bg: "#05050A",
-      accent: "#7C3AED",
+      bg: "#0D1428",
+      accent: "#A8BDF7",
     },
   },
   "infinite-canvas": {
     id: "infinite-canvas",
     name: "Infinite Canvas",
     persona: "Designer / creative thinker",
-    description: "Figma/Miro whiteboard style, freely placed rotated notes",
-    colors: { bg: "#F0F0F0", accent: "#FF6B6B", text: "#1A1A1A" },
+    description: "Oriented project board with direct navigation and a keyboard-friendly reading view",
+    colors: {"bg": "#F3F0E9", "accent": "#9F442D", "text": "#30302A"},
     tags: ["Canvas", "Whiteboard", "Creative"],
     component: InfiniteCanvasTheme,
     preview: {
-      bg: "#F0F0F0",
-      accent: "#FF6B6B",
+      bg: "#F3F0E9",
+      accent: "#9F442D",
     },
   },
   storybook: {
     id: "storybook",
     name: "Storybook",
     persona: "Writer / filmmaker",
-    description: "Book aesthetic, page turning, illustrated sections",
-    colors: { bg: "#1A1423", accent: "#E8A87C", text: "#F5F0E8" },
+    description: "Considered book composition, real chapters and native unfolding project stories",
+    colors: {"bg": "#F3ECDF", "accent": "#8A4932", "text": "#3B2D29"},
     tags: ["Story", "Book", "Cinematic"],
     component: StorybookTheme,
     preview: {
-      bg: "linear-gradient(135deg, #1A1423 0%, #2A1A3E 100%)",
-      accent: "#E8A87C",
+      bg: "#F3ECDF",
+      accent: "#8A4932",
     },
   },
   "spotify-wrapped": {
     id: "spotify-wrapped",
     name: "Spotify Wrapped",
     persona: "Music lover / social sharer",
-    description: "Dark + green, animated slides, music-inspired cards",
-    colors: { bg: "#121212", accent: "#1DB954", text: "#FFFFFF" },
+    description: "Personal story slides with actual swipe, labelled controls and direct full browsing",
+    colors: {"bg": "#152B21", "accent": "#B9DF70", "text": "#F1F7DA"},
     tags: ["Music", "Viral", "Animated"],
     component: SpotifyWrappedTheme,
     preview: {
-      bg: "#121212",
-      accent: "#1DB954",
+      bg: "#152B21",
+      accent: "#B9DF70",
     },
   },
   "netflix-portfolio": {
     id: "netflix-portfolio",
     name: "Netflix Portfolio",
     persona: "Entertainer / media creator",
-    description: "Netflix-style browsing, movie cards, hover scale, rows",
-    colors: { bg: "#141414", accent: "#E50914", text: "#FFFFFF" },
+    description: "Complete identity and a keyboard-accessible project carousel with real links",
+    colors: {"bg": "#171717", "accent": "#FF9B96", "text": "#F5EEEE"},
     tags: ["Entertainment", "Video", "Cards"],
     component: NetflixPortfolioTheme,
     preview: {
-      bg: "#141414",
-      accent: "#E50914",
+      bg: "#171717",
+      accent: "#FF9B96",
     },
   },
   "google-maps-portfolio": {
     id: "google-maps-portfolio",
     name: "Google Maps Portfolio",
     persona: "Traveler / global professional",
-    description: "Google Maps inspired, projects pinned as map locations",
-    colors: { bg: "#1A2332", accent: "#EA4335", text: "#E8EAED" },
+    description: "Illustrated section map, supplied location and direct content without inferred distances",
+    colors: {"bg": "#EAF0E9", "accent": "#386B4E", "text": "#29392F"},
     tags: ["Maps", "Travel", "Journey"],
     component: GoogleMapsPortfolioTheme,
     preview: {
-      bg: "#1A2332",
-      accent: "#EA4335",
+      bg: "#EAF0E9",
+      accent: "#386B4E",
     },
   },
   "comic-book": {
     id: "comic-book",
     name: "Comic Book",
     persona: "Illustrator / storyteller",
-    description: "Comic panels, speech bubbles, halftone dots, onomatopoeia",
-    colors: { bg: "#FFF8E7", accent: "#FF3333", text: "#1A1A1A" },
+    description: "Ink panels, legible speech composition and responsive project storytelling",
+    colors: {"bg": "#FFF2CF", "accent": "#A52D25", "text": "#28261F"},
     tags: ["Comic", "Illustration", "Playful"],
     component: ComicBookTheme,
     preview: {
-      bg: "#FFF8E7",
-      accent: "#FF3333",
+      bg: "#FFF2CF",
+      accent: "#A52D25",
     },
   },
   "terminal-os": {
     id: "terminal-os",
     name: "Terminal OS",
     persona: "DevOps / sysadmin / Linux enthusiast",
-    description: "Linux terminal, split panes, file explorer, interactive shell",
-    colors: { bg: "#0C0C0C", accent: "#00FF41", text: "#00FF41" },
+    description: "Working file destinations and complete career, project and credential panes",
+    colors: {"bg": "#111816", "accent": "#92D5A3", "text": "#E5F2E7"},
     tags: ["Terminal", "Linux", "DevOps"],
     component: TerminalOSTheme,
     preview: {
-      bg: "#0C0C0C",
-      accent: "#00FF41",
+      bg: "#111816",
+      accent: "#92D5A3",
     },
   },
   newspaper: {
     id: "newspaper",
     name: "Newspaper",
     persona: "Journalist / publisher",
-    description: "Vintage newspaper, columns, serif, masthead, BREAKING",
-    colors: { bg: "#F5F0E0", accent: "#1A1A1A", text: "#1A1A1A" },
+    description: "Stable portfolio edition, print hierarchy and responsive project columns",
+    colors: {"bg": "#F3EDDE", "accent": "#70533F", "text": "#302A24"},
     tags: ["Newspaper", "Vintage", "Print"],
     component: NewspaperTheme,
     preview: {
-      bg: "#F5F0E0",
-      accent: "#1A1A1A",
+      bg: "#F3EDDE",
+      accent: "#70533F",
     },
   },
   museum: {
     id: "museum",
     name: "Museum",
     persona: "Artist / curator",
-    description: "Art gallery, projects in frames, gallery walk, spotlights",
-    colors: { bg: "#1A1A1A", accent: "#C9A84C", text: "#FFF8E7" },
+    description: "Curated exhibits with full captions, image framing and native story details",
+    colors: {"bg": "#EEE9DF", "accent": "#755A3C", "text": "#32302B"},
     tags: ["Museum", "Art", "Gallery"],
     component: MuseumTheme,
     preview: {
-      bg: "linear-gradient(135deg, #1A1A1A 0%, #2A1A1A 100%)",
-      accent: "#C9A84C",
+      bg: "#EEE9DF",
+      accent: "#755A3C",
     },
   },
   "hacker-matrix": {
     id: "hacker-matrix",
     name: "Hacker Matrix",
     persona: "Cybersecurity / hacker",
-    description: "Matrix rain, green on black, nodes, network graph, glitch",
-    colors: { bg: "#000000", accent: "#00FF41", text: "#00FF41" },
+    description: "Readable technical content with optional pausable rain and a static fallback",
+    colors: {"bg": "#0C1710", "accent": "#87DCA0", "text": "#DDF0E0"},
     tags: ["Matrix", "Hacker", "Cyber"],
     component: HackerMatrixTheme,
     preview: {
-      bg: "#000000",
-      accent: "#00FF41",
+      bg: "#0C1710",
+      accent: "#87DCA0",
     },
   },
   scrapbook: {
@@ -472,21 +488,29 @@ const THEME_REGISTRY = {
     preview: { bg: "#F4F5F0", accent: "#315E46" },
   },
 
+  "surrealism": { id: "surrealism", name: "Surrealism", persona: "Dreamlike / visual creative", description: "Dreamlike original compositions with grounded text and complete project stories", colors: {"bg": "#EAE4F0", "accent": "#76538A", "text": "#33263F"}, tags: ["Surrealism", "Creative"], component: SurrealismTheme, preview: {"bg": "#EAE4F0", "accent": "#76538A"} },
+
+  "pixel-art": { id: "pixel-art", name: "Pixel Art", persona: "Game maker / playful creator", description: "Original illustrated pixel world with real destinations and direct navigation", colors: {"bg": "#EBF0DD", "accent": "#486B35", "text": "#293929"}, tags: ["Pixel Art", "Creative"], component: PixelArtTheme, preview: {"bg": "#EBF0DD", "accent": "#486B35"} },
+
+  "maximalism": { id: "maximalism", name: "Maximalism", persona: "Expressive / eclectic creator", description: "Layered type, patterns and vivid project frames with a deliberate reading order", colors: {"bg": "#F8EED8", "accent": "#913F64", "text": "#352735"}, tags: ["Maximalism", "Creative"], component: MaximalismTheme, preview: {"bg": "#F8EED8", "accent": "#913F64"} },
+
+  "conceptual-sketch": { id: "conceptual-sketch", name: "Conceptual Sketch", persona: "Designer / process thinker", description: "Sketchbook rules, pencil-like annotations and genuine process stories", colors: {"bg": "#F4F0E5", "accent": "#5D6350", "text": "#34332D"}, tags: ["Conceptual Sketch", "Creative"], component: ConceptualSketchTheme, preview: {"bg": "#F4F0E5", "accent": "#5D6350"} },
+
+  "bohemian": { id: "bohemian", name: "Bohemian", persona: "Warm / handmade creator", description: "Textile-inspired borders, warm portrait framing and tactile project sheets", colors: {"bg": "#EEE3D1", "accent": "#875535", "text": "#49382B"}, tags: ["Bohemian", "Creative"], component: BohemianTheme, preview: {"bg": "#EEE3D1", "accent": "#875535"} },
+
+  "victorian": { id: "victorian", name: "Victorian", persona: "Ornamental / editorial creator", description: "Original engraved-style frames, refined type and restrained project reveals", colors: {"bg": "#241C2B", "accent": "#D7BB84", "text": "#F0E5CE"}, tags: ["Victorian", "Creative"], component: VictorianTheme, preview: {"bg": "#241C2B", "accent": "#D7BB84"} },
+
+  "wabi-sabi": { id: "wabi-sabi", name: "Wabi-sabi", persona: "Quiet / thoughtful creator", description: "Muted asymmetry, generous breathing room and tactile minimal project composition", colors: {"bg": "#ECE8DF", "accent": "#6F735B", "text": "#45453B"}, tags: ["Wabi-sabi", "Creative"], component: WabiSabiTheme, preview: {"bg": "#ECE8DF", "accent": "#6F735B"} },
+
+  "scroll-cinema": { id: "scroll-cinema", name: "Scroll Cinema", persona: "Cinematic / narrative creator", description: "Continuous introduction, work and journey scenes with direct chapter navigation", colors: {"bg": "#171D26", "accent": "#CDA887", "text": "#F0ECE1"}, tags: ["Scroll Cinema", "Creative"], component: ScrollCinemaTheme, preview: {"bg": "#171D26", "accent": "#CDA887"} },
+
 };
 
 export const THEME_GROUPS = {
-  "All": [
-    "aurora", "minimalist", "editorial", "neon-terminal", "brutalist",
-    "neumorphic", "kinetic", "executive", "retro-wave", "organic", "bento",
-    "dark-luxe", "apple-vision", "blueprint", "cyberpunk-2077", "ai-assistant",
-    "interactive-3d", "timeline-journey", "dashboard-portfolio", "space-explorer",
-    "infinite-canvas", "storybook", "spotify-wrapped", "netflix-portfolio",
-    "google-maps-portfolio", "comic-book", "terminal-os", "newspaper",
-    "museum", "hacker-matrix", "scrapbook", "y2k-aesthetic", "product-showcase"
-  ],
-  "Minimal": ["minimalist", "organic", "product-showcase"],
-  "Bold": ["brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book", "y2k-aesthetic"],
-  "Creative": ["aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook", "scrapbook", "y2k-aesthetic"],
+  "All": Object.keys(THEME_REGISTRY),
+  "Minimal": ["wabi-sabi", "minimalist", "organic", "product-showcase"],
+  "Bold": ["maximalism", "pixel-art", "brutalist", "kinetic", "retro-wave", "cyberpunk-2077", "comic-book", "y2k-aesthetic"],
+  "Creative": ["surrealism", "pixel-art", "maximalism", "conceptual-sketch", "bohemian", "victorian", "scroll-cinema", "aurora", "editorial", "dark-luxe", "interactive-3d", "space-explorer", "infinite-canvas", "storybook", "scrapbook", "y2k-aesthetic"],
   "Professional": ["executive", "neumorphic", "bento", "apple-vision", "blueprint", "dashboard-portfolio", "product-showcase"],
   "Developer": ["neon-terminal", "terminal-os", "hacker-matrix", "ai-assistant", "timeline-journey"],
   "Social": ["spotify-wrapped", "netflix-portfolio", "google-maps-portfolio", "newspaper", "museum"],

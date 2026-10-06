@@ -23,7 +23,7 @@ The exact revert commit will be recorded when production promotion occurs. If th
 
 Project-story schema additions are optional and retain existing project IDs. Reverting source does not itself restore or delete portfolio records. Database contents and hosting secrets require their own backups if those are changed later.
 
-## Validation already completed
+## Validation at the third design batch
 
 - Frontend production build passed.
 - 18 backend tests, 6 content tests and 23 browser workflow scenarios passed.
@@ -38,3 +38,13 @@ See `docs/LOCAL_REVIEW.md` for local-service setup and the remaining release che
 The Vercel preview may have no `REACT_APP_API_URL` because production-only environment values do not apply to preview builds. The frontend then requests `/api` on its own origin. `frontend/vercel.json` now routes `/api/:path*` to the existing Render API before the React Router fallback, so login POST requests reach Express instead of the static frontend (which returned HTTP 405).
 
 The Render address was confirmed from the original production JavaScript bundle. This connects the preview to the existing backend and account database; it does not upgrade or replace that backend. Saving in the preview can modify the same account records as the original site. Newly added project-story fields still require the upgraded backend before they can persist there.
+
+## Full collection checkpoint
+
+Before extending the third design batch, `894f1d273a964e0c3ffdc5ebfe6205a23490e818` was preserved locally on `backup/design-batch-3-2026-10-05` and tag `porty-design-batch-3-2026-10-05`. This is the immediately previous reviewed source state.
+
+The full collection adds optional fields, anonymous Journey events and Feedback records. Deleted portfolios set `isPublic:false` as well as a Trash date, so an older public endpoint cannot inadvertently republish them after a source rollback. Restoring on the upgrade backend restores the previous visibility. A MongoDB TTL index permanently expires dated Trash entries after 30 days; database snapshots and deliberate index management are required separately from source backup. Reverting source does not remove an already-created TTL index.
+
+See `UPGRADE_STATUS.md` for backend deployment dependencies and the remaining real-service/device/pilot gates.
+
+The completed collection is saved on the separate local branch `upgrade/porty-complete-checklist`. It has not been pushed or deployed. Switching back to `upgrade/porty-batches-1-3` or the third-batch backup returns to the previously reviewed source. Final local verification results are recorded in `LOCAL_REVIEW.md`; they do not promote either service or modify the live database.

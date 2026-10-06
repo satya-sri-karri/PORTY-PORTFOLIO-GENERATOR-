@@ -13,5 +13,5 @@ export default function ThemePreviewPage() {
     window.parent.postMessage({ type: "porty:theme-ready" }, window.location.origin);
     return () => window.removeEventListener("message", receive);
   }, []);
-  return data ? <div className={staticPreview ? "isolated-theme-preview" : "portfolio-document"} data-theme-id={data.theme}><ThemeRenderer data={data} staticPreview={staticPreview} /></div> : <div className="theme-load-message" role="status">Waiting for preview…</div>;
+  return data ? <div className={staticPreview ? "isolated-theme-preview" : "portfolio-document"} data-theme-id={data.theme} data-capture-id={data.__captureId || ""}><ThemeRenderer data={data} staticPreview={staticPreview} /></div> : <div className="theme-load-message" role="status">Waiting for preview…</div>;
 }

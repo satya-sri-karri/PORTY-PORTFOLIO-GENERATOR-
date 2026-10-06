@@ -1,3 +1,7 @@
+import LearningPanel from "../components/shared/LearningPanel";
+import ProfileReuse from "../components/builder/ProfileReuse";
+import { getTrash, restorePortfolio, permanentlyDeletePortfolio } from "../utils/api";
+import { journeyStats } from "../utils/journey";
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -57,6 +61,9 @@ const SkeletonDashboard = () => (
 const DashboardPage = () => {
   const { token, user } = useAuth();
   const { theme } = useTheme();
+  const [trash,setTrash] = useState(null);
+  const [trashError,setTrashError] = useState("");
+  const [trashBusy,setTrashBusy] = useState(false);
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
@@ -86,14 +93,17 @@ const DashboardPage = () => {
   };
 
   const handleDelete = async id => {
-    if (!window.confirm("Delete this portfolio? This cannot be undone.")) return;
+    if (!window.confirm("Move this portfolio to Trash? Its public link stops working immediately. You can restore it within 30 days.")) return;
     setDeletingId(id); setActionError("");
     try {
       await deletePortfolio(id, token);
-      setPortfolios(prev => prev.filter(p => p._id !== id));
+      setPortfolios(prev => prev.filter(p => p._id !== id)); setTrash(null);
     } catch (e) { setActionError(e.message || "Could not delete this portfolio. Try again."); }
     finally { setDeletingId(null); }
   };
+
+  const loadTrash = async () => { setTrashBusy(true);setTrashError("");try{const response=await getTrash(token);setTrash(response.data);}catch(e){setTrashError(e.message);}finally{setTrashBusy(false);} };
+  const trashAction = async (id, permanent) => { if(permanent && !window.confirm("Permanently delete this trashed portfolio? This cannot be undone.")) return; setTrashBusy(true);setTrashError("");try{if(permanent) await permanentlyDeletePortfolio(id,token);else await restorePortfolio(id,token);setTrash(items=>items.filter(p=>p._id!==id));refresh();}catch(e){setTrashError(e.message);}finally{setTrashBusy(false);} };
 
   if (loading) return <SkeletonDashboard />;
   if (loadError) return <main className="container" style={{ paddingTop: 48 }}>
@@ -124,8 +134,12 @@ const DashboardPage = () => {
           <p style={{ margin: "4px 0 0" }}>Manage and share your portfolios</p>
         </div>
 
+        <LearningPanel token={token} />
         {actionError && <div className="alert alert-error" role="alert">{actionError}</div>}
-        <p className="form-hint">Page views count public page loads, including repeat visits.</p>
+        <p className="form-hint">Page views count public portfolio requests, including repeat loads. Link clicks are measured clicks, not unique visitors or completed downloads.</p>
+        {portfolios.length > 0 && <ProfileReuse portfolios={portfolios} token={token} onUpdated={() => { getMyPortfolios(token).then(response => setPortfolios(response.data)).catch(error => setActionError(error.message)); }} />}
+        <details className="profile-reuse glass"><summary>Trash · restore within 30 days</summary><p>Trashed portfolios are hidden immediately. They are permanently removed after 30 days. Restoring also restores their previous public/private setting and stable link.</p><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={loadTrash}>{trashBusy?"Loading…":"Load Trash"}</button>{trashError && <p role="alert">{trashError}</p>}{trash && !trash.length && <p>Trash is empty.</p>}{trash?.map(p=><div className="section-control" key={p._id}><span>{p.name} · Deleted {new Date(p.deletedAt).toLocaleDateString()}</span><div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,false)}>Restore</button><button type="button" className="btn btn-ghost btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,true)}>Delete permanently</button></div></div>)}</details>
+        <details className="profile-reuse glass"><summary>Creation activity on this browser</summary><p>These are actions recorded on this device, across accounts. They are not global conversion rates or unique people. Clearing browser storage resets them.</p>{["start","preview","save","publish","share","error","recovery"].map(step=><p key={step}>{step}: {journeyStats()?.counts?.[step] || 0}</p>)}{journeyStats()?.firstPublishedAt && journeyStats()?.startedAt && <p>Time to first publication: {Math.round((journeyStats().firstPublishedAt-journeyStats().startedAt)/60000)} minutes</p>}</details>
         <div className="stat-cards">
           {[
             { label: "Portfolios", value: portfolios.length, icon: "◈" },
@@ -195,6 +209,7 @@ const DashboardPage = () => {
                     </span>
                   </div>
 
+                  <p className="form-hint">Project clicks: {p.analytics?.project || 0} · Resume clicks: {p.analytics?.resume || 0} · Contact clicks: {p.analytics?.contact || 0}</p>
                   <p className="form-hint">{p.isPublic ? "Public · Saving changes updates the live portfolio" : "Private · Sharing is disabled"}</p>
                   <div className="portfolio-card-actions">
                     <Link to={`/preview/${p._id}`} className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>Preview</Link>
