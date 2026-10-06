@@ -36,6 +36,8 @@ The read-only `/portfolio/capabilities` endpoint advertises support for saved la
 
 ## Verification record
 
+The reference-inspired theme upgrade adds all-theme project search/filtering, gallery/index browsing and a focused project viewer, with separate palette-aware art directions. Guest trials accept multiple projects. These visitor features do not write portfolio records and need no new backend fields. The study and review flow are documented in `THEME_REFERENCE_UPGRADE.md`; saved custom-layout and other live-service gates above still apply.
+
 Commands and results are recorded in `LOCAL_REVIEW.md`. Screenshots are generated artifacts rather than committed marketing examples. Fixture identities and screenshots are labeled samples; no fictitious creator is added to the opt-in showcase.
 
 ## Pilot protocol

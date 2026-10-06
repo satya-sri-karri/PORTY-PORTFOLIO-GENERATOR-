@@ -23,6 +23,7 @@
     "test:completion": "node test/completion.cjs",
     "test:metadata": "node --test test/metadata.cjs",
     "test:motion": "node test/motion.cjs",
+    "test:discovery": "node test/discovery.cjs",
     "prebuild": "node scripts/prepare-pdf-worker.cjs",
     "prestart": "node scripts/prepare-pdf-worker.cjs"
   },

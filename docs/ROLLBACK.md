@@ -54,3 +54,7 @@ At the initial local completion checkpoint, the collection was saved on `upgrade
 The completion candidate was subsequently pushed at `7ef26760643d10db710ea170356a2c75f2d8f57e`, with a successful Vercel review deployment and draft PR #2. Before adding the motion/layout studio, it was preserved locally on `backup/pre-motion-studio-2026-10-06`; the same source is retained in GitHub under that branch. The earlier local-only completion SHA remains on `backup/completion-local-2026-10-05` with an identical file tree.
 
 The motion upgrade continues `upgrade/porty-complete-checklist` for review; production `main` remains unchanged. Its `layoutSettings` and `none` motion value require the updated backend. Reverting to the preceding frontend keeps optional database settings stored but does not render them. Deploy frontend and backend together when promoting; source rollback does not undo data changes or remove the previously described Trash TTL index.
+
+## Reference-inspired theme review — 6 October 2026
+
+The reviewed motion/layout studio at `229e6e4137d6bf0e850fdd914b60d564f29a6d73` is preserved locally and on GitHub at `backup/pre-reference-themes-2026-10-06`. The next update adds temporary project browsing, focused project stories and original theme artwork on the same review branch. These additions need no schema migration. Original production and all earlier backups remain separate.

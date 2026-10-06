@@ -10,7 +10,7 @@ export default function ThemePreviewPage() {
       setPreview({ data: event.data.data, staticPreview: event.data.staticPreview !== false });
     };
     window.addEventListener("message", receive);
-    const escape = event => { if(event.key === "Escape" && window.parent !== window) window.parent.postMessage({type:"porty:theme-escape"},window.location.origin); };
+    const escape = event => { if(event.key === "Escape" && !document.querySelector('dialog[open]') && window.parent !== window) window.parent.postMessage({type:"porty:theme-escape"},window.location.origin); };
     window.addEventListener("keydown",escape);
     window.parent.postMessage({ type: "porty:theme-ready" }, window.location.origin);
     return () => { window.removeEventListener("message", receive);window.removeEventListener("keydown",escape); };

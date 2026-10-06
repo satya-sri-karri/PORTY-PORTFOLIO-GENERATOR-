@@ -24,6 +24,8 @@ In an existing builder, choose **Theme & Publish**, open a theme, and experiment
 
 ## Saving in the review environment
 
+The later reference-inspired upgrade adds project search, supplied-technology filters, a temporary Reading index and a themed same-page project viewer. The guest trial supports multiple project entries. See `THEME_REFERENCE_UPGRADE.md` for the reference study and review steps. These visitor controls require no additional backend fields.
+
 Custom layouts and non-default motion choices require this revision's backend. The editor first checks `/portfolio/capabilities`. If the service is older or the check fails, it makes no portfolio save request and keeps the experiment in the editor/recoverable draft with clear feedback. Device storage failures are reported separately. Guest experiments remain available without an account.
 
 Connecting a separate review backend/database is still necessary to test live saved settings. Backend fixtures and browser API fixtures do not establish live persistence, email delivery, physical Android performance or target-user observation. The release gates in `UPGRADE_STATUS.md` remain open.
