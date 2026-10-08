@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { PortfolioRoot, PortfolioNav, ProfileMeta, Portrait, Skills, ProfileActions, PortfolioSections } from "./PortfolioParts";
 import { profileLinks, orderedProjects } from "../../../utils/portfolioContent";
 import "./extended.css";
-import { TerminalConsole, CanvasPlayground, PixelExplorer, SceneNavigator } from "./ThemeExperiences";
+import { TerminalConsole, CanvasPlayground, PixelExplorer, SceneNavigator, ProjectRailControls } from "./ThemeExperiences";
 
 function sectionList(data) {
   return [["Introduction", "pf-intro", true], ["Projects", "pf-work", data.projects.length], ["Experience", "pf-experience", data.experience.length], ["Credentials", "pf-credentials", data.certifications.length || data.achievements.length], ["Profiles", "pf-profiles", data.codingProfiles.length], ["Contact", "pf-contact", profileLinks(data).length]].filter(([, , exists]) => exists);
@@ -35,10 +35,32 @@ function PortfolioGuide({ data }) {
   return <div className="ex-guide"><p className="pf-eyebrow">Portfolio guide</p><p>This guide answers common topics using the information on this page. It does not generate AI replies.</p><div className="ex-controls">{["About", "Projects", "Experience", "Skills", "Contact"].map(topic => <button key={topic} type="button" onClick={() => { setQuery(topic); answer(topic); }}>{topic}</button>)}</div><form onSubmit={event => { event.preventDefault(); answer(query); }}><label htmlFor="portfolio-question">Ask about this portfolio</label><div className="ex-query"><input id="portfolio-question" value={query} onChange={e => setQuery(e.target.value)} placeholder="Projects, experience, skills…" /><button type="submit">Ask</button></div></form>{reply && <div className="ex-answer" role="status"><p>{reply.text}</p>{reply.available && <a href={`#${reply.id}`}>Browse this section ↗</a>}</div>}</div>;
 }
 function StorySlides({ data }) {
-  const stories = [{ title: "My perspective", text: data.about || data.title || data.name }, ...orderedProjects(data.projects).map(p => ({ title: p.title || "Project", text: p.description || "Explore this project in the full collection below.", href: "#pf-work" })), ...data.experience.map(e => ({ title: e.role || e.company, text: [e.company, e.duration].filter(Boolean).join(" · "), href: "#pf-experience" }))];
+  const stories = [{ title: "My perspective", text: data.about || data.title || data.name }, ...orderedProjects(data.projects).map((p, i) => ({ title: p.title || "Project", text: p.description || "Explore this project in the full collection below.", href: `#pf-project-${i + 1}` })), ...data.experience.map((e, i) => ({ title: e.role || e.company, text: [e.company, e.duration].filter(Boolean).join(" · "), href: `#pf-experience-${i + 1}` }))];
   const [index, setIndex] = useState(0); const start = useRef(null); const safeIndex = Math.min(index, stories.length - 1); const story = stories[safeIndex];
   const move = delta => setIndex(previous => (Math.min(previous, stories.length - 1) + delta + stories.length) % stories.length);
-  return <div className="ex-slides" onPointerDown={e => { if (e.pointerType !== "mouse" && !e.target.closest("button, a")) start.current = e.clientX; }} onPointerUp={e => { if (start.current !== null) { const delta = e.clientX - start.current; if (Math.abs(delta) > 50) move(delta < 0 ? 1 : -1); start.current = null; } }} onPointerCancel={() => { start.current = null; }}><p className="pf-eyebrow">Story {safeIndex + 1} of {stories.length}</p><div className="ex-slide-content" key={safeIndex}><h2>{story.title}</h2><p className="pf-bio">{story.text}</p>{story.href && <a className="pf-text-link" href={story.href}>Explore the full story ↗</a>}</div><div className="ex-controls"><button type="button" onClick={() => move(-1)} disabled={stories.length < 2}>Previous story</button><button type="button" onClick={() => move(1)} disabled={stories.length < 2}>Next story</button></div></div>;
+  return <div className="ex-slides" role="region" aria-label="Portfolio stories" aria-roledescription="carousel" tabIndex={0} aria-describedby="pf-story-keys"
+    onKeyDown={e => {
+      if (e.target !== e.currentTarget) return;
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); move(e.key === "ArrowRight" ? 1 : -1); }
+      else if (e.key === "Home" || e.key === "End") { e.preventDefault(); setIndex(e.key === "Home" ? 0 : stories.length - 1); }
+    }}
+    onPointerDown={e => {
+      if (e.pointerType === "mouse" || !e.isPrimary || e.target.closest("button, a")) return;
+      start.current = { x: e.clientX, y: e.clientY, id: e.pointerId };
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }}
+    onPointerUp={e => {
+      if (start.current?.id !== e.pointerId) return;
+      const dx = e.clientX - start.current.x, dy = e.clientY - start.current.y;
+      // Vertical browsing must never turn a page accidentally.
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.25) move(dx < 0 ? 1 : -1);
+      start.current = null;
+    }} onPointerCancel={() => { start.current = null; }}>
+    <span id="pf-story-keys" className="pf-control-hint">Use Left and Right arrows to change stories; Home and End select the first and last. On touch, swipe sideways.</span>
+    <p className="pf-eyebrow" role="status" aria-atomic="true">Story {safeIndex + 1} of {stories.length} · {story.title}</p>
+    <div className="ex-slide-content" key={safeIndex}><h2>{story.title}</h2><p className="pf-bio">{story.text}</p>{story.href && <a className="pf-text-link" href={story.href}>Explore the full story ↗</a>}</div>
+    <div className="ex-controls"><button type="button" onClick={() => move(-1)} disabled={stories.length < 2}>Previous story</button><button type="button" onClick={() => move(1)} disabled={stories.length < 2}>Next story</button></div>
+  </div>;
 }
 function IllustratedNavigation({ data, pixel = false }) {
   return <div className={`ex-scene ${pixel ? "ex-pixel-world" : "ex-desk"}`}><svg viewBox="0 0 600 330" role="group" aria-label={pixel ? "Illustrated portfolio world with section links" : "Illustrated creator’s desk with section links"}>
@@ -92,7 +114,7 @@ export default function ExtendedPortfolio({ data, config }) {
       {mode === "map" && <div className="ex-map"><p className="pf-eyebrow">{data.location ? `Based in ${data.location}` : "A map of my work"}</p><IllustratedNavigation data={data} /><p>Illustrated section map; no geographic distances are inferred.</p></div>}
       {(mode === "canvas" || mode === "desk") && <div className="ex-controls" role="group" aria-label="Portfolio presentation"><button type="button" aria-pressed={!reading} onClick={() => setReading(false)}>{mode === "desk" ? "Desk view" : "Board view"}</button><button type="button" aria-pressed={reading} onClick={() => setReading(true)}>Reading view</button></div>}
       {mode === "matrix" && !data.staticPreview && <div className="ex-controls"><button type="button" aria-pressed={rain} onClick={() => setRain(v => !v)}>{rain ? "Pause rain" : "Animate rain"}</button></div>}
-      {mode === "carousel" && data.projects.length > 1 && <div className="ex-controls" role="group" aria-label="Project collection"><button type="button" onClick={() => collection.current?.querySelector('.pf-project-grid')?.scrollBy({left:-420,behavior:"auto"})}>Previous projects</button><button type="button" onClick={() => collection.current?.querySelector('.pf-project-grid')?.scrollBy({left:420,behavior:"auto"})}>Next projects</button></div>}
+      {mode === "carousel" && data.projects.length > 1 && <ProjectRailControls collection={collection} data={data} />}
       <div ref={collection}><PortfolioSections data={data} /></div>
     </main>
   </PortfolioRoot>;

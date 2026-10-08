@@ -8,7 +8,7 @@ import ThemeRenderer from "../components/shared/ThemeRenderer";
  * Fetches portfolio by slug, applies the chosen theme component
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicPortfolio } from "../utils/api";
 
@@ -30,9 +30,25 @@ const SkeletonPortfolio = () => (
 
 const ShareBar = ({ slug, data }) => {
   const [kit, setKit] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [mobile, setMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches);
+  const bar = useRef(null), toggle = useRef(null);
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/p/${slug}`;
   const [error, setError] = useState("");
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const resize = () => { setMobile(media.matches); setExpanded(media.matches && !!bar.current?.contains(document.activeElement)); };
+    media.addEventListener("change", resize);
+    return () => media.removeEventListener("change", resize);
+  }, []);
+  useEffect(() => {
+    if (!mobile || !expanded || kit) return;
+    const outside = event => { if (!bar.current?.contains(event.target)) setExpanded(false); };
+    const escape = event => { if (event.key === "Escape") { setExpanded(false); toggle.current?.focus(); } };
+    document.addEventListener("pointerdown", outside); document.addEventListener("keydown", escape);
+    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
+  }, [mobile, expanded, kit]);
   const copy = async () => {
     setCopied(false); setError("");
     try {
@@ -56,7 +72,9 @@ const ShareBar = ({ slug, data }) => {
         </div>
       )}
       {kit && <ShareKit data={data} slug={slug} onClose={() => setKit(false)} />}
-      <div className="share-bar">
+      <div ref={bar} className="share-bar">
+        <button ref={toggle} type="button" className="btn btn-secondary btn-sm share-bar-toggle" hidden={!mobile} aria-label="Portfolio tools" aria-expanded={expanded} aria-controls="portfolio-share-actions" onClick={() => setExpanded(v => !v)}>{expanded ? "Close" : "↗ Share"}</button>
+        <div id="portfolio-share-actions" className="share-bar-actions" hidden={mobile && !expanded}>
         <button className="btn btn-secondary btn-sm" onClick={() => setKit(true)}>Sharing kit</button>
         <button className="btn btn-primary btn-sm" onClick={share} style={{ boxShadow: "var(--shadow-accent)" }}>
           📤 Share
@@ -67,6 +85,7 @@ const ShareBar = ({ slug, data }) => {
         <Link to="/" className="btn btn-secondary btn-sm" title="Build your own" aria-label="Build your own portfolio" style={{ textDecoration: "none" }}>
           ✨
         </Link>
+        </div>
       </div>
     </>
   );

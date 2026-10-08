@@ -73,3 +73,13 @@ Current results and visual-review notes are recorded in `LOCAL_REVIEW.md`. Brows
 ## Checkpoint
 
 The preceding review is backed up locally and on GitHub at `backup/pre-individual-effects-2026-10-06` (`d13091e37c43a5b7fbe618e9004f0e755193f84c`). This correction stays on the existing review branch and draft PR #2. Original production remains separate.
+
+## Native interaction refinements — 8 October 2026
+
+Storybook's page turn and Wrapped's track change now have separate transitions. Focus the story panel and use Left/Right, Home/End, or swipe sideways on touch. Vertical browsing does not turn a page. The full-story link opens the matching project or career entry, including featured-project ordering.
+
+Focus Pixel's explorer to move with Left/Right and jump with Space/Up. Its project paths now lead to each individual project. Netflix's collection controls follow measured card widths, work after a partial swipe, and become unavailable at the start/end; Expressive uses smooth navigation while Pause, Still and reduced motion use immediate navigation.
+
+Product, Museum, Desk, Canvas and Dashboard entrances wait for their actual objects to enter the viewport. Subtle stops all continuous decorative loops throughout the 41-theme catalog. All changes retain the native compositions, content and destinations. Current test evidence is in `LOCAL_REVIEW.md`.
+
+The phone sharing toolbar starts as one compact button, keeping the story/game controls visible. Open it for Sharing kit, Share, Copy link and Build your own; Escape or clicking outside closes it. Its QR dialog restores focus to Sharing kit. The desktop action list remains available.

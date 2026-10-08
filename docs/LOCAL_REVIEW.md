@@ -1,5 +1,27 @@
 # PORTY local review — batches 1, 2 and 3
 
+## Current refinement: native navigation and motion pacing — 8 October 2026
+
+The 41 restored theme designs remain intact. This pass refines their existing interactions and effects:
+
+- Storybook retains the finite page turn; Wrapped now uses a separate vertical track-change transition. Both support focused Left/Right/Home/End keys, sideways touch gestures and a concise live story announcement. Vertical gestures, cancelled touches and gestures over links/buttons do not advance a story. Story links reach the matching featured-order project or experience entry and move keyboard focus there.
+- Pixel supports focused arrow-key movement and Space/Up jumping. Each supplied project path opens its own project, following featured ordering; nested buttons retain their normal keyboard behavior.
+- Netflix measures actual card positions at each viewport width. Previous/Next work after partial scrolling, disable at collection boundaries, and update on resize. Expressive mode scrolls smoothly; Still, reduced motion and visitor Pause use immediate navigation.
+- Product reflections, Museum lighting, desk entrances, Canvas pins and dashboard circuit drawing start when their original objects enter view. Neumorphic light also participates in viewport observation. Subtle mode stops the previously overlooked Neon Terminal scan and Neumorphic light loops.
+- On phones, the sharing toolbar starts as one compact disclosure instead of a tall dock covering story/game controls. It supports sequential keyboard access, Escape with focus restoration, outside-click dismissal, QR-dialog focus restoration, resizing and safe-area spacing. Desktop keeps its existing action list.
+
+Validation on the built frontend:
+
+- Production build passed without warnings from the application; initial JavaScript is 125.03 kB gzip. No dependency or backend change.
+- All 8 content tests passed.
+- All 18 motion/interaction scenarios and 164 native-layout cases passed on the final build. A dedicated check finds no continuous animation across all 41 themes in Subtle mode, including opt-in Matrix rain. Added regressions cover featured destinations/focus, keyboard navigation, sideways versus vertical/cancelled/nested-control gestures, partial and smooth gallery scrolling, deferred Product reflection and compact phone sharing at five widths.
+- All 82 desktop/phone comparisons against the separately built pre-studio version passed, retaining palette, typography, spacing, grids and image frames.
+- All 820 responsive catalog cases passed across five widths, with 164 review screenshots. The final compact sharing adjustment receives all-theme desktop/phone checks in the motion suite and a dedicated five-width disclosure regression.
+- All 11 completion workflows passed on the final build, including delayed cover capture, save/reload, theme exploration, QR-dialog focus restoration, resume imports, guest continuation and the remaining previous workflows.
+- Storybook, Wrapped, Netflix, phone story/compact tools and Pixel refinement screenshots were visually inspected. Original master checklist SHA-256 remains `de53ae23a3447d6aa7d763d7a6c6e5b4fe649857228026d9225a90a13150cfe9`.
+
+Run `PORTY_CHROME_PATH=/path/to/chromium npm run test:motion --prefix frontend`. Tests use API fixtures; touch gesture regressions use synthetic pointer events. They do not establish physical-device performance or live database/provider behavior. The original Render service still requires an upgraded review backend to persist non-default motion preferences. This checkpoint is saved on the local review branch. Its GitHub push remains pending; the remote review branch and draft PR #2 still point to `974b7a7`.
+
 ## Current correction: individual theme effects — 6 October 2026
 
 The pre-studio compositions from `7ef2676` are restored across all 41 themes. Shared family artwork, universal layout overrides, collection/index controls and the common project dialog are removed. Each theme now has its own scoped visual effects; native interaction controls remain. See `INDIVIDUAL_THEME_EFFECTS.md` for the 41 directions and review flow. Sections below this checkpoint describe historical revisions.

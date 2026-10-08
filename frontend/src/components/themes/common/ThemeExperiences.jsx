@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { orderedProjects, profileLinks } from "../../../utils/portfolioContent";
 
 export function TerminalConsole({ data }) {
@@ -31,7 +31,41 @@ export function CanvasPlayground({ data }) {
 export function PixelExplorer({ data }) {
   const [x,setX]=useState(50); const [jump,setJump]=useState(0); const [visited,setVisited]=useState([]);
   if(!data.projects.length) return null;
-  return <section className="ex-pixel-game" aria-label="Pixel explorer"><p className="pf-eyebrow">Explore my world</p><div className="ex-pixel-stage" aria-hidden="true"><span className="ex-pixel-cloud" /><span key={jump} className={`ex-pixel-player ${jump ? 'ex-pixel-jump' : ''}`} style={{left:`${x}%`}}><svg viewBox="0 0 16 20" width="32" height="40" shapeRendering="crispEdges"><path d="M4 0H12V2H14V8H12V10H4V8H2V2H4Z" fill="var(--pf-text)"/><path d="M4 10H12V16H14V20H10V16H6V20H2V16H4Z" fill="var(--pf-accent)"/><path d="M4 4H6V6H4ZM10 4H12V6H10Z" fill="var(--pf-bg)"/></svg></span><div className="ex-pixel-ground" /></div><div className="ex-controls"><button type="button" onClick={()=>setX(v=>Math.max(8,v-10))}>Move left</button><button type="button" onClick={()=>setJump(v=>v+1)}>Jump</button><button type="button" onClick={()=>setX(v=>Math.min(88,v+10))}>Move right</button><span role="status">{visited.filter(i=>i<data.projects.length).length} of {data.projects.length} project paths explored</span></div><div className="ex-pixel-paths">{orderedProjects(data.projects).map((p,i)=><a key={i} href="#pf-work" onClick={()=>{setX(8+(i/Math.max(1,data.projects.length-1))*80);setVisited(v=>v.includes(i)?v:[...v,i]);}}>◇ {p.title}{visited.includes(i)?" ✓":""}</a>)}</div></section>;
+  const move = delta => setX(v => Math.min(88, Math.max(8, v + delta)));
+  return <section className="ex-pixel-game" aria-label="Pixel explorer" tabIndex={0} aria-describedby="pf-pixel-keys" onKeyDown={e => {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); move(e.key === "ArrowRight" ? 10 : -10); }
+    else if (e.code === "Space" || e.key === "ArrowUp") { e.preventDefault(); if (!e.repeat) setJump(v => v + 1); }
+  }}><p className="pf-eyebrow">Explore my world</p><span id="pf-pixel-keys" className="pf-control-hint">Use Left and Right arrows to move, and Space or Up to jump. Project paths open their matching project below.</span><div className="ex-pixel-stage" aria-hidden="true"><span className="ex-pixel-cloud" /><span key={jump} className={`ex-pixel-player ${jump ? 'ex-pixel-jump' : ''}`} style={{left:`${x}%`}}><svg viewBox="0 0 16 20" width="32" height="40" shapeRendering="crispEdges"><path d="M4 0H12V2H14V8H12V10H4V8H2V2H4Z" fill="var(--pf-text)"/><path d="M4 10H12V16H14V20H10V16H6V20H2V16H4Z" fill="var(--pf-accent)"/><path d="M4 4H6V6H4ZM10 4H12V6H10Z" fill="var(--pf-bg)"/></svg></span><div className="ex-pixel-ground" /></div><div className="ex-controls"><button type="button" onClick={()=>move(-10)}>Move left</button><button type="button" onClick={()=>setJump(v=>v+1)}>Jump</button><button type="button" onClick={()=>move(10)}>Move right</button><span role="status">{visited.filter(i=>i<data.projects.length).length} of {data.projects.length} project paths explored</span></div><div className="ex-pixel-paths">{orderedProjects(data.projects).map((p,i)=><a key={i} href={`#pf-project-${i + 1}`} onClick={()=>{setX(8+(i/Math.max(1,data.projects.length-1))*80);setVisited(v=>v.includes(i)?v:[...v,i]);}}>◇ {p.title}{visited.includes(i)?" ✓":""}</a>)}</div></section>;
+}
+export function ProjectRailControls({ collection, data }) {
+  const [bounds, setBounds] = useState({ start: true, end: false });
+  useEffect(() => {
+    const rail = collection.current?.querySelector(".pf-project-grid");
+    if (!rail) return;
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const next = { start: rail.scrollLeft <= 2, end: rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 2 };
+      setBounds(old => old.start === next.start && old.end === next.end ? old : next);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    const observer = new ResizeObserver(schedule);
+    observer.observe(rail); rail.querySelectorAll(".pf-project").forEach(card => observer.observe(card));
+    rail.addEventListener("scroll", schedule, { passive: true }); measure();
+    return () => { observer.disconnect(); rail.removeEventListener("scroll", schedule); cancelAnimationFrame(frame); };
+  }, [collection, data.projects]);
+  const move = delta => {
+    const rail = collection.current?.querySelector(".pf-project-grid");
+    if (!rail) return;
+    const left = rail.getBoundingClientRect().left;
+    const offsets = [...rail.children].map(card => card.getBoundingClientRect().left - left + rail.scrollLeft);
+    // Follow real card positions at phone and desktop widths, including a partial swipe.
+    const target = delta > 0 ? offsets.find(x => x > rail.scrollLeft + 2) ?? rail.scrollWidth : [...offsets].reverse().find(x => x < rail.scrollLeft - 2) ?? 0;
+    const resting = rail.closest(".portfolio-v4").classList.contains("pf-resting");
+    rail.scrollTo({ left: target, behavior: data.motion === "expressive" && !resting ? "smooth" : "auto" });
+  };
+  return <div className="ex-controls" role="group" aria-label="Project collection"><button type="button" disabled={bounds.start} onClick={() => move(-1)}>Previous projects</button><button type="button" disabled={bounds.end} onClick={() => move(1)}>Next projects</button></div>;
 }
 export function SceneNavigator({ data }) {
   const [active,setActive]=useState(-1);

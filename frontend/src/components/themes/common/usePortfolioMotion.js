@@ -31,9 +31,9 @@ export default function usePortfolioMotion(data, effect) {
       entry.target.dataset.effectVisible = String(entry.isIntersecting);
       if (entry.isIntersecting) entry.target.classList.add("pf-effect-entered");
     }), { threshold: .1 });
-    el.querySelectorAll([effect.reveal, ".pf-effect-art, .product-device, .terminal-window, .pf-project-media, .ex-desk svg, .ex-slides"].filter(Boolean).join(",")).forEach(node => observer.observe(node));
+    el.querySelectorAll([effect.reveal, effect.pointer, ".pf-effect-art, .product-device, .terminal-window, .pf-project-media, .ex-desk svg, .ex-slides"].filter(Boolean).join(",")).forEach(node => observer.observe(node));
     return () => observer.disconnect();
-  }, [active, effect.id, effect.reveal, data]);
+  }, [active, effect.id, effect.reveal, effect.pointer, data]);
   useEffect(() => {
     const el = root.current;
     if (!active || !el || data.motion !== "expressive" || !["space-explorer", "scroll-cinema"].includes(effect.id)) return;

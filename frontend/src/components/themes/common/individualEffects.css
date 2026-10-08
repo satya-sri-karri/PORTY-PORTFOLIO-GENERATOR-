@@ -35,6 +35,7 @@
 @keyframes fx-stars { from { opacity:.3; } to { opacity:.85; } }
 @keyframes fx-pin { from { translate:0 -4px; } to { translate:0 0; } }
 @keyframes fx-page { from { rotate:y -9deg; translate:4px 0; } to { rotate:y 0deg; translate:0 0; } }
+@keyframes fx-track { from { translate:0 8px; } to { translate:0 0; } }
 @keyframes fx-book { from { scale:1 .96; } to { scale:1 1; } }
 @keyframes fx-record { to { rotate:360deg; } }
 @keyframes fx-equalizer { from { scale:1 .35; } to { scale:1 1; } }
@@ -77,7 +78,8 @@
 .pf-scrapbook .scrapbook-project:is(:hover,:focus-within) .scrapbook-photo { rotate:-1deg; box-shadow:5px 10px 0 color-mix(in srgb,var(--pf-text) 12%,transparent); }
 /* 04 Product Showcase: a screen reflection inside the existing frame. */
 .pf-product .product-device { position:relative; overflow:hidden; }
-.pf-product .product-device::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg,transparent 35%,color-mix(in srgb,var(--pf-bg) 27%,transparent) 50%,transparent 65%); animation:fx-reflection 2s ease-out 1; }
+.pf-product .product-device::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg,transparent 35%,color-mix(in srgb,var(--pf-bg) 27%,transparent) 50%,transparent 65%); }
+.pf-product .product-device.pf-effect-entered::after { animation:fx-reflection 2s ease-out 1; }
 .pf-product .product-device.pf-pointer-active::after { animation:none; background:radial-gradient(ellipse at var(--pf-light-x) var(--pf-light-y),#ffffff21,transparent 55%); }
 .pf-product .product-study:focus-within .product-device { box-shadow:0 0 0 2px var(--pf-accent); }
 /* 05 Y2K: chrome keeps its original text treatment. */
@@ -142,7 +144,8 @@
 .ex-ai-assistant .fx-orbit-dot { fill:currentColor; }
 .ex-ai-assistant .ex-answer { animation:fx-reply .35s ease-out 1; }
 /* 20 3D: only the illustrated object tilts. */
-.ex-interactive-3d .ex-desk svg { transition:transform .4s ease-out; animation:fx-desk 1.2s ease-out 1; }
+.ex-interactive-3d .ex-desk svg { transition:transform .4s ease-out; }
+.ex-interactive-3d .ex-desk svg.pf-effect-entered { animation:fx-desk 1.2s ease-out 1; }
 .ex-interactive-3d .ex-desk svg.pf-pointer-active { transform:perspective(1000px) rotateX(calc(8deg + var(--pf-angle-x))) rotateY(var(--pf-angle-y)); }
 .ex-interactive-3d .ex-desk svg a:is(:hover,:focus) rect { stroke:var(--pf-accent); stroke-width:4px; }
 /* 21 Journey: milestone tracing. */
@@ -151,7 +154,7 @@
 .ex-timeline-journey .pf-timeline-row.pf-effect-entered::before { content:''; position:absolute; inset:0 auto 0 -3px; width:3px; background:var(--pf-accent); transform-origin:top; animation:fx-signature .8s ease-out; }
 /* 22 Dashboard: activity circuit and actual supplied counts. */
 .ex-dashboard-portfolio .fx-circuit > path { stroke-dasharray:1; }
-.ex-dashboard-portfolio .fx-circuit > path { animation:fx-circuit 2s ease-out both; }
+.ex-dashboard-portfolio .pf-effect-entered .fx-circuit > path { animation:fx-circuit 2s ease-out both; }
 .ex-dashboard-portfolio .ex-counts > .pf-effect-entered { outline:1px solid var(--pf-accent); outline-offset:-1px; transition:outline-color .65s ease-out; }
 /* 23 Space: deterministic stars with different phases, orbital depth. */
 .ex-space-explorer .ex-decoration i { animation:fx-stars 6s ease-in-out infinite alternate; }
@@ -160,7 +163,7 @@
 .ex-space-explorer .fx-orbit { transform-origin:126px 102px; animation:fx-orbit 50s linear infinite; }
 .ex-space-explorer .pf-effect-art { translate:0 var(--pf-depth,0px); opacity:.6; }
 /* 24 Canvas: pinned cards feel physical when moved. */
-.ex-infinite-canvas .fx-pins > g { animation:fx-pin .8s ease-out both; }
+.ex-infinite-canvas .pf-effect-entered .fx-pins > g { animation:fx-pin .8s ease-out both; }
 .ex-infinite-canvas .fx-pins > g:nth-child(3) { animation-delay:.15s; }
 .ex-infinite-canvas .fx-pins > g:nth-child(4) { animation-delay:.3s; }
 .ex-infinite-canvas .ex-drag-card { transition:box-shadow .2s; }
@@ -171,6 +174,7 @@
 .ex-storybook .ex-slides { background-image:linear-gradient(90deg,#00000006,transparent 14%); }
 /* 26 Wrapped: decorative rhythm, no fictional listening statistics. */
 .ex-spotify-wrapped .fx-record { transform-origin:120px 95px; animation:fx-record 30s linear infinite; }
+.ex-spotify-wrapped .ex-slide-content { animation:fx-track .45s cubic-bezier(.16,1,.3,1) both; }
 .ex-spotify-wrapped .fx-equalizer rect { fill:currentColor; stroke:none; transform-box:fill-box; transform-origin:bottom; animation:fx-equalizer calc(1.8s + var(--fx-i)*.13s) ease-in-out calc(var(--fx-i)*-.2s) infinite alternate; }
 /* 27 Netflix: the original poster rail remains horizontal. */
 .ex-netflix-portfolio .fx-spotlight { transform-origin:120px 20px; animation:fx-spotlight 16s ease-in-out infinite alternate; }
@@ -192,7 +196,8 @@
 .ex-newspaper .pf-section-heading.pf-effect-entered::after { content:''; position:absolute; bottom:-10px; left:0; width:100%; height:1px; background:var(--pf-text); animation:fx-press .8s steps(12); }
 .ex-newspaper .pf-project:is(:hover,:focus-within) h3 { text-decoration:underline double; text-decoration-thickness:1px; text-underline-offset:7px; }
 /* 32 Museum: gallery light, never a rotating painting. */
-.ex-museum .pf-project-media::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,50%) var(--pf-light-y,0%),#ffffff44,transparent 75%); animation:fx-gallery 2s ease-out both; }
+.ex-museum .pf-project-media::after { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at var(--pf-light-x,50%) var(--pf-light-y,0%),#ffffff44,transparent 75%); }
+.ex-museum .pf-project-media.pf-effect-entered::after { animation:fx-gallery 2s ease-out both; }
 .ex-museum .pf-project:focus-within .pf-project-media { outline-color:var(--pf-accent); }
 /* 33 Matrix: manual rain remains opt-in. */
 .ex-hacker-matrix .ex-matrix span:nth-child(3n) { opacity:.55; animation-duration:7s; }
@@ -235,6 +240,7 @@
 /* A slower, quieter option uses the same personality. No continuous ambient movement. */
 .portfolio-v4.pf-motion-subtle .pf-effect-art *, .portfolio-v4.pf-motion-subtle .ex-decoration *, .portfolio-v4.pf-motion-subtle :is(.aurora-orbit,.retro-sun,.retro-grid,.luxe-hero-decoration,.y2k-star,.ex-art,.ex-pixel-cloud) { animation:none; }
 .portfolio-v4.pf-motion-subtle .pf-effect-art { opacity:.2; }
+.portfolio-v4.pf-motion-subtle .terminal-window::after, .portfolio-v4.pf-motion-subtle .neumorphic-introduction::after { animation:none; }
 /* Pause when decorative scenes leave the viewport; freeze remaining finite effects too. */
 .portfolio-v4[data-ambient="paused"] .pf-effect-art *, .portfolio-v4[data-ambient="paused"] .ex-decoration *, .portfolio-v4[data-ambient="paused"] :is(.aurora-orbit,.retro-sun,.retro-grid,.luxe-hero-decoration,.y2k-star,.ex-art,.ex-pixel-cloud), .portfolio-v4 [data-effect-visible="false"], .portfolio-v4 [data-effect-visible="false"] * { animation-play-state:paused !important; }
 .portfolio-v4 [data-effect-visible="false"]::before, .portfolio-v4 [data-effect-visible="false"]::after { animation-play-state:paused !important; }
@@ -242,6 +248,9 @@
 .portfolio-v4.pf-resting *, .portfolio-v4.pf-resting *::before, .portfolio-v4.pf-resting *::after { animation:none !important; transition:none !important; }
 /* Restore static transforms when movement is disabled. */
 .portfolio-v4.pf-resting .pf-effect-art, .portfolio-v4.pf-resting .pf-project-media img { translate:0 0; }
+.portfolio-v4 :is(.pf-project,.pf-timeline-row,.ex-slides,.ex-pixel-game):focus-visible { outline:2px solid var(--pf-accent); outline-offset:5px; }
+.pf-ex .ex-controls button:disabled { opacity:.45; cursor:default; }
+.portfolio-v4 .pf-control-hint { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 @media (max-width:760px) {
   .portfolio-v4 .pf-effect-art { width:120px; opacity:.18; }
   .portfolio-v4 .pf-motion-toggle { bottom:8px; left:8px; }

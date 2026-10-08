@@ -47,6 +47,75 @@ stored.theme='pixel-art';await open(page);const player=page.locator('.ex-pixel-p
 await test('Terminal commands and cinema navigation point to supplied content',async(page,stored)=>{
 stored.theme='terminal-os';await open(page);await page.getByLabel('Portfolio command',{exact:true}).fill('ls');await page.getByRole('button',{name:'Run command',exact:true}).click();assert.match(await page.locator('.ex-console-output').innerText(),/Community journal/);await page.getByRole('link',{name:'Open section',exact:false}).click();assert.equal(new URL(page.url()).hash,'#pf-work');await page.getByLabel('Portfolio command',{exact:true}).fill('delete everything');await page.getByRole('button',{name:'Run command',exact:true}).click();assert.match(await page.locator('.ex-console-output').innerText(),/Unknown command/);assert.equal(await page.locator('#pf-work .pf-project, #pf-work .scrapbook-project, #pf-work .product-study, #pf-work .editorial-project').count(),3);stored.theme='scroll-cinema';await open(page);const scene=page.getByRole('button',{name:'01 / Community journal',exact:true});await scene.click();assert.equal(await scene.getAttribute('aria-pressed'),'true');await overflow(page);
 });
+await test('Native stories support keyboard, direct featured destinations and distinct transitions',async(page,stored)=>{
+ stored.projects[2].featured=true;
+ for(const [theme,animation] of [['storybook','fx-page'],['spotify-wrapped','fx-track']]) {
+  stored.theme=theme;await open(page);const stories=page.getByRole('region',{name:'Portfolio stories',exact:true});
+  await stories.focus();await page.keyboard.press('ArrowRight');await stories.getByRole('heading',{name:'Study planner',exact:true}).waitFor();
+  assert.equal(await stories.getByRole('link',{name:'Explore the full story',exact:false}).getAttribute('href'),'#pf-project-1');
+  assert.equal(await stories.locator('.ex-slide-content').evaluate(el=>getComputedStyle(el).animationName),animation);
+  await stories.getByRole('link',{name:'Explore the full story',exact:false}).click();assert.equal(new URL(page.url()).hash,'#pf-project-1');assert.match(await page.locator(':focus').innerText(),/Study planner/);
+  await stories.focus();await page.keyboard.press('End');await stories.getByRole('heading',{name:'Design intern',exact:true}).waitFor();
+  await stories.getByRole('link',{name:'Explore the full story',exact:false}).click();assert.equal(new URL(page.url()).hash,'#pf-experience-1');
+  await stories.focus();await page.keyboard.press('Home');await stories.getByRole('heading',{name:'My perspective',exact:true}).waitFor();
+  await stories.getByRole('button',{name:'Next story',exact:true}).focus();await page.keyboard.press('ArrowRight');assert.equal(await stories.getByRole('heading',{name:'My perspective',exact:true}).count(),1,'Keys on a nested button must not hijack the story');
+  await page.emulateMedia({reducedMotion:'reduce'});await stories.getByRole('button',{name:'Next story',exact:true}).click();assert.equal(await stories.locator('.ex-slide-content').evaluate(el=>el.getAnimations().length),0);await page.emulateMedia({reducedMotion:'no-preference'});
+  await stories.screenshot({path:path.join(output,`${theme}-story-refinement.png`)});await overflow(page);
+ }
+});
+await test('Story touch swipes ignore vertical browsing, cancellation and nested controls',async(page,stored)=>{
+ stored.theme='storybook';await open(page);const stories=page.locator('.ex-slides');await stories.scrollIntoViewIfNeeded();
+ const swipe=async(dx,dy,cancel=false)=>stories.evaluate((el,{dx,dy,cancel})=>{
+  el.setPointerCapture=()=>{};const init={bubbles:true,pointerType:'touch',pointerId:7,isPrimary:true,clientX:220,clientY:100};
+  el.dispatchEvent(new PointerEvent('pointerdown',init));el.dispatchEvent(new PointerEvent(cancel?'pointercancel':'pointerup',{...init,clientX:220+dx,clientY:100+dy}));
+ },{dx,dy,cancel});
+ await swipe(-90,130);assert.equal(await stories.getByRole('heading',{name:'My perspective',exact:true}).count(),1);
+ await swipe(-90,0,true);assert.equal(await stories.getByRole('heading',{name:'My perspective',exact:true}).count(),1);
+ await stories.getByRole('button',{name:'Next story',exact:true}).evaluate(el=>{const init={bubbles:true,pointerType:'touch',pointerId:8,isPrimary:true,clientX:220,clientY:100};el.dispatchEvent(new PointerEvent('pointerdown',init));el.dispatchEvent(new PointerEvent('pointerup',{...init,clientX:120}));});assert.equal(await stories.getByRole('heading',{name:'My perspective',exact:true}).count(),1);
+ await swipe(-90,5);await stories.getByRole('heading',{name:'Community journal',exact:true}).waitFor();
+ await swipe(90,5);await stories.getByRole('heading',{name:'My perspective',exact:true}).waitFor();await stories.screenshot({path:path.join(output,'storybook-touch-refinement.png')});await overflow(page);
+},{width:390,height:900});
+await test('Pixel keyboard and featured paths reach their matching project without hijacking buttons',async(page,stored)=>{
+ stored.theme='pixel-art';stored.projects[2].featured=true;await open(page);const game=page.getByRole('region',{name:'Pixel explorer',exact:true});
+ await game.focus();const player=game.locator('.ex-pixel-player'),initial=await player.getAttribute('style');await page.keyboard.press('ArrowRight');assert.notEqual(await player.getAttribute('style'),initial);await page.keyboard.press('Space');assert.equal(await game.locator('.ex-pixel-jump').count(),1);
+ await game.getByRole('button',{name:'Move left',exact:true}).focus();const before=await player.getAttribute('style');await page.keyboard.press('ArrowRight');assert.equal(await player.getAttribute('style'),before);
+ await game.getByRole('link',{name:'◇ Field notes',exact:true}).click();assert.equal(new URL(page.url()).hash,'#pf-project-3');assert.match(await page.locator(':focus').innerText(),/Field notes/);await game.getByText('1 of 3 project paths explored',{exact:true}).waitFor();await game.scrollIntoViewIfNeeded();await game.screenshot({path:path.join(output,'pixel-keyboard-refinement.png')});await overflow(page);
+},{width:390,height:900});
+await test('Netflix collection follows real card widths, swipe positions and responsive boundaries',async(page,stored)=>{
+ stored.theme='netflix-portfolio';stored.projects=[...stored.projects,...stored.projects.map(p=>({...p,title:p.title+' II'}))];stored.motion='none';await open(page);
+ const controls=page.getByRole('group',{name:'Project collection',exact:true}),prev=controls.getByRole('button',{name:'Previous projects',exact:true}),next=controls.getByRole('button',{name:'Next projects',exact:true}),rail=page.locator('.pf-project-grid');
+ for(const width of [390,1440]) {
+  await page.setViewportSize({width,height:1000});await rail.evaluate(el=>el.scrollTo({left:0,behavior:'instant'}));await prev.waitFor();await page.waitForFunction(()=>document.querySelector('[aria-label="Project collection"] button').disabled);
+  const target=await rail.evaluate(el=>el.children[1].getBoundingClientRect().left-el.getBoundingClientRect().left);await next.click();await page.waitForFunction(target=>Math.abs(document.querySelector('.pf-project-grid').scrollLeft-target)<3,target);
+  await rail.evaluate((el,target)=>{el.style.scrollSnapType='none';el.scrollTo({left:target*.45,behavior:'instant'});},target);await next.click();await page.waitForFunction(target=>Math.abs(document.querySelector('.pf-project-grid').scrollLeft-target)<3,target);
+  await rail.evaluate(el=>el.scrollTo({left:el.scrollWidth,behavior:'instant'}));await page.waitForFunction(()=>[...document.querySelectorAll('[aria-label="Project collection"] button')].at(-1).disabled);assert.equal(await prev.isDisabled(),false);
+  await prev.click();await page.waitForFunction(()=>![...document.querySelectorAll('[aria-label="Project collection"] button')].at(-1).disabled);await overflow(page);
+ }
+ stored.motion='expressive';await open(page);const second=await rail.evaluate(el=>el.children[1].getBoundingClientRect().left-el.getBoundingClientRect().left);await next.click();await page.waitForFunction(target=>Math.abs(document.querySelector('.pf-project-grid').scrollLeft-target)<3,second);await page.getByRole('button',{name:'Pause motion',exact:true}).click();await prev.click();await page.waitForFunction(()=>document.querySelector('.pf-project-grid').scrollLeft<3);
+ await rail.scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'netflix-rail-refinement.png')});
+});
+await test('Subtle mode has no continuous loops across all 41 native effects',async(page,stored)=>{
+ stored.motion='subtle';const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,'../../backend/themeCatalog.json')));
+ for(const {id} of catalog) {stored.theme=id;await open(page);if(id==='hacker-matrix')await page.getByRole('button',{name:'Animate rain',exact:true}).click();
+  const loops=await page.locator('.portfolio-v4').evaluate(el=>el.getAnimations({subtree:true}).filter(a=>a.effect.getTiming().iterations===Infinity).map(a=>a.animationName));assert.deepEqual(loops,[],id+' has a continuous loop in Subtle mode');
+ }
+});
+await test('Product reflection waits until its original screen enters the viewport',async(page,stored)=>{
+ stored.theme='product-showcase';stored.about='A supplied long biography. '.repeat(160);await open(page);const device=page.locator('.product-device').first();
+ assert.equal(await device.evaluate(el=>el.getAnimations({subtree:true}).some(a=>a.animationName==='fx-reflection')),false);
+ await device.scrollIntoViewIfNeeded();await page.waitForFunction(()=>document.querySelector('.product-device').getAnimations({subtree:true}).some(a=>a.animationName==='fx-reflection'));
+ assert.equal(await device.evaluate(el=>el.classList.contains('pf-effect-entered')),true);await overflow(page);
+});
+await test('Mobile portfolio tools stay compact and support keyboard, outside dismissal and resizing',async(page,stored)=>{
+ stored.theme='storybook';await open(page);const toggle=page.getByRole('button',{name:'Portfolio tools',exact:true}),bar=page.locator('.share-bar');
+ assert.ok((await bar.boundingBox()).height<=60);assert.equal(await page.getByRole('button',{name:'Copy link',exact:true}).count(),0);
+ await toggle.focus();await page.keyboard.press('Enter');assert.equal(await toggle.getAttribute('aria-expanded'),'true');await page.keyboard.press('Tab');assert.equal(await page.getByRole('button',{name:'Sharing kit',exact:true}).evaluate(el=>el===document.activeElement),true);
+ await page.keyboard.press('Escape');assert.equal(await toggle.getAttribute('aria-expanded'),'false');assert.equal(await toggle.evaluate(el=>el===document.activeElement),true);
+ await toggle.click();await page.locator('.ex-slide-content').click();assert.equal(await toggle.getAttribute('aria-expanded'),'false');
+ await page.setViewportSize({width:1440,height:1000});await page.getByRole('button',{name:'Copy link',exact:true}).waitFor();assert.equal(await toggle.isVisible(),false);
+ await page.locator('.portfolio-v4 h1').click();await page.setViewportSize({width:390,height:900});await toggle.waitFor();assert.ok((await bar.boundingBox()).height<=60);await page.locator('.ex-slides').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(output,'storybook-mobile-tools.png')});await overflow(page);
+ for(const width of [360,390,768,1024,1440]){await page.setViewportSize({width,height:900});await page.waitForFunction(mobile=>document.querySelector('.share-bar-toggle').hidden!==mobile,width<768);await overflow(page);if(width<768)assert.ok((await bar.boundingBox()).height<=60);}
+},{width:390,height:900});
 await test('All 41 themes keep native layouts under legacy settings and have individual effects',async(page,stored)=>{
 const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,'../../backend/themeCatalog.json')));
 const layouts=[{}, {hero:'centered',projects:'rail',spacing:'airy',typography:'mono',image:'rounded',hover:'tilt'}];

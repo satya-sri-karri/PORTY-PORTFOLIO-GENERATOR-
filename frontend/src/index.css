@@ -1468,5 +1468,12 @@ button.tag-remove { background: transparent; border: none; color: inherit; curso
 .share-bar .btn-secondary { background:#253148; border-color:#6b7890; color:#fff; }
 .share-bar .btn-primary { background:#6253ce; border-color:#8c80ef; color:#fff; }
 .share-bar .btn { min-height:40px; }
+.share-bar-actions { display:flex; flex-direction:column; gap:var(--space-2); }
+.share-bar-toggle { order:2; }
+.share-bar-actions[hidden], .share-bar-toggle[hidden] { display:none; }
+@media (max-width:767px) {
+  .share-bar { right:max(8px,env(safe-area-inset-right)); bottom:max(8px,env(safe-area-inset-bottom)); padding:4px; gap:8px; }
+  .share-bar .btn { min-height:44px; }
+}
 .trial-project-fields { min-width:0; border:1px solid var(--border); border-radius:12px; padding:16px; margin:18px 0; }
 .trial-project-fields legend { font-size:13px; padding:0 8px; }

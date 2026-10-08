@@ -1,6 +1,6 @@
 # Upgrade implementation and release status
 
-Updated 6 October 2026. The original `PORTY_Master_Improvement_Checklist.md` is preserved unchanged. This document reports implementation separately from live release validation.
+Updated 8 October 2026. The original `PORTY_Master_Improvement_Checklist.md` is preserved unchanged. This document reports implementation separately from live release validation.
 
 The earlier three design batches are retained; the remaining 18 original themes and eight new themes bring the catalog to **41**. All original theme identifiers remain valid. Neo-brutalism remains a Brutalist palette; Creator's Desk remains `interactive-3d`, and Signature Studio remains `kinetic`.
 
@@ -37,6 +37,8 @@ An older backend still cannot persist non-default motion preferences or the othe
 ## Verification record
 
 Commands and current results are recorded in `LOCAL_REVIEW.md`. Prior records remain historical and do not describe the current feature set. Screenshots are generated QA artifacts. Real-service, physical-device and pilot gates remain pending.
+
+The 8 October refinement retains all 41 compositions and improves existing Storybook/Wrapped keyboard and swipe navigation, exact project/story destinations, Pixel keyboard/path controls, Netflix responsive collection controls and viewport-triggered native effects. Subtle mode now stops every continuous decorative loop. A compact phone sharing disclosure keeps story/game controls visible. This is a frontend review update; the earlier backend and live-service gates still apply.
 
 ## Pilot protocol
 
