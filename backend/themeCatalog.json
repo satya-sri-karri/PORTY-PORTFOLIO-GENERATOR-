@@ -1,0 +1,207 @@
+[
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "persona": "Ethereal / creative generalist"
+  },
+  {
+    "id": "minimalist",
+    "name": "Minimalist",
+    "persona": "Swiss Design / precise typography"
+  },
+  {
+    "id": "editorial",
+    "name": "Editorial",
+    "persona": "Designer / writer"
+  },
+  {
+    "id": "neon-terminal",
+    "name": "Neon Terminal",
+    "persona": "Developer / hacker"
+  },
+  {
+    "id": "brutalist",
+    "name": "Brutalist",
+    "persona": "Bold creative / artist"
+  },
+  {
+    "id": "neumorphic",
+    "name": "Neumorphic",
+    "persona": "Product / UI designer"
+  },
+  {
+    "id": "kinetic",
+    "name": "Kinetic",
+    "persona": "Motion designer / frontend"
+  },
+  {
+    "id": "executive",
+    "name": "Executive",
+    "persona": "Consultant / business"
+  },
+  {
+    "id": "retro-wave",
+    "name": "Retro Wave",
+    "persona": "Game dev / creative coder"
+  },
+  {
+    "id": "organic",
+    "name": "Organic",
+    "persona": "Photographer / wellness"
+  },
+  {
+    "id": "bento",
+    "name": "Bento Grid",
+    "persona": "Modern SaaS / startup dev"
+  },
+  {
+    "id": "dark-luxe",
+    "name": "Dark Luxe",
+    "persona": "Luxury typography / editorial"
+  },
+  {
+    "id": "apple-vision",
+    "name": "Apple Vision",
+    "persona": "Product Engineer / Apple Enthusiast"
+  },
+  {
+    "id": "blueprint",
+    "name": "Blueprint",
+    "persona": "Mechanical / Civil / Architecture"
+  },
+  {
+    "id": "cyberpunk-2077",
+    "name": "Cyberpunk 2077",
+    "persona": "AI Engineer / ML Engineer / Robotics"
+  },
+  {
+    "id": "ai-assistant",
+    "name": "AI Assistant",
+    "persona": "Anyone (viral-friendly)"
+  },
+  {
+    "id": "interactive-3d",
+    "name": "Interactive 3D",
+    "persona": "3D artist / creative developer"
+  },
+  {
+    "id": "timeline-journey",
+    "name": "Timeline Journey",
+    "persona": "Student / career changer"
+  },
+  {
+    "id": "dashboard-portfolio",
+    "name": "Dashboard Portfolio",
+    "persona": "Developer / PM"
+  },
+  {
+    "id": "space-explorer",
+    "name": "Space Explorer",
+    "persona": "Dreamer / storyteller"
+  },
+  {
+    "id": "infinite-canvas",
+    "name": "Infinite Canvas",
+    "persona": "Designer / creative thinker"
+  },
+  {
+    "id": "storybook",
+    "name": "Storybook",
+    "persona": "Writer / filmmaker"
+  },
+  {
+    "id": "spotify-wrapped",
+    "name": "Spotify Wrapped",
+    "persona": "Music lover / social sharer"
+  },
+  {
+    "id": "netflix-portfolio",
+    "name": "Netflix Portfolio",
+    "persona": "Entertainer / media creator"
+  },
+  {
+    "id": "google-maps-portfolio",
+    "name": "Google Maps Portfolio",
+    "persona": "Traveler / global professional"
+  },
+  {
+    "id": "comic-book",
+    "name": "Comic Book",
+    "persona": "Illustrator / storyteller"
+  },
+  {
+    "id": "terminal-os",
+    "name": "Terminal OS",
+    "persona": "DevOps / sysadmin / Linux enthusiast"
+  },
+  {
+    "id": "newspaper",
+    "name": "Newspaper",
+    "persona": "Journalist / publisher"
+  },
+  {
+    "id": "museum",
+    "name": "Museum",
+    "persona": "Artist / curator"
+  },
+  {
+    "id": "hacker-matrix",
+    "name": "Hacker Matrix",
+    "persona": "Cybersecurity / hacker"
+  },
+  {
+    "id": "scrapbook",
+    "name": "Scrapbook",
+    "persona": "Personal storytelling / creative"
+  },
+  {
+    "id": "y2k-aesthetic",
+    "name": "Y2K Aesthetic",
+    "persona": "Digital creative / playful"
+  },
+  {
+    "id": "product-showcase",
+    "name": "Product Showcase",
+    "persona": "Product designer / builder"
+  },
+  {
+    "id": "surrealism",
+    "name": "Surrealism",
+    "persona": "Dreamlike / visual creative"
+  },
+  {
+    "id": "pixel-art",
+    "name": "Pixel Art",
+    "persona": "Game maker / playful creator"
+  },
+  {
+    "id": "maximalism",
+    "name": "Maximalism",
+    "persona": "Expressive / eclectic creator"
+  },
+  {
+    "id": "conceptual-sketch",
+    "name": "Conceptual Sketch",
+    "persona": "Designer / process thinker"
+  },
+  {
+    "id": "bohemian",
+    "name": "Bohemian",
+    "persona": "Warm / handmade creator"
+  },
+  {
+    "id": "victorian",
+    "name": "Victorian",
+    "persona": "Ornamental / editorial creator"
+  },
+  {
+    "id": "wabi-sabi",
+    "name": "Wabi-sabi",
+    "persona": "Quiet / thoughtful creator"
+  },
+  {
+    "id": "scroll-cinema",
+    "name": "Scroll Cinema",
+    "persona": "Cinematic / narrative creator"
+  }
+]

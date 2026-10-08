@@ -1,53 +1,25 @@
-import React, { useEffect, useRef } from "react";
-import { toPng } from "html-to-image";
-import { getTheme } from "../../registry/themeRegistry";
-
-const ThumbnailGenerator = ({ data, onCapture }) => {
-  const ref = useRef(null);
-  const themeConfig = getTheme(data.theme);
-  const accent = themeConfig?.preview?.accent || "#E07A9E";
-  const bg = themeConfig?.preview?.bg || "#0A0A0A";
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const timer = setTimeout(() => {
-      toPng(ref.current, { width: 400, height: 300, pixelRatio: 1 })
-        .then(onCapture)
-        .catch(() => {});
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div ref={ref} style={{ width: 400, height: 300, position: "fixed", left: -9999, top: 0, overflow: "hidden", background: typeof bg === "string" && bg.includes("linear-gradient") ? bg.split(",")[0].replace("linear-gradient(", "").trim() : bg, fontFamily: "Inter, sans-serif" }}>
-      <div style={{ height: 4, background: accent }} />
-      <div style={{ padding: "16px 16px 0" }}>
-        <div style={{ width: 32, height: 32, borderRadius: "50%", background: accent, marginBottom: 8 }} />
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 2 }}>{data.name || "Your Name"}</div>
-        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginBottom: 14 }}>{data.title || "Professional Title"}</div>
-      </div>
-      <div style={{ padding: "0 16px", display: "flex", gap: 6, marginBottom: 12 }}>
-        {["React", "Node.js", "Python"].map((s, i) => (
-          <div key={i} style={{ padding: "3px 8px", borderRadius: 4, fontSize: 8, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>{s}</div>
-        ))}
-      </div>
-      <div style={{ padding: "0 16px", display: "flex", gap: 8 }}>
-        {[1, 2].map(i => (
-          <div key={i} style={{ flex: 1, padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.06)" }}>
-            <div style={{ height: 6, width: "60%", borderRadius: 3, background: accent, marginBottom: 6 }} />
-            <div style={{ height: 4, width: "100%", borderRadius: 2, background: "rgba(255,255,255,0.1)", marginBottom: 4 }} />
-            <div style={{ height: 4, width: "80%", borderRadius: 2, background: "rgba(255,255,255,0.08)" }} />
-          </div>
-        ))}
-      </div>
-      <div style={{ padding: "0 16px", marginTop: 12 }}>
-        <div style={{ height: 6, width: "40%", borderRadius: 3, background: "rgba(255,255,255,0.12)", marginBottom: 8 }} />
-        {[1, 2, 3].map(i => (
-          <div key={i} style={{ height: 4, width: `${100 - i * 15}%`, borderRadius: 2, background: "rgba(255,255,255,0.07)", marginBottom: 5 }} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+const ThumbnailGenerator = forwardRef(function ThumbnailGenerator({ data, onCapture }, api) {
+  const frame = useRef(null); const latest = useRef(data); latest.current = data; const sequence = useRef(0); const timer = useRef(null);
+  async function capture() {
+    // An explicit Save capture owns this request; a pending background capture
+    // must not supersede it while the image module is loading or rendering.
+    clearTimeout(timer.current);
+    const request = ++sequence.current; const target = frame.current;
+    if (!target?.contentWindow) return "";
+    target.contentWindow.postMessage({ type: "porty:theme-data", data: { ...latest.current, __captureId: String(request) } }, window.location.origin);
+    try {
+      let node; const deadline = Date.now() + 6000;
+      while (Date.now() < deadline) { const doc = target.contentDocument; const envelope = doc?.querySelector('[data-capture-id]'); node = doc?.querySelector('.portfolio-v4'); if (envelope?.getAttribute('data-capture-id') === String(request) && node?.querySelector('h1')) break; node = null; await new Promise(resolve => setTimeout(resolve, 80)); }
+      if (!node || request !== sequence.current) return "";
+      const { toJpeg } = await import("html-to-image");
+      const result = await toJpeg(node, { width: 1100, height: 700, canvasWidth: 660, canvasHeight: 420, pixelRatio: 1, quality: .8, skipFonts: true });
+      if (request !== sequence.current || result.length > 500000) return "";
+      onCapture(result); return result;
+    } catch { return ""; }
+  }
+  useImperativeHandle(api, () => ({ capture }));
+  useEffect(() => { onCapture(""); timer.current = setTimeout(capture, 900); return () => { clearTimeout(timer.current); sequence.current++; }; }, [data]); // eslint-disable-line
+  return <iframe ref={frame} src="/theme-preview" title="Portfolio cover capture" tabIndex={-1} aria-hidden="true" onLoad={() => { frame.current.contentWindow.postMessage({ type: "porty:theme-data", data: latest.current }, window.location.origin); }} style={{ position:"fixed", left:-12000, top:0, width:1100, height:700, border:0, pointerEvents:"none" }} />;
+});
 export default ThumbnailGenerator;

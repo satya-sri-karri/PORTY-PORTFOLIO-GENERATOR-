@@ -3,6 +3,11 @@ const mongoose = require("mongoose");
 const ProjectSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   description: { type: String, trim: true, default: "" },
+  problem: { type: String, trim: true, default: "" },
+  contribution: { type: String, trim: true, default: "" },
+  process: { type: String, trim: true, default: "" },
+  outcome: { type: String, trim: true, default: "" },
+  featured: { type: Boolean, default: false },
   link: { type: String, trim: true, default: "" },
   github: { type: String, trim: true, default: "" },
   techStack: [{ type: String, trim: true }],
@@ -49,6 +54,27 @@ const PortfolioSchema = new mongoose.Schema({
   avatarUrl: { type: String, trim: true, default: "" },
   location: { type: String, trim: true, default: "" },
 
+  availability: { type: String, trim: true, default: "" },
+  motto: { type: String, trim: true, default: "" },
+  interests: [{ type: String, trim: true }],
+  resumeUrl: { type: String, trim: true, default: "" },
+  showLocation: { type: Boolean, default: true },
+  motion: { type: String, enum: ["none", "subtle", "expressive"], default: "expressive" },
+  layoutSettings: {
+    hero: { type: String, enum: ["theme", "centered", "split"], default: "theme" },
+    projects: { type: String, enum: ["theme", "cards", "spotlight", "rail"], default: "theme" },
+    spacing: { type: String, enum: ["theme", "compact", "airy"], default: "theme" },
+    typography: { type: String, enum: ["theme", "editorial", "bold", "mono"], default: "theme" },
+    image: { type: String, enum: ["theme", "wide", "square", "rounded"], default: "theme" },
+    hover: { type: String, enum: ["theme", "lift", "tilt"], default: "theme" },
+  },
+  sectionOrder: { type: [{ type: String, enum: ["projects", "experience", "credentials", "profiles", "contact"] }], default: ["projects", "experience", "credentials", "profiles", "contact"] },
+  sectionVisibility: { type: Map, of: Boolean, default: {} },
+  audience: { type: String, trim: true, default: "" },
+  showcaseOptIn: { type: Boolean, default: false },
+  analytics: { project: { type: Number, default: 0 }, resume: { type: Number, default: 0 }, contact: { type: Number, default: 0 } },
+  wasPublicBeforeDelete: { type: Boolean, default: false },
+  deletedAt: { type: Date, default: null },
   // Sections
   skills: [{ type: String, trim: true }],
   projects: [ProjectSchema],
@@ -85,7 +111,16 @@ const PortfolioSchema = new mongoose.Schema({
   shareSlug: { type: String, unique: true, sparse: true },
   views: { type: Number, default: 0 },
   thumbnail: { type: String, default: "" },
+  // A locally generated request ID makes retrying a lost create response safe.
+  clientRequestId: { type: String, default: undefined, select: false },
 }, { timestamps: true });
+
+PortfolioSchema.index({ userId: 1, clientRequestId: 1 }, {
+  unique: true, partialFilterExpression: { clientRequestId: { $type: "string" } },
+});
+
+// Deleted portfolios can be restored for 30 days; MongoDB expires only dated entries.
+PortfolioSchema.index({ deletedAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
 // Auto-generate shareSlug
 PortfolioSchema.pre("save", function (next) {

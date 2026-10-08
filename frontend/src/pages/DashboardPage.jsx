@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import LearningPanel from "../components/shared/LearningPanel";
+import ProfileReuse from "../components/builder/ProfileReuse";
+import { getTrash, restorePortfolio, permanentlyDeletePortfolio } from "../utils/api";
+import { journeyStats } from "../utils/journey";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -57,35 +61,57 @@ const SkeletonDashboard = () => (
 const DashboardPage = () => {
   const { token, user } = useAuth();
   const { theme } = useTheme();
+  const [trash,setTrash] = useState(null);
+  const [trashError,setTrashError] = useState("");
+  const [trashBusy,setTrashBusy] = useState(false);
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [retry, setRetry] = useState(0);
 
+  const refresh = useCallback(() => setRetry(n => n + 1), []);
   useEffect(() => {
+    let active = true;
+    setLoading(true); setLoadError("");
     getMyPortfolios(token)
-      .then(res => setPortfolios(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [token]);
+      .then(res => { if (active) setPortfolios(res.data); })
+      .catch(e => { if (active) setLoadError(e.message || "Could not load your portfolios."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [token, retry]);
 
-  const copyLink = (slug, id) => {
-    navigator.clipboard.writeText(`${window.location.origin}/p/${slug}`);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+  const copyLink = async (slug, id) => {
+    setActionError(""); setCopiedId(null);
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/p/${slug}`);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch { setActionError("Could not copy the link. Select and copy the address shown on the portfolio card."); }
   };
 
   const handleDelete = async id => {
-    if (!window.confirm("Delete this portfolio? This cannot be undone.")) return;
-    setDeletingId(id);
+    if (!window.confirm("Move this portfolio to Trash? Its public link stops working immediately. You can restore it within 30 days.")) return;
+    setDeletingId(id); setActionError("");
     try {
       await deletePortfolio(id, token);
-      setPortfolios(prev => prev.filter(p => p._id !== id));
-    } catch { alert("Failed to delete."); }
+      setPortfolios(prev => prev.filter(p => p._id !== id)); setTrash(null);
+    } catch (e) { setActionError(e.message || "Could not delete this portfolio. Try again."); }
     finally { setDeletingId(null); }
   };
 
+  const loadTrash = async () => { setTrashBusy(true);setTrashError("");try{const response=await getTrash(token);setTrash(response.data);}catch(e){setTrashError(e.message);}finally{setTrashBusy(false);} };
+  const trashAction = async (id, permanent) => { if(permanent && !window.confirm("Permanently delete this trashed portfolio? This cannot be undone.")) return; setTrashBusy(true);setTrashError("");try{if(permanent) await permanentlyDeletePortfolio(id,token);else await restorePortfolio(id,token);setTrash(items=>items.filter(p=>p._id!==id));refresh();}catch(e){setTrashError(e.message);}finally{setTrashBusy(false);} };
+
   if (loading) return <SkeletonDashboard />;
+  if (loadError) return <main className="container" style={{ paddingTop: 48 }}>
+    <h1>Your portfolios could not be loaded</h1>
+    <div className="alert alert-error" role="alert">{loadError}</div>
+    <button className="btn btn-primary" onClick={refresh}>Retry</button>
+    {loadError.includes("session") && <Link to="/login" state={{ from: { pathname: "/dashboard" } }} className="btn btn-secondary">Sign in again</Link>}
+  </main>;
 
   const totalViews = portfolios.reduce((a, p) => a + (p.views || 0), 0);
 
@@ -108,10 +134,16 @@ const DashboardPage = () => {
           <p style={{ margin: "4px 0 0" }}>Manage and share your portfolios</p>
         </div>
 
+        <LearningPanel token={token} />
+        {actionError && <div className="alert alert-error" role="alert">{actionError}</div>}
+        <p className="form-hint">Page views count public portfolio requests, including repeat loads. Link clicks are measured clicks, not unique visitors or completed downloads.</p>
+        {portfolios.length > 0 && <ProfileReuse portfolios={portfolios} token={token} onUpdated={() => { getMyPortfolios(token).then(response => setPortfolios(response.data)).catch(error => setActionError(error.message)); }} />}
+        <details className="profile-reuse glass"><summary>Trash · restore within 30 days</summary><p>Trashed portfolios are hidden immediately. They are permanently removed after 30 days. Restoring also restores their previous public/private setting and stable link.</p><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={loadTrash}>{trashBusy?"Loading…":"Load Trash"}</button>{trashError && <p role="alert">{trashError}</p>}{trash && !trash.length && <p>Trash is empty.</p>}{trash?.map(p=><div className="section-control" key={p._id}><span>{p.name} · Deleted {new Date(p.deletedAt).toLocaleDateString()}</span><div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,false)}>Restore</button><button type="button" className="btn btn-ghost btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,true)}>Delete permanently</button></div></div>)}</details>
+        <details className="profile-reuse glass"><summary>Creation activity on this browser</summary><p>These are actions recorded on this device, across accounts. They are not global conversion rates or unique people. Clearing browser storage resets them.</p>{["start","preview","save","publish","share","error","recovery"].map(step=><p key={step}>{step}: {journeyStats()?.counts?.[step] || 0}</p>)}{journeyStats()?.firstPublishedAt && journeyStats()?.startedAt && <p>Time to first publication: {Math.round((journeyStats().firstPublishedAt-journeyStats().startedAt)/60000)} minutes</p>}</details>
         <div className="stat-cards">
           {[
             { label: "Portfolios", value: portfolios.length, icon: "◈" },
-            { label: "Total Views", value: totalViews, icon: "👁" },
+            { label: "Page views", value: totalViews, icon: "👁" },
             { label: "Public", value: portfolios.filter(p => p.isPublic).length, icon: "🌐" },
           ].map(s => (
             <div key={s.label} className="stat-card glass" style={{ borderRadius: 16 }}>
@@ -159,9 +191,10 @@ const DashboardPage = () => {
                   </div>
 
                   <div className="portfolio-card-url" style={{ borderRadius: 10 }}>
-                    <span>{shareUrl}</span>
+                    <span style={{ overflowWrap: "anywhere" }}>{p.isPublic ? shareUrl : "Private — only you can preview this portfolio"}</span>
                     <button
                       className="btn btn-sm"
+                      disabled={!p.isPublic}
                       onClick={() => copyLink(p.shareSlug, p._id)}
                       style={{ background: copiedId === p._id ? "#22C55E" : "var(--glass-bg)", color: copiedId === p._id ? "#fff" : "var(--text-secondary)", border: "none", padding: "4px 10px", fontSize: 11, borderRadius: 6, flexShrink: 0, fontWeight: 500 }}
                     >
@@ -172,14 +205,16 @@ const DashboardPage = () => {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                     <span className="portfolio-card-views">👁 {p.views || 0} views</span>
                     <span className="portfolio-card-date">
-                      {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      {new Date(p.updatedAt || p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </span>
                   </div>
 
+                  <p className="form-hint">Project clicks: {p.analytics?.project || 0} · Resume clicks: {p.analytics?.resume || 0} · Contact clicks: {p.analytics?.contact || 0}</p>
+                  <p className="form-hint">{p.isPublic ? "Public · Saving changes updates the live portfolio" : "Private · Sharing is disabled"}</p>
                   <div className="portfolio-card-actions">
-                    <a href={`/p/${p.shareSlug}`} target="_blank" rel="noopener noreferrer" className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>View</a>
+                    <Link to={`/preview/${p._id}`} className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>Preview</Link>
                     <Link to={`/builder/${p._id}`} className="btn" style={{ flex: 1, textDecoration: "none", background: "var(--glass-bg)", color: "var(--text-primary)", fontWeight: 500, padding: "6px 0", borderRadius: 6, fontSize: 13 }}>Edit</Link>
-                    <button className="btn" onClick={() => handleDelete(p._id)} disabled={deletingId === p._id} style={{ flex: "0 0 36px", background: "rgba(239,68,68,0.1)", color: "#EF4444", padding: "6px 0", borderRadius: 6 }}>
+                    <button className="btn" aria-label={`Delete ${p.name}`} onClick={() => handleDelete(p._id)} disabled={deletingId === p._id} style={{ flex: "0 0 36px", background: "rgba(239,68,68,0.1)", color: "#EF4444", padding: "6px 0", borderRadius: 6 }}>
                       {deletingId === p._id ? "..." : "🗑"}
                     </button>
                   </div>

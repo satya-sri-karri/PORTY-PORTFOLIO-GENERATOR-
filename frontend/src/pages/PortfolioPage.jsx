@@ -1,12 +1,16 @@
+import ShareKit from "../components/shared/ShareKit";
+import { normalizePortfolio, profileLinks, orderedProjects } from "../utils/portfolioContent";
+import { recordPortfolioClick } from "../utils/api";
+import { trackStep } from "../utils/journey";
+import ThemeRenderer from "../components/shared/ThemeRenderer";
 /**
  * PortfolioPage — Public view
  * Fetches portfolio by slug, applies the chosen theme component
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicPortfolio } from "../utils/api";
-import { getTheme } from "../registry/themeRegistry";
 
 const SkeletonPortfolio = () => (
   <div style={{ padding: "60px 24px", maxWidth: 900, margin: "0 auto" }}>
@@ -24,35 +28,64 @@ const SkeletonPortfolio = () => (
   </div>
 );
 
-const ShareBar = ({ slug }) => {
+const ShareBar = ({ slug, data }) => {
+  const [kit, setKit] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [mobile, setMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches);
+  const bar = useRef(null), toggle = useRef(null);
   const [copied, setCopied] = useState(false);
   const url = `${window.location.origin}/p/${slug}`;
-  const copy = () => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const resize = () => { setMobile(media.matches); setExpanded(media.matches && !!bar.current?.contains(document.activeElement)); };
+    media.addEventListener("change", resize);
+    return () => media.removeEventListener("change", resize);
+  }, []);
+  useEffect(() => {
+    if (!mobile || !expanded || kit) return;
+    const outside = event => { if (!bar.current?.contains(event.target)) setExpanded(false); };
+    const escape = event => { if (event.key === "Escape") { setExpanded(false); toggle.current?.focus(); } };
+    document.addEventListener("pointerdown", outside); document.addEventListener("keydown", escape);
+    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
+  }, [mobile, expanded, kit]);
+  const copy = async () => {
+    setCopied(false); setError("");
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true); trackStep("share");
+      setTimeout(() => setCopied(false), 2500);
+    } catch { setError("Could not copy the link. Copy the address from your browser instead."); }
   };
-  const share = () => {
-    if (navigator.share) navigator.share({ url });
-    else copy();
+  const share = async () => {
+    setError("");
+    if (!navigator.share) return copy();
+    try { await navigator.share({ url }); trackStep("share"); }
+    catch (e) { if (e.name !== "AbortError") setError("Sharing failed. Try Copy link instead."); }
   };
   return (
     <>
+      {error && <div className="toast" role="alert" style={{ pointerEvents: "none" }}>{error}</div>}
       {copied && (
-        <div className="toast">
+        <div className="toast" role="status" style={{ pointerEvents: "none" }}>
           <span>✓</span> Link copied to clipboard
         </div>
       )}
-      <div className="share-bar">
+      {kit && <ShareKit data={data} slug={slug} onClose={() => setKit(false)} />}
+      <div ref={bar} className="share-bar">
+        <button ref={toggle} type="button" className="btn btn-secondary btn-sm share-bar-toggle" hidden={!mobile} aria-label="Portfolio tools" aria-expanded={expanded} aria-controls="portfolio-share-actions" onClick={() => setExpanded(v => !v)}>{expanded ? "Close" : "↗ Share"}</button>
+        <div id="portfolio-share-actions" className="share-bar-actions" hidden={mobile && !expanded}>
+        <button className="btn btn-secondary btn-sm" onClick={() => setKit(true)}>Sharing kit</button>
         <button className="btn btn-primary btn-sm" onClick={share} style={{ boxShadow: "var(--shadow-accent)" }}>
           📤 Share
         </button>
-        <button className="btn btn-secondary btn-sm" onClick={copy} title="Copy link">
+        <button className="btn btn-secondary btn-sm" onClick={copy} title="Copy link" aria-label="Copy link">
           {copied ? "✓" : "🔗"}
         </button>
-        <Link to="/" className="btn btn-secondary btn-sm" title="Build your own" style={{ textDecoration: "none" }}>
+        <Link to="/" className="btn btn-secondary btn-sm" title="Build your own" aria-label="Build your own portfolio" style={{ textDecoration: "none" }}>
           ✨
         </Link>
+        </div>
       </div>
     </>
   );
@@ -65,11 +98,22 @@ const PortfolioPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let active = true;
+    setLoading(true); setError("");
     getPublicPortfolio(slug)
-      .then(res => setData(res.data))
-      .catch(err => setError(err.message || "Portfolio not found."))
-      .finally(() => setLoading(false));
+      .then(res => { if (active) setData(res.data); })
+      .catch(err => { if (active) setError(err.message || "Portfolio not found."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [slug]);
+
+  useEffect(() => {
+    if (!data) return;
+    const previous = document.title; document.title = [data.name, data.title, "Porty"].filter(Boolean).join(" · ");
+    const meta = document.querySelector('meta[name="description"]'); const original = meta?.content;
+    if(meta) meta.content = (data.about || "").slice(0,160);
+    return () => { document.title = previous; if(meta) meta.content = original; };
+  }, [data]);
 
   if (loading) {
     return <SkeletonPortfolio />;
@@ -86,14 +130,14 @@ const PortfolioPage = () => {
     );
   }
 
-  // Resolve theme component from registry
-  const themeConfig = getTheme(data.theme);
-  const ThemeComponent = themeConfig.component;
 
+  const profile = normalizePortfolio(data);
+  const click = event => { const a = event.target.closest("a[href]"); if (!a) return; const href = a.getAttribute("href"); const type = href === profile.resumeUrl ? "resume" : /^(mailto:|tel:)/.test(href) || a.closest(".pf-contact-links") ? "contact" : a.closest(".pf-project-links") ? "project" : null; if(type) recordPortfolioClick(slug,type).catch(() => {}); };
   return (
     <>
-      <ThemeComponent data={data} />
-      <ShareBar slug={slug} />
+      <div onClickCapture={click}><ThemeRenderer data={data} /></div>
+      <details className="visitor-profile"><summary>Quick profile</summary><h2>{profile.name}</h2>{profile.title && <p>{profile.title}</p>}{profile.about && <p>{profile.about}</p>}<ul>{orderedProjects(profile.projects).slice(0,3).map((p,i) => <li key={i}>{p.title}{p.link && <a href={p.link} target="_blank" rel="noopener noreferrer" onClick={() => recordPortfolioClick(slug,"project").catch(() => {})}> View project ↗</a>}</li>)}</ul><div className="pf-contact-links" onClickCapture={click}>{profileLinks(profile).map(link => <a key={link.label} href={link.href} target={/^https?:/.test(link.href) ? "_blank" : undefined} rel="noopener noreferrer">{link.label}</a>)}</div><Link to="/try" state={{style:{theme:data.theme,themeColors:data.themeColors,motion:data.motion,layoutSettings:data.layoutSettings}}}>Use this style with my own content</Link></details>
+      <ShareBar slug={slug} data={data} />
     </>
   );
 };

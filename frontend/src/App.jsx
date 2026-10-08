@@ -9,6 +9,10 @@ import { RegisterPage, LoginPage } from "./pages/AuthPages";
 import DashboardPage from "./pages/DashboardPage";
 import BuilderPage from "./pages/BuilderPage";
 import PortfolioPage from "./pages/PortfolioPage";
+import ThemePreviewPage from "./pages/ThemePreviewPage";
+import GuestTrialPage from "./pages/GuestTrialPage";
+import ShowcasePage from "./pages/ShowcasePage";
+import { RecoveryPage } from "./pages/RecoveryPage";
 import PreviewPage from "./pages/PreviewPage";
 
 const WithNav = ({ children }) => <><Navbar />{children}</>;
@@ -19,14 +23,19 @@ function App() {
       <ThemeProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/theme-preview" element={<ThemePreviewPage />} />
             <Route path="/"         element={<WithNav><LandingPage /></WithNav>} />
+            <Route path="/try" element={<WithNav><GuestTrialPage /></WithNav>} />
+            <Route path="/showcase" element={<WithNav><ShowcasePage /></WithNav>} />
+            <Route path="/recover" element={<WithNav><RecoveryPage /></WithNav>} />
             <Route path="/register" element={<WithNav><RegisterPage /></WithNav>} />
             <Route path="/login"    element={<WithNav><LoginPage /></WithNav>} />
             <Route path="/dashboard" element={<ProtectedRoute><WithNav><DashboardPage /></WithNav></ProtectedRoute>} />
             <Route path="/builder"   element={<ProtectedRoute><WithNav><BuilderPage /></WithNav></ProtectedRoute>} />
             <Route path="/builder/:id" element={<ProtectedRoute><WithNav><BuilderPage /></WithNav></ProtectedRoute>} />
             <Route path="/p/:slug"  element={<PortfolioPage />} />
-            <Route path="/preview"  element={<PreviewPage />} />
+            <Route path="/preview/:id" element={<ProtectedRoute><PreviewPage /></ProtectedRoute>} />
+            <Route path="/preview"  element={<ProtectedRoute><PreviewPage /></ProtectedRoute>} />
             <Route path="*"         element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

@@ -5,11 +5,11 @@ import Grainient from "../components/effects/Grainient";
 import TextPressure from "../components/effects/TextPressure";
 
 const FEATURES = [
-  { icon: "✦", label: "AI Bio Generator", desc: "Describe yourself in seconds with Gemini AI" },
-  { icon: "✦", label: "AI Project Descriptions", desc: "Let AI write compelling project copy" },
+  { icon: "✦", label: "AI Bio Generator", desc: "Review a biography draft based on your real information" },
+  { icon: "✦", label: "AI Project Descriptions", desc: "Review and refine a draft based on your project facts" },
   { icon: "✦", label: "AI Skill Suggester", desc: "Discover relevant skills for your role" },
   { icon: "✦", label: "AI Theme Recommender", desc: "Find your perfect visual identity" },
-  { icon: "◈", label: "12 Distinct Themes", desc: "From brutalist to luxe — each tells a different story" },
+  { icon: "◈", label: `${getAllThemes().length} Distinct Themes`, desc: "From brutalist to luxe — each tells a different story" },
   { icon: "◈", label: "9 Portfolio Sections", desc: "Skills, projects, experience, certs, achievements, coding profiles" },
   { icon: "◈", label: "Instant Share Links", desc: "Unique URL — shareable without login" },
   { icon: "◈", label: "Edit Anytime", desc: "Update your portfolio whenever you want" },
@@ -89,13 +89,15 @@ const LandingPage = () => {
 
           <p className="fade-up d-2 text-on-gradient-secondary" style={{ fontSize: 19, maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.75, fontWeight: 400, textShadow }}>
             Your story. Your skills. Your portfolio.
-            Create multiple stunning, portfolios with modern templates, and real-time analytics to track your impact.
+            Turn your real projects into a portfolio that feels like you. Explore 41 themes, review your work, and share when you’re ready.
           </p>
 
           <div className="fade-up d-3" style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <Link to="/register" className="btn btn-glass-white btn-xl" style={{ textDecoration: "none" }}>
               Get started free →
             </Link>
+            <Link to="/try" className="btn btn-secondary btn-lg">Try it before signing up</Link>
+            <Link to="/showcase" className="btn btn-ghost">Community portfolios</Link>
             <Link to="/login" className="btn btn-glass-outline btn-lg" style={{ textDecoration: "none" }}>
               Sign in
             </Link>
@@ -111,7 +113,7 @@ const LandingPage = () => {
       <section style={{ padding: "0 0 80px", overflow: "hidden", position: "relative" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <p className="text-on-gradient-tertiary" style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", textShadow }}>
-            20+ Distinct Themes
+            {getAllThemes().length} Distinct Themes
           </p>
         </div>
         <div style={{ display: "flex", gap: 12, padding: "0 24px", overflowX: "auto", paddingBottom: 8 }}>
@@ -144,7 +146,7 @@ const LandingPage = () => {
               Everything in one place
             </h2>
             <p className="text-on-gradient-secondary" style={{ fontSize: 15, fontWeight: 400, textShadow }}>
-              AI-powered tools + 20+ themes + 9 sections
+              AI writing assistance + {getAllThemes().length} themes + 9 sections
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 14 }}>
