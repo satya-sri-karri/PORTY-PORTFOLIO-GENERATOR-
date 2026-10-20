@@ -17,27 +17,28 @@ import AvatarCharacter from "../components/builder/AvatarCharacter";
 import ThemeFrame from "../components/builder/ThemeFrame";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import useBuilderSession from "../hooks/useBuilderSession";
 import { usePortfolioForm } from "../hooks/usePortfolioForm";
 import {
   generateBio, suggestSkills, generateProjectDesc,
 } from "../utils/api";
 import ThumbnailGenerator from "../components/shared/ThumbnailGenerator";
+import LineSidebar from "../components/shared/LineSidebar";
+import DotField from "../components/shared/DotField";
 
 // ── Sidebar nav items ─────────────────────────────────────────────────────────
-const CORE_NAV = [
-  { id: "personal", label: "About you", hint: "Start with your name and a little about yourself." },
-  { id: "projects", label: "Your work", hint: "Add a project you’re proud of. You can add more later." },
-  { id: "contact", label: "Contact", hint: "Choose how people can reach you." },
-  { id: "theme", label: "Design", hint: "Keep your current style or explore a few alternatives." },
-  { id: "review", label: "Review & save", hint: "Check your portfolio and decide who can see it." },
+const NAV = [
+  { id: "personal",    label: "Personal Info"},
+  { id: "skills",      label: "Skills" },
+  { id: "projects",    label: "Projects"},
+  { id: "experience",  label: "Experience"},
+  { id: "certs",       label: "Certifications" },
+  { id: "achievements",label: "Achievements" },
+  { id: "coding",      label: "Coding Profiles" },
+  { id: "contact",     label: "Contact & Social"},
+  { id: "theme",       label: "Theme & Publish"},
 ];
-const OPTIONAL_NAV = [
-  { id: "skills", label: "Skills" }, { id: "experience", label: "Experience" },
-  { id: "certs", label: "Certifications" }, { id: "achievements", label: "Achievements" },
-  { id: "coding", label: "Coding profiles" },
-];
-const NAV = [...CORE_NAV, ...OPTIONAL_NAV];
 
 // ── Reusable small components ────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ const PersonalSection = ({ form, set, token }) => {
     <div>
       <FieldGroup className="form-group">
         <label className="form-label" htmlFor="portfolio-name">Full Name *</label>
-        <input id="portfolio-name" required autoComplete="name" className="form-input" placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)} />
+        <input id="portfolio-name" autoComplete="name" className="form-input" placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)} />
       </FieldGroup>
       <FieldGroup className="form-group">
         <label className="form-label" htmlFor="portfolio-title">Professional Title</label>
@@ -126,11 +127,10 @@ const PersonalSection = ({ form, set, token }) => {
           <AIButton onClick={handleGenerateBio} loading={bioAI.loading}>Generate Bio</AIButton>
         </div>
 
-        <textarea id="portfolio-about" required maxLength={2000} className="form-input" rows={5} placeholder="Write a compelling bio…" value={form.about} onChange={e => set("about", e.target.value)} />
+        <textarea id="portfolio-about" maxLength={2000} className="form-input" rows={5} placeholder="Write a compelling bio…" value={form.about} onChange={e => set("about", e.target.value)} />
         <div className="form-hint">{form.about.length}/2000 · Generate Bio creates a draft for you to review</div>
         <AITextReview ai={bioAI} value={form.about} onChange={v => set("about", v)} onRetry={handleGenerateBio} label="bio" />
       </FieldGroup>
-      <details className="app-disclosure"><summary>Photo, location & more · optional</summary>
       <FormRow>
         <FieldGroup className="form-group">
           <label className="form-label">Avatar URL</label>
@@ -159,7 +159,6 @@ const PersonalSection = ({ form, set, token }) => {
           <span className="form-hint">Avatar preview</span>
         </div>
       )}
-      </details>
     </div>
   );
 };
@@ -227,7 +226,7 @@ const SkillsSection = ({ form, set, skillInput, setSkillInput, addSkill, addSkil
       <FieldGroup className="form-group">
         <label className="form-label">Quick Add</label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {SUGGESTED.filter(s => !form.skills.map(x => x.toLowerCase()).includes(s.toLowerCase())).slice(0, 6).map(s => (
+          {SUGGESTED.filter(s => !form.skills.map(x => x.toLowerCase()).includes(s.toLowerCase())).map(s => (
             <button key={s} type="button" className="btn btn-ghost btn-sm" onClick={() => addSkillDirect(s)}>+ {s}</button>
           ))}
         </div>
@@ -596,6 +595,7 @@ const BuilderPage = () => {
   const isEdit = Boolean(id);
   const { token, user, storageError: authStorageError } = useAuth();
   const location = useLocation();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("personal");
   const [view, setView] = useState("edit");
@@ -626,7 +626,7 @@ const BuilderPage = () => {
   const [guestDraft, setGuestDraft] = useState(() => readJSON("localStorage", "porty:guest:v1").value);
   const handleSave = async () => {
     const blocking = publishingIssues(form).filter(i => i.blocking);
-    if (blocking.length) { setValidationError(blocking.map(i => i.text).join(" ")); setActiveSection(blocking[0].section); setView("edit"); return; }
+    if (blocking.length) { setValidationError(blocking.map(i => i.text).join(" ")); setActiveSection(blocking[0].section); return; }
     setValidationError("");
     if (saveLock.current) return;
     saveLock.current = true; setCapturingCover(true);
@@ -649,22 +649,12 @@ const BuilderPage = () => {
       case "achievements": return <AchievementsSection {...props} />;
       case "coding":       return <CodingSection {...props} />;
       case "contact":      return <ContactSection {...props} />;
-      case "theme": return <><ThemeSection {...props} /><details className="app-disclosure"><summary>Section order, motion & showcase · optional</summary><PresentationControls form={form} set={set} /></details></>;
-      case "review": return <div className="review-save-panel"><div className="review-summary"><span className="app-eyebrow">Your portfolio at a glance</span><h2>{form.name || "Your name"}</h2><p>{form.title || "Your personal portfolio"}</p><p>{form.projects.length} projects · {form.skills.length} skills</p><button type="button" className="btn btn-secondary" onClick={() => handlePreview()}>Review full preview</button></div><h3>Who can see your portfolio?</h3><p className="form-hint">You can change this later. Saving a public portfolio updates its live link.</p><Toggle on={form.isPublic} onChange={() => set("isPublic", !form.isPublic)} label={form.isPublic ? "Public — anyone with the link" : "Private — only you"} /><PublishCheck form={form} onSection={setActiveSection} /></div>;
+      case "theme":        return <><ThemeSection {...props} /><PresentationControls form={form} set={set} /><PublishCheck form={form} onSection={setActiveSection} /></>;
       default:             return null;
     }
   };
 
   const currentNav = NAV.find(n => n.id === activeSection);
-  const stepIndex = CORE_NAV.findIndex(n => n.id === activeSection);
-  const sectionHeading = useRef(null);
-  useEffect(() => { sectionHeading.current?.focus(); }, [activeSection]);
-  useEffect(() => {
-    if (validationError && activeSection === "personal" && form.name.trim() && form.about.trim()) {
-      const optional = sectionHeading.current?.closest(".builder-main")?.querySelector("details.app-disclosure");
-      if (optional) optional.open = true;
-    }
-  }, [validationError, activeSection, form.name, form.about]);
 
   if (loadError) return (
     <main className="container" style={{ paddingTop: 48 }}>
@@ -695,6 +685,25 @@ const BuilderPage = () => {
 
   return (
     <div className="builder-page" style={{ position: "relative", minHeight: "calc(100vh - 52px)" }}>
+      <DotField
+        dotRadius={1.5}
+        dotSpacing={16}
+        bulgeStrength={67}
+        glowRadius={160}
+        sparkle={false}
+        waveAmplitude={0}
+        gradientFrom={theme === "dark" ? "rgba(200, 140, 255, 0.55)" : "rgba(168, 85, 247, 0.35)"}
+        gradientTo={theme === "dark" ? "rgba(220, 180, 255, 0.45)" : "rgba(180, 151, 207, 0.25)"}
+        glowColor={theme === "dark" ? "#0a0510" : "#120F17"}
+      />
+      {/* Success toast */}
+      {success && (
+        <div className="toast fade-up">
+          <span>🎉 {success.isEdit ? "Updated" : "Created"} — </span>
+          <Link to={success.isPublic ? `/p/${success.slug}` : `/preview/${success.id}`} style={{ color: "var(--accent-light)", textDecoration: "underline" }}>View portfolio</Link>
+          <button type="button" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer", fontSize: 14, marginLeft: 8, padding: 0, lineHeight: 1 }}>✕</button>
+        </div>
+      )}
       {/* Hidden thumbnail capture — re-captures when theme changes */}
       {form.name && <ThumbnailGenerator ref={coverCapture} data={form} onCapture={setThumbnail} />}
       <div className={`builder-layout builder-with-preview view-${view}`} style={{ position: "relative", zIndex: 1 }}>
@@ -703,17 +712,34 @@ const BuilderPage = () => {
           <div className="builder-sidebar-header glass" style={{ margin: "0 8px 12px", borderRadius: 10, padding: "12px 16px", border: "none" }}>
             <div className="builder-sidebar-title">{isEdit ? "Edit Portfolio" : "New Portfolio"}</div>
           </div>
-          <nav className="studio-steps" aria-label="Portfolio steps">{CORE_NAV.map((item, index) => <button type="button" key={item.id} className={activeSection === item.id ? "is-current" : ""} aria-current={activeSection === item.id ? "step" : undefined} onClick={() => { setActiveSection(item.id); setView("edit"); }}><span className="step-number" aria-hidden="true">{String(index + 1).padStart(2,"0")}</span><span>{item.label}</span></button>)}</nav>
-          <details className="optional-steps" open={stepIndex < 0 || undefined}><summary>Add more to your story</summary><p>Optional. Include what’s relevant to you.</p><nav aria-label="Optional portfolio sections">{OPTIONAL_NAV.map(item => <button type="button" key={item.id} aria-current={activeSection === item.id ? "step" : undefined} onClick={() => { setActiveSection(item.id); setView("edit"); }}>{item.label}</button>)}</nav></details>
+          <div className="glass" style={{ flex: 1, display: "flex", alignItems: "flex-start", justifyContent: "flex-start", padding: "12px 0 0", margin: "0 8px", borderRadius: 12, border: "none" }}>
+            <LineSidebar
+              items={NAV.map(i => i.label)}
+              accentColor={theme === "dark" ? "#FFFFFF" : "#000000"}
+              textColor={theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)"}
+              markerColor={theme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)"}
+              showIndex={false}
+              showMarker
+              maxShift={30}
+              markerLength={20}
+              markerGap={0}
+              tickScale={0.5}
+              scaleTick
+              itemGap={20}
+              fontSize={0.85}
+              defaultActive={NAV.findIndex(n => n.id === activeSection)}
+              onItemClick={(index) => setActiveSection(NAV[index].id)}
+            />
+          </div>
           {/* Sidebar action buttons — always visible */}
           <div className="glass" style={{ margin: "8px 8px 0", padding: "10px 12px", borderRadius: 12, border: "none", display: "flex", flexDirection: "column", gap: 6 }}>
-            <button className="btn btn-secondary btn-sm" onClick={() => handlePreview()} style={{ width: "100%", justifyContent: "center" }}>
+            <button className="btn btn-secondary btn-sm" onClick={handlePreview} style={{ width: "100%", justifyContent: "center" }}>
               👁 Preview
             </button>
-            <button className="btn btn-secondary btn-sm" onClick={handleSave} disabled={saving || capturingCover || Boolean(recoverable)} style={{ width: "100%", justifyContent: "center" }}>
+            <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving || capturingCover || Boolean(recoverable)} style={{ width: "100%", justifyContent: "center" }}>
               {capturingCover ? "Preparing portfolio cover…" : saving
                 ? <><span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} /> {isEdit ? "Saving…" : "Creating…"}</>
-                : form.isPublic ? "Save changes" : "Save draft"
+                : isEdit ? "💾 Save Changes" : form.isPublic ? "Publish Portfolio" : "Save Private Portfolio"
               }
             </button>
           </div>
@@ -723,11 +749,21 @@ const BuilderPage = () => {
         {/* Main content */}
         <main className="builder-content" style={{ overflow: "auto", padding: "var(--space-6) var(--space-6) var(--space-6) 0" }}>
           <div className="builder-main glass" style={{ borderRadius: 16, padding: "var(--space-8) var(--space-10)", border: "none" }}>
-            <p className="app-eyebrow">{stepIndex >= 0 ? `Step ${stepIndex + 1} of ${CORE_NAV.length}` : "Optional section"}</p><h1 ref={sectionHeading} tabIndex={-1} className="builder-section-title">{currentNav?.label}</h1>
-            <p className="builder-section-sub">{currentNav?.hint || "Add what helps tell your story. You can skip this section."}</p>
+            <div className="builder-section-title">{currentNav?.label}</div>
+            <div className="builder-section-sub">
+              {activeSection === "personal" && "Start with the basics — who you are"}
+              {activeSection === "skills" && "Showcase your tech stack"}
+              {activeSection === "projects" && "Add your best work (up to 8)"}
+              {activeSection === "experience" && "Your professional journey"}
+              {activeSection === "certs" && "Certifications and credentials"}
+              {activeSection === "achievements" && "Awards and notable wins"}
+              {activeSection === "coding" && "Your competitive programming profiles"}
+              {activeSection === "contact" && "How people can reach you"}
+              {activeSection === "theme" && "Pick a visual identity for your portfolio"}
+            </div>
 
             <div role="status" className="builder-save-status">{capturingCover ? "Preparing portfolio cover…" : session.status}</div>
-            <p className="form-hint">{form.isPublic ? "Saving publishes your changes to your live portfolio." : "Saving keeps this portfolio private. Choose Public in Review & save when you are ready to share."}</p>
+            <p className="form-hint">{form.isPublic ? "Saving publishes your changes to your live portfolio." : "Saving keeps this portfolio private. Turn on Public in Theme & Publish when you are ready to share."}</p>
             {(storageError || authStorageError) && <div className="alert alert-error" role="alert">{storageError || authStorageError}</div>}
             {recoverable && <div className="alert alert-info" role="status">
               <p>A draft from {new Date(recoverable.savedAt).toLocaleString()} is available. Choose whether to recover it or {isEdit ? "keep the saved version" : "start a new portfolio"}.</p>
@@ -741,18 +777,36 @@ const BuilderPage = () => {
             {success && (
               <div className="alert alert-success" style={{ marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span>✅ {success.isEdit ? "Portfolio updated!" : "Portfolio created!"} — <Link to={success.isPublic ? `/p/${success.slug}` : `/preview/${success.id}`} style={{ color: "inherit", textDecoration: "underline" }}>View it here</Link></span>
-                <button type="button" aria-label="Dismiss save confirmation" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: 16, padding: 0, lineHeight: 1 }}>✕</button>
+                <button type="button" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontSize: 16, padding: 0, lineHeight: 1 }}>✕</button>
               </div>
             )}
 
             {validationError && <p className="alert alert-error" role="alert">{validationError}</p>}
             {!id && guestDraft && <div className="alert alert-info"><p>Your guest trial is available. Import it into this private draft?</p><button type="button" className="btn btn-primary btn-sm" onClick={() => { load({ ...guestDraft, isPublic: false }); removeStored("localStorage", "porty:guest:v1"); setGuestDraft(null); }}>Continue guest work</button><button type="button" className="btn btn-ghost btn-sm" onClick={() => setGuestDraft(null)}>Keep current draft</button></div>}
-            <div className="review-actions builder-history"><button type="button" className="btn btn-ghost btn-sm" disabled={!canUndo || saving || Boolean(recoverable)} onClick={undo}>Undo</button><button type="button" className="btn btn-secondary btn-sm" disabled={!canRedo || saving || Boolean(recoverable)} onClick={redo}>Redo</button></div>
+            <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" disabled={!canUndo || saving || Boolean(recoverable)} onClick={undo}>Undo</button><button type="button" className="btn btn-secondary btn-sm" disabled={!canRedo || saving || Boolean(recoverable)} onClick={redo}>Redo</button></div>
             {activeSection === "personal" && <ResumeImport form={form} onApply={next => { Object.entries(next).forEach(([key, value]) => set(key, value)); }} />}
             {renderSection()}
 
-            <div className="builder-footer"><button type="button" className="btn btn-ghost" disabled={stepIndex === 0} onClick={() => setActiveSection(stepIndex > 0 ? CORE_NAV[stepIndex - 1].id : "personal")}>← Back</button><div className="builder-footer-right">{activeSection === "review" ? <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving || capturingCover || Boolean(recoverable)}>{saving || capturingCover ? "Saving…" : form.isPublic ? isEdit ? "Save public changes" : "Publish portfolio" : "Save private portfolio"}</button> : <button type="button" className="btn btn-primary" onClick={() => setActiveSection(CORE_NAV[stepIndex >= 0 ? stepIndex + 1 : 2].id)}>Continue to {CORE_NAV[stepIndex >= 0 ? stepIndex + 1 : 2].label.toLowerCase()} →</button>}</div></div>
-
+            <div className="builder-footer" style={{ borderTop: "none", marginTop: 0 }}>
+              <button className="btn btn-ghost" onClick={() => {
+                const idx = NAV.findIndex(n => n.id === activeSection);
+                if (idx > 0) setActiveSection(NAV[idx - 1].id);
+              }} disabled={activeSection === NAV[0].id}>
+                ← Back
+              </button>
+              <div className="builder-footer-right">
+                {activeSection !== NAV[NAV.length - 1].id ? (
+                  <button className="btn btn-primary" onClick={() => {
+                    const idx = NAV.findIndex(n => n.id === activeSection);
+                    setActiveSection(NAV[idx + 1].id);
+                  }}>
+                    Next →
+                  </button>
+                ) : (
+                  <span />
+                )}
+              </div>
+            </div>
           </div>
         </main>
         <aside className="builder-live-preview glass" aria-label="Live portfolio preview">
@@ -760,7 +814,7 @@ const BuilderPage = () => {
           <p className="form-hint">Changes appear here as you type.</p>
           <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "desktop"} onClick={() => setPreviewDevice("desktop")}>Desktop layout</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "mobile"} onClick={() => setPreviewDevice("mobile")}>Mobile layout</button></div>
           {(wide || view === "preview") && <ThemeFrame data={form} device={previewDevice} height={500} title="Live portfolio preview" />}
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => handlePreview()}>Open full preview</button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handlePreview}>Open full preview</button>
         </aside>
       </div>
     </div>

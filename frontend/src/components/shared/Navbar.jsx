@@ -1,27 +1,52 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import Logo from "./Logo";
 
-export default function Navbar() {
+const Navbar = () => {
   const { user, logout, isLoggedIn } = useAuth();
   const { theme, toggle } = useTheme();
-  const navigate = useNavigate(), { pathname } = useLocation(), menu = useRef(null);
-  const building = pathname.startsWith("/builder"), authenticating = ["/login", "/register", "/recover"].includes(pathname);
-  useEffect(() => { if (menu.current) menu.current.open = false; }, [pathname]);
-  useEffect(() => {
-    const close = event => { if (menu.current && !menu.current.contains(event.target)) menu.current.open = false; };
-    document.addEventListener("pointerdown", close);
-    return () => document.removeEventListener("pointerdown", close);
-  }, []);
-  return <header className="navbar"><Link to={isLoggedIn ? "/dashboard" : "/"} className="navbar-brand" aria-label="Porty home"><Logo size={28} /><span>Porty<span className="brand-period">.</span></span></Link>
-    {building && <span className="nav-context">Portfolio studio</span>}
-    <nav className="navbar-actions" aria-label="Main navigation">
-      {isLoggedIn ? <><Link to="/dashboard" className="btn btn-ghost btn-sm" aria-current={pathname === "/dashboard" ? "page" : undefined}>My portfolios</Link><details ref={menu} className="account-menu" onKeyDown={event => { if (event.key === "Escape") { event.currentTarget.open = false; event.currentTarget.querySelector("summary").focus(); } }}><summary aria-label="Account and appearance">{user?.name?.slice(0, 1).toUpperCase() || "P"}</summary><div className="account-options"><span>{user?.name || "Your account"}</span><button type="button" className="btn btn-ghost btn-sm" onClick={toggle}>Use {theme === "dark" ? "light" : "dark"} appearance</button><button type="button" className="btn btn-ghost btn-sm" onClick={() => { logout(); navigate("/login"); }}>Sign out</button></div></details></> : <>
-        {!authenticating && <Link to="/showcase" className="nav-community">Made with Porty</Link>}
-        {pathname !== "/login" && <Link to="/login" className="btn btn-ghost btn-sm">Sign in</Link>}
-        {!authenticating && pathname !== "/try" && <Link to="/try" className="btn btn-primary btn-sm">Start creating <span aria-hidden="true">↗</span></Link>}
-      </>}
-    </nav></header>;
-}
+  const navigate = useNavigate();
+  const location = useLocation();
+  const handleLogout = () => { logout(); navigate("/login"); };
+  const isPublicPage = location.pathname === "/" || location.pathname === "/login" || location.pathname === "/register";
+
+  return (
+    <nav className="navbar">
+      <Link to={isLoggedIn ? "/dashboard" : "/"} className="navbar-brand" style={{ textDecoration: "none" }}>
+        <Logo size={28} />
+        <span>Porty</span>
+      </Link>
+
+      <div className="navbar-actions">
+        {!isPublicPage && (
+          <button onClick={toggle} className="btn btn-ghost btn-sm" style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, border: "none", borderRadius: 8 }} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
+        )}
+        {isLoggedIn && !isPublicPage ? (
+          <>
+            
+            <Link to="/dashboard" className="btn btn-ghost btn-sm" style={{ textDecoration: "none" }}>
+              Dashboard
+            </Link>
+            <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
+              <span className="navbar-new-long">+ New Portfolio</span><span className="navbar-new-short">+ New</span>
+            </Link>
+            <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#fff", background: "transparent", boxShadow: "none" }}>Sign in</Link>
+            <Link to="/register" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#17172B", background: "#fff", boxShadow: "none" }}>Get started</Link>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

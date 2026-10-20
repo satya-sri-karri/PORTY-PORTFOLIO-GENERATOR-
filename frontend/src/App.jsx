@@ -1,5 +1,4 @@
 import React from "react";
-import "./styles/application.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -17,7 +16,7 @@ import { RecoveryPage } from "./pages/RecoveryPage";
 import PreviewPage from "./pages/PreviewPage";
 const MinimalistDemoPage = React.lazy(() => import("./pages/MinimalistDemoPage"));
 
-const WithNav = ({ children }) => <div className="porty-app"><a className="app-skip" href="#app-main">Skip to content</a><Navbar /><div id="app-main" tabIndex={-1}>{children}</div></div>;
+const WithNav = ({ children }) => <><Navbar />{children}</>;
 
 function App() {
   return (
