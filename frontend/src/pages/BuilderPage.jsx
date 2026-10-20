@@ -13,6 +13,7 @@ import { trackStep } from "../utils/journey";
 import useAISuggestion from "../hooks/useAISuggestion";
 import AITextReview from "../components/builder/AITextReview";
 import ThemePicker from "../components/builder/ThemePicker";
+import AvatarCharacter from "../components/builder/AvatarCharacter";
 import ThemeFrame from "../components/builder/ThemeFrame";
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -150,6 +151,7 @@ const PersonalSection = ({ form, set, token }) => {
       </FormRow>
       {cropSource && <ImageCropper source={cropSource} onApply={value => { set("avatarUrl", value); setCropSource(null); }} onCancel={() => setCropSource(null)} />}
       <PersonalExtras form={form} set={set} />
+      <AvatarCharacter avatarUrl={form.avatarUrl} token={token} onApply={image => set("avatarUrl", image)} />
       {form.avatarUrl && (
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: -8 }}>
           <img key={form.avatarUrl} src={form.avatarUrl} alt="preview" onError={e => e.target.style.display = "none"}

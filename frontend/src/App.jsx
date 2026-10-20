@@ -14,6 +14,7 @@ import GuestTrialPage from "./pages/GuestTrialPage";
 import ShowcasePage from "./pages/ShowcasePage";
 import { RecoveryPage } from "./pages/RecoveryPage";
 import PreviewPage from "./pages/PreviewPage";
+const MinimalistDemoPage = React.lazy(() => import("./pages/MinimalistDemoPage"));
 
 const WithNav = ({ children }) => <><Navbar />{children}</>;
 
@@ -23,6 +24,7 @@ function App() {
       <ThemeProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/themes/minimalist" element={<React.Suspense fallback={<p role="status">Loading Minimalist preview…</p>}><MinimalistDemoPage /></React.Suspense>} />
             <Route path="/theme-preview" element={<ThemePreviewPage />} />
             <Route path="/"         element={<WithNav><LandingPage /></WithNav>} />
             <Route path="/try" element={<WithNav><GuestTrialPage /></WithNav>} />

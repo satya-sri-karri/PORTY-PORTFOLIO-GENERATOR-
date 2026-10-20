@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import { MINIMALIST_PALETTES } from "../components/themes/minimalistOptions";
 /**
  * Theme Registry
  * Maps theme ID → { component, config, preview }
@@ -73,14 +74,15 @@ const THEME_REGISTRY = {
   minimalist: {
     id: "minimalist",
     name: "Minimalist",
-    persona: "Swiss Design / precise typography",
-    description: "Swiss typographic grids, confident hierarchy, purposeful rules and responsive project layouts",
-    colors: { bg: "#F7F6F2", accent: "#B33B28", text: "#20211F" },
-    tags: ["Swiss Design", "Clean", "Professional", "Focused"],
+    persona: "Personal poster / creative portfolio",
+    description: "Oversized poster typography, layered portraits, soft gradients and a curated project gallery",
+    colors: { bg: "#103d47", text: "#f4edce", accent: "#d5e59b" },
+    palettes: MINIMALIST_PALETTES,
+    tags: ["Poster", "Minimal", "Creative", "Personal"],
     component: MinimalistTheme,
     preview: {
-      bg: "#F7F6F2",
-      accent: "#B33B28",
+      bg: "#103d47",
+      accent: "#d5e59b",
     },
   },
   editorial: {

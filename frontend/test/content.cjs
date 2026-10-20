@@ -23,6 +23,10 @@ test('featured arrangement is deterministic and leaves the saved project order u
   const source = [{ title: 'First' }, { title: 'Second', featured: true }, { title: 'Third' }];
   assert.deepEqual(content.orderedProjects(source).map(p => p.title), ['Second', 'First', 'Third']); assert.equal(source[0].title, 'First');
 });
+test('Minimalist settings accept only supported cover and font choices', () => {
+  assert.deepEqual(content.normalizePortfolio({ minimalistSettings: { cover: 'type', font: 'geometric' } }).minimalistSettings, { cover: 'type', font: 'geometric' });
+  assert.deepEqual(content.normalizePortfolio({ minimalistSettings: { cover: 'unexpected', font: 'url(unsafe)' } }).minimalistSettings, { cover: 'character', font: 'condensed' });
+});
 test('rendered destinations allow genuine web links and block executable or disguised protocols', () => {
   assert.equal(content.externalURL('github.com/example/journal'), 'https://github.com/example/journal');
   assert.equal(content.externalURL('http://localhost:3000/project'), 'http://localhost:3000/project');

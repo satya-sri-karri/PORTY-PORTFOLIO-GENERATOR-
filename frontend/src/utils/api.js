@@ -28,6 +28,10 @@ export const generateBio = (b, t, signal) => req("POST", "/ai/bio", b, t, signal
 export const suggestSkills = (b, t, signal) => req("POST", "/ai/skills", b, t, signal);
 export const generateProjectDesc = (b, t, signal) => req("POST", "/ai/project", b, t, signal);
 export const recommendTheme = (b, t, signal) => req("POST", "/ai/theme-recommend", b, t, signal);
+export const getCharacterAvailability = signal => req("GET", "/ai/character/status", null, null, signal);
+export const startCharacter = (b, t, signal) => req("POST", "/ai/character", b, t, signal);
+export const getCharacter = (id, t, signal) => req("GET", `/ai/character/${encodeURIComponent(id)}`, null, t, signal);
+export const cancelCharacter = (id, t) => req("DELETE", `/ai/character/${encodeURIComponent(id)}`, null, t);
 
 export const forgotPassword = email => req("POST", "/auth/forgot-password", { email });
 export const resetPassword = (email, otp, password) => req("POST", "/auth/reset-password", { email, otp, password });

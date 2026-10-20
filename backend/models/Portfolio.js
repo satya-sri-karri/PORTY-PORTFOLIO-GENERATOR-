@@ -60,6 +60,7 @@ const PortfolioSchema = new mongoose.Schema({
   resumeUrl: { type: String, trim: true, default: "" },
   showLocation: { type: Boolean, default: true },
   motion: { type: String, enum: ["none", "subtle", "expressive"], default: "expressive" },
+  minimalistSettings: { cover: { type: String, enum: ["character", "type"], default: "character" }, font: { type: String, enum: ["condensed", "bold", "geometric"], default: "condensed" } },
   layoutSettings: {
     hero: { type: String, enum: ["theme", "centered", "split"], default: "theme" },
     projects: { type: String, enum: ["theme", "cards", "spotlight", "rail"], default: "theme" },

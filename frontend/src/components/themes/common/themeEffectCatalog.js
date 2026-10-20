@@ -1,6 +1,6 @@
 // Effects preserve the native composition, type and frames of every theme.
 export const THEME_EFFECTS = {
-  minimalist: { name: "Measured lines", note: "Precise rule drawing and quiet index accents in the original Swiss grid.", reveal: ".swiss-ruler, .pf-section-heading" },
+  minimalist: { name: "Personal poster", note: "Layered portrait, oversized typography and gentle idle motion in a softly textured poster.", reveal: ".pf-section-heading" },
   "dark-luxe": { name: "Gilded light", note: "Gold reflections follow the light across the original serif gallery.", pointer: ".pf-project-media, .luxe-portrait" },
   scrapbook: { name: "Paper & tape", note: "Mounted photos settle like paper; a focused story unfolds like a handwritten note.", reveal: ".scrapbook-photo" },
   "product-showcase": { name: "Studio reflection", note: "Device frames catch a polished reflection around the case study.", pointer: ".product-device" },

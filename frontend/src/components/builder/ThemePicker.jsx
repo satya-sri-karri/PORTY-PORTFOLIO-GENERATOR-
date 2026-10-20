@@ -5,6 +5,7 @@ import { recommendTheme } from "../../utils/api";
 import useAISuggestion from "../../hooks/useAISuggestion";
 import ThemeFrame from "./ThemeFrame";
 import MotionControls from "./MotionControls";
+import MinimalistControls from "./MinimalistControls";
 
 const PALETTES = [
   { name: "Ink & paper", bg: "#fafaf5", text: "#18212c", accent: "#245c43" },
@@ -25,6 +26,7 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
   const [selected, setSelected] = useState(null); const [colors, setColors] = useState(null); const [device, setDevice] = useState("desktop");
   const [compare,setCompare] = useState("");
   const [motion,setMotion] = useState("expressive");
+  const [minimalistSettings, setMinimalistSettings] = useState({});
   const ai = useAISuggestion(); const dialog = useRef(null); const trigger = useRef(null);
   const filtered = allThemes.filter(t => (group === "All" || THEME_GROUPS[group].includes(t.id)) && [t.name, t.persona, t.description, ...(t.tags || [])].join(" ").toLowerCase().includes(query.trim().toLowerCase()));
   const close = () => setSelected(null);
@@ -32,6 +34,7 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
     trigger.current = document.activeElement;
     setCompare(""); setSelected(theme); setDevice(window.innerWidth < 768 ? "mobile" : "desktop");
     setMotion(form.motion || "expressive");
+    setMinimalistSettings(form.minimalistSettings || {});
     setColors(Object.fromEntries(Object.entries(theme.colors).map(([key, fallback]) => [key, form.theme === theme.id && form.themeColors?.[key] || fallback])));
   };
   useEffect(() => {
@@ -58,7 +61,7 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
     if (!valid.length) throw new Error("No available themes were suggested. Try again.");
     return valid.slice(0, 3);
   });
-  const previewData = selected ? { ...form, theme: selected.id, themeColors: colors, layoutSettings:{}, motion } : form;
+  const previewData = selected ? { ...form, theme: selected.id, themeColors: colors, layoutSettings:{}, motion, minimalistSettings } : form;
   return <div>
     <div className="ai-panel">
       <h3 className="ai-panel-title">AI Theme Recommender</h3>
@@ -84,13 +87,14 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
           <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={device === "desktop"} onClick={() => setDevice("desktop")}>Desktop layout</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={device === "mobile"} onClick={() => setDevice("mobile")}>Mobile layout</button>{onFullPreview && <button type="button" className="btn btn-ghost btn-sm" onClick={() => onFullPreview(previewData)}>Open full preview</button>}</div>
           <div className="studio-live-preview"><ThemeFrame data={previewData} device={device} height={device === "mobile" ? 240 : 340} title={`${selected.name} theme preview`} /></div>
           <MotionControls theme={selected.id} motion={motion} onMotion={setMotion} id="theme-effects" />
+          {selected.id === "minimalist" && <><MinimalistControls value={minimalistSettings} onChange={setMinimalistSettings} /><a className="btn btn-secondary btn-sm" href="/themes/minimalist" target="_blank" rel="noopener noreferrer">Try Minimalist demo ↗</a></>}
           <details><summary>Compare with another theme</summary><label htmlFor="theme-compare">Comparison theme</label><select id="theme-compare" className="form-input" value={compare} onChange={e=>setCompare(e.target.value)}><option value="">Choose a theme</option>{allThemes.filter(t=>t.id!==selected.id).map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select>{compare && <><p>{getTheme(compare).name} · Same content, default palette</p><ThemeFrame data={{...form,theme:compare,themeColors:getTheme(compare).colors}} device={device} height={340} title={`${getTheme(compare).name} comparison preview`} /></>}</details>
           <p className="form-hint">Preview settings are applied only when you choose Apply Theme. Open full preview to browse the portfolio.</p>
           <div className="review-actions">{[...(selected.palettes || []), ...PALETTES].map(palette => <button key={palette.name} type="button" className="btn btn-ghost btn-sm" onClick={() => setColors({ bg: palette.bg, text: palette.text, accent: palette.accent })}>{palette.name}</button>)}<button type="button" className="btn btn-secondary btn-sm" onClick={() => setColors({ ...selected.colors })}>Reset colours</button></div>
           <div className="color-fields">{[["accent", "Accent"], ["bg", "Background"], ["text", "Text"]].map(([key, label]) => <div className="color-field" key={key}><label className="color-field-label" htmlFor={`theme-color-${key}`}>{label}</label><input id={`theme-color-${key}`} type="color" value={colors[key]} onChange={e => setColors(prev => ({ ...prev, [key]: e.target.value }))} /></div>)}</div>
           <p className="form-hint">Text/background contrast: {contrast(colors.text, colors.bg).toFixed(1)}:1. Themes may use additional surface colours.</p>
           {(contrast(colors.text, colors.bg) < 4.5 || contrast(colors.accent, colors.bg) < 3) && <p className="form-error" role="status">These colours may be hard to read. Try a curated palette or Reset colours.</p>}
-          <div className="preview-actions"><button type="button" className="btn btn-primary" onClick={() => { set("theme", selected.id); set("themeColors", { ...colors }); set("layoutSettings", {}); set("motion",motion); close(); }}>Apply Theme</button><button type="button" className="btn btn-secondary" onClick={close}>Cancel</button></div>
+          <div className="preview-actions"><button type="button" className="btn btn-primary" onClick={() => { set("theme", selected.id); set("themeColors", { ...colors }); set("layoutSettings", {}); set("motion",motion); if(selected.id === "minimalist") set("minimalistSettings",minimalistSettings); close(); }}>Apply Theme</button><button type="button" className="btn btn-secondary" onClick={close}>Cancel</button></div>
         </div>
       </div>
     </div>, document.body)}

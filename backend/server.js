@@ -45,6 +45,7 @@ app.use("/api/", limiter);
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/portfolio", require("./routes/portfolio"));
 app.use("/api/metrics", require("./routes/metrics"));
+app.use("/api/ai/character", require("./routes/character"));
 app.use("/api/ai", aiLimiter, require("./routes/ai"));
 
 // Health check

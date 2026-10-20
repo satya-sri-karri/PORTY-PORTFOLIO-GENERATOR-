@@ -3,7 +3,7 @@ const router = express.Router();
 const Portfolio = require("../models/Portfolio");
 const auth = require("../middleware/auth");
 
-const editableFields = ["name", "title", "about", "avatarUrl", "location", "skills", "projects", "experience", "certifications", "achievements", "codingProfiles", "contact", "socialLinks", "theme", "themeColors", "isPublic", "thumbnail", "availability", "motto", "interests", "resumeUrl", "showLocation", "motion", "layoutSettings", "sectionOrder", "sectionVisibility", "audience", "showcaseOptIn"];
+const editableFields = ["name", "title", "about", "avatarUrl", "location", "skills", "projects", "experience", "certifications", "achievements", "codingProfiles", "contact", "socialLinks", "theme", "themeColors", "minimalistSettings", "isPublic", "thumbnail", "availability", "motto", "interests", "resumeUrl", "showLocation", "motion", "layoutSettings", "sectionOrder", "sectionVisibility", "audience", "showcaseOptIn"];
 const editableData = body => Object.fromEntries(editableFields.filter(key => Object.prototype.hasOwnProperty.call(body, key)).map(key => [key, body[key]]));
 // Public responses never expose ownership, recovery state or hidden contact content.
 const publicData = portfolio => {

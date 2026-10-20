@@ -1,0 +1,15 @@
+import React, { useState } from "react";
+import MinimalistTheme from "../components/themes/MinimalistTheme";
+import StaticAvatar from "../components/builder/StaticAvatar";
+import MinimalistControls from "../components/builder/MinimalistControls";
+import { MINIMALIST_PALETTES } from "../components/themes/minimalistOptions";
+import { normalizePortfolio } from "../utils/portfolioContent";
+import "./minimalistDemo.css";
+
+const demo = { theme: "minimalist", name: "Anya", title: "Designer & creative developer", about: "I bring a curious mind and a careful eye to digital experiences. A little design, a little code, and a lot of attention to the details.", avatarUrl: "/demo/minimalist-character.webp", skills: ["Interface design", "React", "Creative development"], projects: [{ title: "Studio Notes", description: "A thoughtful home for ideas, notes and the things worth keeping.", techStack: ["Design", "Development"], featured: true }, { title: "Field Guide", description: "An exploration of clear information and a calmer reading experience.", techStack: ["Interaction design"] }, { title: "Form Studies", description: "Small experiments in shape, typography and the feel of an interface.", techStack: ["Creative coding"] }], contact: { email: "anya@example.com" }, minimalistSettings: { cover: "character", font: "condensed" }, motion: "expressive" };
+
+export default function MinimalistDemoPage() {
+  const [data, setData] = useState(demo), [palette, setPalette] = useState(0), [resetKey, setResetKey] = useState(0);
+  const colors = MINIMALIST_PALETTES[palette];
+  return <div className="minimalist-demo"><header className="md-toolbar"><div className="md-title"><strong>PORTY / Minimalist</strong><span>Interactive theme preview · sample content</span></div><div className="md-fields"><label>Your name<input value={data.name} maxLength={100} onChange={event => setData({ ...data, name: event.target.value })} /></label><label>Colour palette<select value={palette} onChange={event => setPalette(Number(event.target.value))}>{MINIMALIST_PALETTES.map((item,i) => <option key={item.name} value={i}>{item.name}</option>)}</select></label><MinimalistControls value={data.minimalistSettings} onChange={minimalistSettings => setData({ ...data, minimalistSettings })} /><label className="md-motion"><input type="checkbox" checked={data.motion === "expressive"} onChange={event => setData({ ...data, motion: event.target.checked ? "expressive" : "none" })} />Play motion</label></div><StaticAvatar key={resetKey} previewOnly avatarUrl={data.avatarUrl} onApply={avatarUrl => setData(previous => ({ ...previous, avatarUrl, minimalistSettings: { ...previous.minimalistSettings, cover: "character" } }))} /><button type="button" className="md-reset" onClick={() => { setData(demo); setPalette(0); setResetKey(value => value + 1); }}>Reset preview</button><p>Static preview · your edits stay in this tab. Photo conversion uses an external tool.</p></header><MinimalistTheme data={normalizePortfolio({ ...data, themeColors: { bg: colors.bg, text: colors.text, accent: colors.accent } })} /></div>;
+}

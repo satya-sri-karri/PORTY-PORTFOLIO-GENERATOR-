@@ -30,6 +30,7 @@ export function normalizePortfolio(input = {}) {
     avatarUrl: imageURL(data.avatarUrl),
     interests: strings(data.interests), resumeUrl: externalURL(data.resumeUrl),
     motion: ["none", "subtle", "expressive"].includes(data.motion) ? data.motion : "expressive",
+    minimalistSettings: { cover: object(data.minimalistSettings).cover === "type" ? "type" : "character", font: ["condensed", "bold", "geometric"].includes(object(data.minimalistSettings).font) ? data.minimalistSettings.font : "condensed" },
     layoutSettings: Object.fromEntries(Object.entries({ hero: ["centered", "split"], projects: ["cards", "spotlight", "rail"], spacing: ["compact", "airy"], typography: ["editorial", "bold", "mono"], image: ["wide", "square", "rounded"], hover: ["lift", "tilt"] }).map(([key, choices]) => [key, choices.includes(object(data.layoutSettings)[key]) ? data.layoutSettings[key] : "theme"])),
     sectionOrder: [...new Set([...strings(data.sectionOrder), "projects", "experience", "credentials", "profiles", "contact"])].filter(key => ["projects", "experience", "credentials", "profiles", "contact"].includes(key)),
     skills: strings(data.skills),
