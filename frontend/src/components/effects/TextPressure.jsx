@@ -117,7 +117,10 @@ const TextPressure = ({
 
   useEffect(() => {
     let rafId;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const animate = () => {
+      rafId = null;
+      if (document.hidden || motion.matches) return;
       mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
       mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
@@ -155,8 +158,22 @@ const TextPressure = ({
       rafId = requestAnimationFrame(animate);
     };
 
-    animate();
-    return () => cancelAnimationFrame(rafId);
+    const sync = () => {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      if (motion.matches) spansRef.current.forEach(span => {
+        if (span) { span.style.fontVariationSettings = "'wght' 600, 'wdth' 100, 'ital' 0"; span.style.opacity = '1'; }
+      });
+      else animate();
+    };
+    document.addEventListener('visibilitychange', sync);
+    motion.addEventListener('change', sync);
+    sync();
+    return () => {
+      cancelAnimationFrame(rafId);
+      document.removeEventListener('visibilitychange', sync);
+      motion.removeEventListener('change', sync);
+    };
   }, [width, weight, italic, alpha]);
 
   const styleElement = useMemo(() => {

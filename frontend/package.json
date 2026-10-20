@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "html-to-image": "^1.11.13",
+    "mammoth": "^1.13.0",
     "ogl": "^1.0.11",
+    "pdfjs-dist": "^4.10.38",
+    "qrcode-generator": "^2.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.0",
@@ -12,7 +15,17 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test:browser": "node test/reliability.cjs",
+    "review": "node test/serve-build.cjs",
+    "test:content": "node --test test/content.cjs",
+    "test:themes": "node test/themes.cjs",
+    "test:completion": "node test/completion.cjs",
+    "test:metadata": "node --test test/metadata.cjs",
+    "test:motion": "node test/motion.cjs",
+    "test:native": "node test/native-compositions.cjs",
+    "prebuild": "node scripts/prepare-pdf-worker.cjs",
+    "prestart": "node scripts/prepare-pdf-worker.cjs"
   },
   "proxy": "http://localhost:5000",
   "browserslist": {
@@ -23,5 +36,8 @@
     "development": [
       "last 1 chrome version"
     ]
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
   }
 }

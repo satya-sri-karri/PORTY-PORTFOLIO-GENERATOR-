@@ -1,0 +1,140 @@
+/* Swiss: a typographic grid, deliberate rules, and an accent marker. */
+.pf-swiss { font-family: 'Inter', Helvetica, Arial, sans-serif; }
+.pf-swiss .swiss-hero-heading { border-top: 5px solid var(--pf-text); padding-top: 26px; }
+.pf-swiss .swiss-hero-heading h1 { margin-top: 30px; font-weight: 700; font-size: clamp(3.5rem, 9.5vw, 8.75rem); letter-spacing: -.07em; }
+.pf-swiss .swiss-intro { display: grid; grid-template-columns: 1fr 1.8fr; gap: 50px; margin-top: 50px; }
+.pf-swiss .swiss-with-portrait { grid-template-columns: 1fr 1.6fr .65fr; }
+.pf-swiss .pf-role { font-size: 19px; }
+.pf-swiss .pf-portrait { aspect-ratio: 1; filter: grayscale(1); }
+.pf-swiss .swiss-ruler { display: flex; justify-content: space-between; padding-top: 24px; margin-top: 52px; border-top: 1px solid var(--pf-line); color: var(--pf-muted); font: 10px 'JetBrains Mono', monospace; letter-spacing: .14em; }
+.pf-swiss .pf-button, .pf-swiss .pf-skills span { border-radius: 0; }
+.pf-swiss .pf-section-heading { display: grid; grid-template-columns: 1fr 1.8fr; gap: 50px; align-items: baseline; }
+.pf-swiss .pf-section-heading h2 { margin-top: 0; }
+.pf-swiss .pf-project-media { background: var(--pf-surface); }
+.pf-swiss .pf-cover-glyph { font-family: Helvetica, Arial, sans-serif; }
+.pf-swiss .pf-credential { border: none; border-top: 2px solid var(--pf-text); padding: 24px 0; }
+/* Luxury: large serif type and images within a restrained, warm dark palette. */
+.pf-luxe { background-image: radial-gradient(color-mix(in srgb, var(--pf-text) 5%, transparent) .5px, transparent .5px); background-size: 5px 5px; }
+.pf-luxe h1, .pf-luxe h2, .pf-luxe h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; letter-spacing: -.04em; }
+.pf-luxe .pf-brand-mark { background: transparent; color: var(--pf-accent); font-size: 28px; }
+.pf-luxe .luxe-hero { position: relative; padding: 110px 0 96px; }
+.pf-luxe .luxe-hero > div:first-child { max-width: 930px; position: relative; z-index: 1; }
+.pf-luxe .luxe-hero h1 { font-size: clamp(4rem, 9vw, 9rem); margin: 22px 0 26px; }
+.pf-luxe .luxe-with-portrait { display: grid; grid-template-columns: 1.8fr 1fr; gap: 64px; align-items: center; }
+.pf-luxe .luxe-with-portrait h1 { font-size: clamp(3.5rem, 7vw, 7rem); }
+.pf-luxe .luxe-hero .pf-role { color: var(--pf-accent); font-size: 18px; }
+.pf-luxe .luxe-hero .pf-bio { margin-top: 26px; max-width: 56ch; }
+.pf-luxe .luxe-portrait { border: 1px solid var(--pf-line); padding: 10px; }
+.pf-luxe .luxe-hero-decoration { position: absolute; right: 3%; bottom: 60px; font-size: 140px; color: var(--pf-line); line-height: 1; pointer-events: none; }
+.pf-luxe .luxe-with-portrait .luxe-hero-decoration { display: none; }
+.pf-luxe .pf-skills span { border: none; border-bottom: 1px solid var(--pf-line); padding: 4px 0; margin-right: 16px; border-radius: 0; }
+.pf-luxe .pf-button { background: transparent; color: var(--pf-text); border-color: var(--pf-accent); border-radius: 0; }
+.pf-luxe .pf-project-grid { gap: 60px 40px; }
+.pf-luxe .pf-project-media { border: none; }
+.pf-luxe .pf-project-body h3 { font-size: 34px; }
+.pf-luxe .pf-project-links { color: var(--pf-accent); }
+.pf-luxe .pf-cover-glyph { font-family: Georgia, serif; font-weight: 400; font-style: italic; font-size: 9rem; }
+.pf-luxe .pf-credential { background: transparent; padding: 30px; }
+.pf-luxe .pf-credential h3 { font-size: 26px; }
+/* Scrapbook: paper, photo mounts, tape, and readable unfolding stories. */
+.pf-scrapbook { background-image: radial-gradient(color-mix(in srgb, var(--pf-text) 9%, transparent) .6px, transparent .6px); background-size: 8px 8px; }
+.pf-scrapbook h1, .pf-scrapbook h2, .pf-scrapbook h3 { font-family: 'Georgia', serif; font-weight: 400; letter-spacing: -.045em; }
+.pf-scrapbook .pf-brand-mark { border-radius: 5px; transform: rotate(-6deg); }
+.pf-scrapbook .scrapbook-hero { position: relative; }
+.pf-scrapbook .scrapbook-note { position: relative; background: var(--pf-surface); border: 1px solid var(--pf-line); box-shadow: 6px 8px 0 color-mix(in srgb, var(--pf-text) 9%, transparent); padding: 44px; max-width: 960px; }
+.pf-scrapbook .scrapbook-note::before, .pf-scrapbook .scrapbook-photo::before { content: ''; position: absolute; top: -13px; left: 34%; width: 94px; height: 26px; background: color-mix(in srgb, var(--pf-accent) 18%, var(--pf-bg)); border: 1px solid var(--pf-line); transform: rotate(-4deg); z-index: 2; }
+.pf-scrapbook .scrapbook-note h1 { margin: 24px 0; font-size: clamp(3.3rem, 7vw, 6.5rem); }
+.pf-scrapbook .scrapbook-note .pf-bio { margin-top: 22px; }
+.pf-scrapbook .scrapbook-portrait { position: absolute; right: 24px; top: 50px; width: 200px; transform: rotate(5deg); }
+.pf-scrapbook .scrapbook-portrait .pf-portrait { padding: 10px 10px 36px; background: var(--pf-bg); border: 1px solid var(--pf-line); box-shadow: 0 8px 20px #0002; }
+.pf-scrapbook .scrapbook-hero:has(.pf-portrait) .scrapbook-note { width: calc(100% - 140px); padding-right: 125px; }
+.pf-scrapbook .scrapbook-stamp { display: grid; place-content: center; text-align: center; border: 2px solid var(--pf-accent); border-radius: 50%; width: 108px; height: 108px; font-family: Georgia, serif; font-style: italic; color: var(--pf-accent); margin: 32px 0 0 auto; transform: rotate(-15deg); }
+.pf-scrapbook .scrapbook-project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 46px 40px; }
+.pf-scrapbook .scrapbook-project { min-width: 0; }
+.pf-scrapbook .scrapbook-photo { padding: 12px 12px 0; background: var(--pf-surface); position: relative; border: 1px solid var(--pf-line); box-shadow: 3px 5px 0 color-mix(in srgb, var(--pf-text) 8%, transparent); }
+.pf-scrapbook .scrapbook-caption { font: italic 16px Georgia, serif; padding: 14px 8px; color: var(--pf-muted); }
+.pf-scrapbook .scrapbook-solo { grid-template-columns: 1fr; }
+.pf-scrapbook .scrapbook-solo .scrapbook-project { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: start; }
+.pf-scrapbook .pf-story { border: 1px dashed var(--pf-line); padding: 14px 18px; background: var(--pf-surface); }
+.pf-scrapbook .pf-story[open] dl { animation: pf-note-unfold .2s ease-out; }
+@keyframes pf-note-unfold { from { opacity: .5; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+/* Y2K: chrome, browser windows, light iridescence; no decorative fake controls. */
+.pf-y2k { background-image: linear-gradient(125deg, color-mix(in srgb, var(--pf-accent) 8%, transparent), transparent 50%), radial-gradient(ellipse at 80% 25%, color-mix(in srgb, var(--pf-accent) 10%, transparent), transparent 65%); }
+.pf-y2k .pf-nav { box-shadow: 0 3px 0 color-mix(in srgb, var(--pf-text) 7%, transparent); }
+.pf-y2k .pf-brand-mark { border: 1px solid var(--pf-line); background: linear-gradient(145deg, var(--pf-bg), var(--pf-line), var(--pf-bg)); color: var(--pf-text); }
+.pf-y2k .pf-container { max-width: 1100px; }
+.pf-y2k .y2k-window { border: 1px solid var(--pf-line); border-radius: 20px; background: var(--pf-surface); padding: 6px; box-shadow: 8px 10px 0 color-mix(in srgb, var(--pf-accent) 15%, transparent); position: relative; }
+.pf-y2k .y2k-window-bar { border: 1px solid var(--pf-line); background: linear-gradient(var(--pf-bg), var(--pf-line), var(--pf-bg)); display: flex; justify-content: space-between; gap: 20px; border-radius: 14px 14px 0 0; padding: 10px 18px; font: 11px 'JetBrains Mono', monospace; }
+.pf-y2k .y2k-hero-content { padding: 44px; }
+.pf-y2k .y2k-hero-content h1 { font-size: clamp(3.6rem, 8vw, 7.5rem); margin: 24px 0 32px; font-family: 'Arial Black', 'Inter', sans-serif; font-weight: 900; letter-spacing: -.055em; background: linear-gradient(180deg, var(--pf-text) 10%, var(--pf-muted) 40%, var(--pf-text) 52%, var(--pf-muted) 70%, var(--pf-text) 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pf-y2k .y2k-intro.y2k-with-portrait { display: grid; grid-template-columns: 1.7fr .65fr; gap: 40px; }
+.pf-y2k .y2k-intro .pf-bio { margin-top: 18px; }
+.pf-y2k .pf-portrait { border: 5px solid var(--pf-bg); border-radius: 20px; box-shadow: 0 0 0 1px var(--pf-line); aspect-ratio: 1; }
+.pf-y2k .y2k-star { position: absolute; color: var(--pf-accent); line-height: 1; pointer-events: none; text-shadow: 2px 2px 0 var(--pf-bg); }
+.pf-y2k .y2k-star-one { top: 66px; right: -12px; font-size: 70px; transform: rotate(10deg); }
+.pf-y2k .y2k-star-two { bottom: -18px; right: 8%; font-size: 55px; }
+.pf-y2k .pf-skills span { border-radius: 20px; background: var(--pf-bg); box-shadow: 2px 2px 0 var(--pf-line); }
+.pf-y2k .pf-button { border-radius: 24px; box-shadow: 3px 3px 0 var(--pf-line); }
+.pf-y2k .pf-project { padding: 10px; background: var(--pf-surface); border: 1px solid var(--pf-line); border-radius: 18px; box-shadow: 5px 5px 0 color-mix(in srgb, var(--pf-accent) 10%, transparent); }
+.pf-y2k .pf-project-media { border-radius: 10px; }
+.pf-y2k .pf-project-body { padding: 22px 14px 16px; }
+.pf-y2k .pf-credential { border-radius: 16px; background: var(--pf-surface); }
+/* Product Showcase: actual screenshots in a neutral device frame, genuine case studies. */
+.pf-product .product-hero h1 { font-size: clamp(3.5rem, 8.5vw, 8rem); font-weight: 550; }
+.pf-product .product-identity { display: flex; justify-content: space-between; align-items: center; gap: 40px; margin: 24px 0 40px; }
+.pf-product .product-identity h1 { min-width: 0; }
+.pf-product .product-identity .pf-portrait { width: 88px; height: 88px; aspect-ratio: 1; border-radius: 50%; flex-shrink: 0; }
+.pf-product .product-intro { display: grid; grid-template-columns: 1fr 1.8fr; gap: 50px; }
+.pf-product .pf-button { border-radius: 28px; }
+.pf-product .product-studies { display: grid; gap: 60px; }
+.pf-product .product-study { display: grid; grid-template-columns: 1.3fr 1fr; gap: 44px; align-items: start; padding-bottom: 50px; border-bottom: 1px solid var(--pf-line); }
+.pf-product .product-display { padding: 32px; background: var(--pf-surface); border-radius: 18px; }
+.pf-product .product-device { border-radius: 10px; border: 1px solid var(--pf-line); box-shadow: 0 16px 30px color-mix(in srgb, var(--pf-text) 12%, transparent); overflow: hidden; background: var(--pf-bg); }
+.pf-product .product-device-bar { height: 26px; display: flex; gap: 5px; align-items: center; padding: 0 10px; border-bottom: 1px solid var(--pf-line); }
+.pf-product .product-device-bar i { width: 5px; height: 5px; border-radius: 50%; background: var(--pf-muted); }
+.pf-product .product-device .pf-project-media { border: none; }
+.pf-product .product-study .pf-project-body { padding-top: 0; }
+.pf-product .product-study .pf-project-body h3 { font-size: 30px; }
+.pf-product .pf-story { background: var(--pf-surface); padding: 18px; border: 1px solid var(--pf-line); border-radius: 8px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .portfolio-v4:not(.pf-static) .pf-project-media img { transition: transform .3s ease; }
+  .portfolio-v4:not(.pf-static) .pf-project-media:hover img { transform: scale(1.025); }
+  .pf-y2k:not(.pf-static) .pf-button:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--pf-line); }
+}
+@media (max-width: 760px) {
+  .pf-swiss .swiss-hero-heading h1 { font-size: clamp(3rem, 13vw, 5rem); }
+  .pf-swiss .swiss-intro, .pf-swiss .swiss-with-portrait, .pf-swiss .pf-section-heading, .pf-product .product-intro { grid-template-columns: 1fr; gap: 24px; }
+  .pf-swiss .pf-portrait { width: 100px; }
+  .pf-swiss .pf-section-heading h2 { margin-top: 0; }
+  .pf-luxe .luxe-hero, .pf-luxe .luxe-with-portrait { display: block; padding: 65px 0; }
+  .pf-luxe .luxe-hero h1, .pf-luxe .luxe-with-portrait h1 { font-size: clamp(3rem, 13vw, 5rem); }
+  .pf-luxe .luxe-portrait { max-width: 260px; margin-top: 40px; }
+  .pf-luxe .luxe-hero-decoration { font-size: 75px; bottom: 30px; right: 0; }
+  .pf-scrapbook .scrapbook-note, .pf-scrapbook .scrapbook-hero:has(.pf-portrait) .scrapbook-note { padding: 28px 22px; width: 100%; }
+  .pf-scrapbook .scrapbook-note h1 { font-size: clamp(2.8rem, 12vw, 4rem); }
+  .pf-scrapbook .scrapbook-portrait { position: relative; top: auto; right: auto; width: 145px; margin: 28px 8px 0 auto; transform: rotate(3deg); }
+  .pf-scrapbook .scrapbook-stamp { width: 80px; height: 80px; font-size: 14px; margin-top: 14px; }
+  .pf-scrapbook .scrapbook-project-grid { grid-template-columns: 1fr; gap: 40px; }
+  .pf-scrapbook .scrapbook-solo .scrapbook-project { display: block; }
+  .pf-y2k .y2k-window { border-radius: 15px; box-shadow: 4px 5px 0 color-mix(in srgb, var(--pf-accent) 15%, transparent); }
+  .pf-y2k .y2k-window-bar { padding: 10px; font-size: 10px; }
+  .pf-y2k .y2k-hero-content { padding: 30px 20px; }
+  .pf-y2k .y2k-hero-content h1 { font-size: clamp(2.6rem, 11vw, 4rem); }
+  .pf-y2k .y2k-intro.y2k-with-portrait { grid-template-columns: 1fr; gap: 28px; }
+  .pf-y2k .pf-portrait { width: 110px; }
+  .pf-y2k .y2k-star-one { top: 58px; right: 0; font-size: 38px; }
+  .pf-product .product-identity { align-items: start; gap: 16px; }
+  .pf-product .product-identity h1 { font-size: clamp(2.5rem, 11vw, 4rem); }
+  .pf-product .product-identity .pf-portrait { width: 52px; height: 52px; }
+  .pf-product .product-study { grid-template-columns: 1fr; gap: 24px; }
+  .pf-product .product-display { padding: 20px; }
+}
+.pf-swiss .swiss-intro:not(:has(.pf-profile-meta)) { grid-template-columns: 1fr; max-width: 850px; }
+.pf-swiss .swiss-with-portrait:not(:has(.pf-profile-meta)):has(.pf-portrait) { grid-template-columns: 1.8fr .65fr; }
+.pf-swiss .swiss-with-portrait:not(:has(.pf-portrait)):has(.pf-profile-meta) { grid-template-columns: 1fr 1.8fr; }
+.pf-luxe .luxe-with-portrait:not(:has(.pf-portrait)) { display: block; }
+.pf-y2k .y2k-with-portrait:not(:has(.pf-portrait)) { display: block; }
+.pf-product .product-intro:not(:has(.pf-profile-meta)) { grid-template-columns: 1fr; max-width: 800px; }
+@media (max-width: 760px) {
+  .pf-swiss .swiss-with-portrait:not(:has(.pf-profile-meta)):has(.pf-portrait), .pf-swiss .swiss-with-portrait:not(:has(.pf-portrait)):has(.pf-profile-meta) { grid-template-columns: 1fr; }
+}

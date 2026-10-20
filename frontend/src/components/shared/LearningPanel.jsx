@@ -1,0 +1,7 @@
+import React, {useState} from 'react';
+import {sendFeedback} from '../../utils/api';
+export default function LearningPanel(){
+ const [helpful,setHelpful]=useState('');const [blocked,setBlocked]=useState('');const [error,setError]=useState('');const [message,setMessage]=useState('');const [busy,setBusy]=useState(false);
+ const submit=async e=>{e.preventDefault();setBusy(true);setError('');setMessage('');try{await sendFeedback({helpful,blocked});setMessage('Feedback sent. Thank you.');setHelpful('');setBlocked('');}catch(e){setError(e.message);}finally{setBusy(false);}};
+ return <details className="profile-reuse glass"><summary>Help improve Porty</summary><form onSubmit={submit}><p>Tell the Porty team about your creation experience. Avoid including passwords or private contact information.</p><label htmlFor="feedback-helpful">What worked well?</label><textarea id="feedback-helpful" className="form-input" rows={3} maxLength={1000} value={helpful} onChange={e=>setHelpful(e.target.value)} /><label htmlFor="feedback-blocked">Where did you get stuck?</label><textarea id="feedback-blocked" className="form-input" rows={3} maxLength={1000} value={blocked} onChange={e=>setBlocked(e.target.value)} /><button type="submit" className="btn btn-secondary btn-sm" disabled={busy || ![helpful,blocked].some(v=>v.trim())}>Send feedback</button></form>{error && <p role="alert" className="form-error">{error}</p>}{message && <p role="status">{message}</p>}</details>;
+}

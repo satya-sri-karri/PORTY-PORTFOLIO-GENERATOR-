@@ -1,0 +1,4 @@
+.studio-live-preview { position:sticky; top:0; z-index:3; border:1px solid var(--border); border-radius:10px; background:var(--surface-0); }
+.frame-controls { position:absolute; top:8px; right:8px; display:flex; gap:6px; z-index:4; }
+.frame-controls button { min-height:36px; font-size:10px; border:1px solid #ffffff55; padding:6px 10px; border-radius:7px; background:#18212c; color:white; cursor:pointer; }
+.frame-controls button[aria-pressed="true"] { border-color:#b9a3ff; }

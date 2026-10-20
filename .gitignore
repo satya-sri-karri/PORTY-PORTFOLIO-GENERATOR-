@@ -19,6 +19,7 @@ npm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+__pycache__/
 
 # Misc
 *.zip
@@ -26,3 +27,13 @@ Thumbs.db
 *.pdf
 *.docx
 *.ipynb
+
+# Generated browser verification output
+frontend/test/artifacts/
+
+# PDF worker copied from the locked dependency by prebuild/prestart
+frontend/public/porty-pdf-worker.mjs
+frontend/public/porty-pdf-worker.LICENSE.txt
+
+# Reproducible static theme preview
+huggingface/minimalist-static/index.html

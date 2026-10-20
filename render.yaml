@@ -16,7 +16,9 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
-      - key: SMTP_USER
+      - key: MAILJET_API_KEY
         sync: false
-      - key: SMTP_PASS
+      - key: MAILJET_SECRET_KEY
+        sync: false
+      - key: EMAIL_FROM
         sync: false

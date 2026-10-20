@@ -1,0 +1,8 @@
+gradio>=6,<7
+spaces
+torch>=2.8,<3
+diffusers>=0.37,<1
+transformers>=4.51,<5
+accelerate>=1,<2
+Pillow>=11,<13
+rembg[cpu]>=2.0.67,<3
