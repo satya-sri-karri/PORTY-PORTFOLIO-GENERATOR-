@@ -25,7 +25,8 @@
     "test:motion": "node test/motion.cjs",
     "test:native": "node test/native-compositions.cjs",
     "prebuild": "node scripts/prepare-pdf-worker.cjs",
-    "prestart": "node scripts/prepare-pdf-worker.cjs"
+    "prestart": "node scripts/prepare-pdf-worker.cjs",
+    "test:ux": "node --test test/application-ux.cjs"
   },
   "proxy": "http://localhost:5000",
   "browserslist": {

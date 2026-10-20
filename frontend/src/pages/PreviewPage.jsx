@@ -44,7 +44,7 @@ const PreviewPage = () => {
   const config = getTheme(data.theme);
   const returnTo = /^\/builder(?:\/[a-zA-Z0-9]+)?$/.test(envelope.returnTo || "") ? envelope.returnTo : "/builder";
   return (
-    <div className="owner-preview-page">
+    <div className="owner-preview-page porty-app">
       <div className="owner-preview-banner">
         <span>Preview · {config.name} · {id ? data.isPublic ? "Public portfolio" : "Private — only you can view" : "Unsaved preview"}</span>
         <Link to={returnTo} state={id ? undefined : { resumeData: envelope.resumeData || data, savedContent: envelope.savedContent, clientRequestId: envelope.clientRequestId }} className="btn btn-secondary btn-sm">← Back to Builder</Link>
