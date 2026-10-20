@@ -97,14 +97,10 @@ const LandingPage = () => {
               Get started free →
             </Link>
             <Link to="/try" className="btn btn-secondary btn-lg">Try it before signing up</Link>
-            <Link to="/showcase" className="btn btn-ghost">Community portfolios</Link>
-            <Link to="/login" className="btn btn-glass-outline btn-lg" style={{ textDecoration: "none" }}>
-              Sign in
-            </Link>
           </div>
 
           <p className="fade-up d-4 text-on-gradient-tertiary" style={{ fontSize: 12, marginTop: 16, textShadow }}>
-             Takes 5 minutes
+             Start with your name. Add the rest as you go.
           </p>
         </div>
       </section>
@@ -180,7 +176,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="text-on-gradient-tertiary border-on-gradient" style={{ textAlign: "center", padding: "24px", borderTop: "1px solid", fontSize: 12, textShadow }}>
-        
+        <Link to="/showcase" style={{ color: "inherit" }}>Community portfolios</Link>
       </footer>
     </div>
     </div>

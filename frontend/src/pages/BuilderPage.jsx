@@ -696,14 +696,6 @@ const BuilderPage = () => {
         gradientTo={theme === "dark" ? "rgba(220, 180, 255, 0.45)" : "rgba(180, 151, 207, 0.25)"}
         glowColor={theme === "dark" ? "#0a0510" : "#120F17"}
       />
-      {/* Success toast */}
-      {success && (
-        <div className="toast fade-up">
-          <span>🎉 {success.isEdit ? "Updated" : "Created"} — </span>
-          <Link to={success.isPublic ? `/p/${success.slug}` : `/preview/${success.id}`} style={{ color: "var(--accent-light)", textDecoration: "underline" }}>View portfolio</Link>
-          <button type="button" onClick={() => setSuccess(null)} style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer", fontSize: 14, marginLeft: 8, padding: 0, lineHeight: 1 }}>✕</button>
-        </div>
-      )}
       {/* Hidden thumbnail capture — re-captures when theme changes */}
       {form.name && <ThumbnailGenerator ref={coverCapture} data={form} onCapture={setThumbnail} />}
       <div className={`builder-layout builder-with-preview view-${view}`} style={{ position: "relative", zIndex: 1 }}>
@@ -733,7 +725,7 @@ const BuilderPage = () => {
           </div>
           {/* Sidebar action buttons — always visible */}
           <div className="glass" style={{ margin: "8px 8px 0", padding: "10px 12px", borderRadius: 12, border: "none", display: "flex", flexDirection: "column", gap: 6 }}>
-            <button className="btn btn-secondary btn-sm" onClick={handlePreview} style={{ width: "100%", justifyContent: "center" }}>
+            <button className="btn btn-secondary btn-sm" onClick={() => handlePreview()} style={{ width: "100%", justifyContent: "center" }}>
               👁 Preview
             </button>
             <button className="btn btn-primary btn-sm" onClick={handleSave} disabled={saving || capturingCover || Boolean(recoverable)} style={{ width: "100%", justifyContent: "center" }}>
@@ -814,7 +806,7 @@ const BuilderPage = () => {
           <p className="form-hint">Changes appear here as you type.</p>
           <div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "desktop"} onClick={() => setPreviewDevice("desktop")}>Desktop layout</button><button type="button" className="btn btn-secondary btn-sm" aria-pressed={previewDevice === "mobile"} onClick={() => setPreviewDevice("mobile")}>Mobile layout</button></div>
           {(wide || view === "preview") && <ThemeFrame data={form} device={previewDevice} height={500} title="Live portfolio preview" />}
-          <button type="button" className="btn btn-ghost btn-sm" onClick={handlePreview}>Open full preview</button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => handlePreview()}>Open full preview</button>
         </aside>
       </div>
     </div>

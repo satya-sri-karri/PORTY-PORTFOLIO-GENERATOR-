@@ -5,7 +5,7 @@ import { useTheme } from "../../context/ThemeContext";
 import Logo from "./Logo";
 
 const Navbar = () => {
-  const { user, logout, isLoggedIn } = useAuth();
+  const { logout, isLoggedIn } = useAuth();
   const { theme, toggle } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,23 +25,23 @@ const Navbar = () => {
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
         )}
-        {isLoggedIn && !isPublicPage ? (
+        {isLoggedIn ? (
           <>
             
             <Link to="/dashboard" className="btn btn-ghost btn-sm" style={{ textDecoration: "none" }}>
               Dashboard
             </Link>
-            <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
+            {!location.pathname.startsWith("/builder") && location.pathname !== "/dashboard" && <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none" }}>
               <span className="navbar-new-long">+ New Portfolio</span><span className="navbar-new-short">+ New</span>
-            </Link>
+            </Link>}
             <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
               Sign out
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#fff", background: "transparent", boxShadow: "none" }}>Sign in</Link>
-            <Link to="/register" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#17172B", background: "#fff", boxShadow: "none" }}>Get started</Link>
+            {location.pathname !== "/login" && <Link to="/login" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#fff", background: "transparent", boxShadow: "none" }}>Sign in</Link>}
+            {location.pathname !== "/register" && <Link to="/register" className="btn btn-sm" style={{ textDecoration: "none", border: "1px solid #fff", color: "#17172B", background: "#fff", boxShadow: "none" }}>Get started</Link>}
           </>
         )}
       </div>

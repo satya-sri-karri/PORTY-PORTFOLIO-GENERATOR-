@@ -63,13 +63,13 @@ export default function ThemePicker({ form, set, token, onFullPreview }) {
   });
   const previewData = selected ? { ...form, theme: selected.id, themeColors: colors, layoutSettings:{}, motion, minimalistSettings } : form;
   return <div>
-    <div className="ai-panel">
-      <h3 className="ai-panel-title">AI Theme Recommender</h3>
+    <details className="ai-panel">
+      <summary className="ai-panel-title">AI Theme Recommender · optional</summary>
       <p className="ai-panel-desc">Get three styles to consider, with reasons based on your profile.</p>
       <button type="button" className="btn btn-ai btn-sm" disabled={ai.loading} onClick={recommend}>{ai.loading ? "Generating…" : "✦ Recommend My Theme"}</button>
       {ai.error && <p className="form-error" role="alert">{ai.error}</p>}
       {ai.suggestion?.map(rec => <div key={rec.theme} className="ai-result"><strong>{getTheme(rec.theme).name}</strong><p>{rec.reason}</p><button type="button" className="btn btn-secondary btn-sm" onClick={() => open(getTheme(rec.theme))}>Preview {getTheme(rec.theme).name}</button></div>)}
-    </div>
+    </details>
     <div className="form-group"><div className="form-label">Visibility</div><button type="button" role="switch" aria-checked={form.isPublic} className="toggle-row" onClick={() => set("isPublic", !form.isPublic)}><span className={`toggle-track ${form.isPublic ? "on" : ""}`}><span className="toggle-thumb" /></span><span className="toggle-label">{form.isPublic ? "Public — anyone with link can view" : "Private — only you can view"}</span></button></div>
     <label className="form-label" htmlFor="theme-search">Search themes by name or style</label>
     <input id="theme-search" className="form-input" type="search" placeholder="Try Minimalist, bold, developer…" value={query} onChange={e => setQuery(e.target.value)} />

@@ -1,7 +1,6 @@
 import LearningPanel from "../components/shared/LearningPanel";
 import ProfileReuse from "../components/builder/ProfileReuse";
 import { getTrash, restorePortfolio, permanentlyDeletePortfolio } from "../utils/api";
-import { journeyStats } from "../utils/journey";
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -134,12 +133,8 @@ const DashboardPage = () => {
           <p style={{ margin: "4px 0 0" }}>Manage and share your portfolios</p>
         </div>
 
-        <LearningPanel token={token} />
         {actionError && <div className="alert alert-error" role="alert">{actionError}</div>}
-        <p className="form-hint">Page views count public portfolio requests, including repeat loads. Link clicks are measured clicks, not unique visitors or completed downloads.</p>
-        {portfolios.length > 0 && <ProfileReuse portfolios={portfolios} token={token} onUpdated={() => { getMyPortfolios(token).then(response => setPortfolios(response.data)).catch(error => setActionError(error.message)); }} />}
-        <details className="profile-reuse glass"><summary>Trash · restore within 30 days</summary><p>Trashed portfolios are hidden immediately. They are permanently removed after 30 days. Restoring also restores their previous public/private setting and stable link.</p><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={loadTrash}>{trashBusy?"Loading…":"Load Trash"}</button>{trashError && <p role="alert">{trashError}</p>}{trash && !trash.length && <p>Trash is empty.</p>}{trash?.map(p=><div className="section-control" key={p._id}><span>{p.name} · Deleted {new Date(p.deletedAt).toLocaleDateString()}</span><div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,false)}>Restore</button><button type="button" className="btn btn-ghost btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,true)}>Delete permanently</button></div></div>)}</details>
-        <details className="profile-reuse glass"><summary>Creation activity on this browser</summary><p>These are actions recorded on this device, across accounts. They are not global conversion rates or unique people. Clearing browser storage resets them.</p>{["start","preview","save","publish","share","error","recovery"].map(step=><p key={step}>{step}: {journeyStats()?.counts?.[step] || 0}</p>)}{journeyStats()?.firstPublishedAt && journeyStats()?.startedAt && <p>Time to first publication: {Math.round((journeyStats().firstPublishedAt-journeyStats().startedAt)/60000)} minutes</p>}</details>
+
         <div className="stat-cards">
           {[
             { label: "Portfolios", value: portfolios.length, icon: "◈" },
@@ -156,7 +151,7 @@ const DashboardPage = () => {
 
         <div className="glass" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, padding: "14px 20px", borderRadius: 12 }}>
           <div className="dashboard-section-header" style={{ margin: 0 }}><h3 style={{ margin: 0 }}>Your Portfolios</h3></div>
-          <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none", fontWeight: 600, padding: "6px 16px", borderRadius: 8 }}>+ New</Link>
+          {portfolios.length > 0 && <Link to="/builder" className="btn btn-secondary btn-sm" style={{ textDecoration: "none", fontWeight: 600, padding: "6px 16px", borderRadius: 8 }}>+ New</Link>}
         </div>
 
         {portfolios.length === 0 ? (
@@ -223,6 +218,9 @@ const DashboardPage = () => {
             })}
           </div>
         )}
+        {portfolios.length > 0 && <ProfileReuse portfolios={portfolios} token={token} onUpdated={() => { getMyPortfolios(token).then(response => setPortfolios(response.data)).catch(error => setActionError(error.message)); }} />}
+        <details className="profile-reuse glass"><summary>Trash · restore within 30 days</summary><p>Trashed portfolios are hidden immediately. They are permanently removed after 30 days. Restoring also restores their previous public/private setting and stable link.</p><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={loadTrash}>{trashBusy?"Loading…":"Load Trash"}</button>{trashError && <p role="alert">{trashError}</p>}{trash && !trash.length && <p>Trash is empty.</p>}{trash?.map(p=><div className="section-control" key={p._id}><span>{p.name} · Deleted {new Date(p.deletedAt).toLocaleDateString()}</span><div className="review-actions"><button type="button" className="btn btn-secondary btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,false)}>Restore</button><button type="button" className="btn btn-ghost btn-sm" disabled={trashBusy} onClick={()=>trashAction(p._id,true)}>Delete permanently</button></div></div>)}</details>
+        <LearningPanel />
       </div>
     </div>
   );
